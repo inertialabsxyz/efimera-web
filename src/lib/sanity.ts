@@ -16,8 +16,8 @@ export function urlFor(source: any) {
 
 // Queries
 export async function getArticles(limit = 20) {
-  return client.fetch(`
-    *[_type == "article"] | order(featured desc, publishedAt desc)[0...${limit}] {
+  const featured = await client.fetch(`
+    *[_type == "article" && featured == true] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -29,6 +29,20 @@ export async function getArticles(limit = 20) {
       "author": author->name
     }
   `);
+  const nonFeatured = await client.fetch(`
+    *[_type == "article" && featured != true] | order(publishedAt desc)[0...${limit}] {
+      _id,
+      title,
+      slug,
+      excerpt,
+      publishedAt,
+      category,
+      mainImage,
+      featured,
+      "author": author->name
+    }
+  `);
+  return [...featured, ...nonFeatured];
 }
 
 export async function getArticle(slug: string) {

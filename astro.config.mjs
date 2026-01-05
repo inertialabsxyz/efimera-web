@@ -1,10 +1,12 @@
-import { defineConfig } from 'astro/config';
-import vercel from '@astrojs/vercel/serverless';
+import { defineConfig } from "astro/config";
+import vercel from "@astrojs/vercel/serverless";
 
 export default defineConfig({
-  output: 'hybrid',
-  adapter: vercel(),
+  output: "hybrid",
+  adapter: vercel({
+    nodeVersion: "20.x",
+  }),
   image: {
-    domains: ['cdn.sanity.io'],
+    domains: ["cdn.sanity.io"],
   },
 });

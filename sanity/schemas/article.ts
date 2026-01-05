@@ -68,10 +68,9 @@ export default {
     },
     {
       name: "featured",
-      title: "Destacado",
+      title: "Featured",
       type: "boolean",
-      description:
-        "Mostrar este artículo como destacado en la página principal",
+      description: "Show this article as featured on the main page",
       initialValue: false,
     },
     {

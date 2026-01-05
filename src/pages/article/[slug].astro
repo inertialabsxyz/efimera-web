@@ -1,0 +1,123 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import { getArticle, urlFor } from "../../lib/sanity";
+import { toHTML } from "@portabletext/to-html";
+
+const { slug } = Astro.params;
+
+// For production, use:
+const article = await getArticle(slug);
+
+// Demo article for preview
+// const article = {
+//   title: 'The Architecture of Silence',
+//   category: 'Art',
+//   publishedAt: '2025-01-03',
+//   author: { name: 'Elena Marchetti' },
+//   mainImage: null,
+//   body: `
+//     <p>In the quiet hours before dawn, when the city still sleeps, Tadao Ando's Church of the Light reveals its true nature. The cruciform void cut into the concrete wall begins to glow, first with the palest grey, then warming to gold as the sun rises over Osaka.</p>
+
+//     <p>This is architecture as meditation—spaces that strip away the unnecessary to reveal something essential about light, material, and the human experience of moving through space.</p>
+
+//     <h2>Concrete as Canvas</h2>
+
+//     <p>Ando's signature material is not merely structural. His concrete walls bear the texture of the wooden formwork used to cast them, each surface a record of its own making. The walls age, gathering patina, becoming more beautiful with time rather than less.</p>
+
+//     <blockquote>
+//       "Light is the origin of all being. Without light, there is no architecture."
+//     </blockquote>
+
+//     <p>At the Naoshima Contemporary Art Museum, built into a hillside overlooking the Seto Inland Sea, this philosophy reaches its fullest expression. Visitors descend into the earth, passing through geometric volumes of varying scales, before emerging into a courtyard open to the sky.</p>
+
+//     <p>The journey is deliberate—a choreography of compression and release, darkness and light, that transforms a simple museum visit into something approaching pilgrimage.</p>
+
+//     <h2>The Space Between</h2>
+
+//     <p>What distinguishes Ando's work is not what he builds but what he leaves empty. The negative space—the void, the gap, the pause—carries as much meaning as the walls themselves. In Japanese aesthetics, this is ma: the pregnant interval, the silence between notes that gives music its shape.</p>
+
+//     <p>Walking through his buildings, one becomes acutely aware of one's own body moving through space, of the quality of light on skin, of the subtle gradations of shadow on a grey wall. This heightened perception is, perhaps, the architecture's true subject.</p>
+//   `,
+// };
+
+if (!article) {
+    return Astro.redirect("/404");
+}
+
+const formattedDate = new Date(article.publishedAt).toLocaleDateString(
+    "en-US",
+    {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+    },
+);
+
+const imageUrl = article.mainImage
+    ? urlFor(article.mainImage).width(1600).height(900).url()
+    : `https://picsum.photos/seed/${slug}/1600/900`;
+
+// Convert Portable Text to HTML
+function renderImage({ value }: { value: any }) {
+    // Skip images without proper asset reference
+    if (!value?.asset?._ref) {
+        return "";
+    }
+    const imgUrl = urlFor(value).width(1200).url();
+    const alt = value.alt || "";
+    const caption = value.caption
+        ? `<figcaption>${value.caption}</figcaption>`
+        : "";
+    return `<figure><img src="${imgUrl}" alt="${alt}" />${caption}</figure>`;
+}
+
+const bodyHtml = article.body
+    ? toHTML(article.body, {
+          components: {
+              types: {
+                  image: renderImage,
+              },
+          },
+      })
+    : "";
+---
+
+<Layout title={`${article.title} — Magazine`}>
+    <article>
+        <header class="article-header">
+            <span class="article-category">{article.category}</span>
+            <h1 class="article-title">{article.title}</h1>
+            {
+                article.excerpt && (
+                    <p class="article-excerpt">{article.excerpt}</p>
+                )
+            }
+            <p class="article-meta">
+                By {article.author?.name || "Anonymous"} · {formattedDate}
+            </p>
+        </header>
+
+        <div class="article-hero">
+            <img src={imageUrl} alt={article.title} />
+        </div>
+
+        <div class="article-content" set:html={bodyHtml} />
+    </article>
+</Layout>
+
+<style>
+    article {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+</style>

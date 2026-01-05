@@ -85,19 +85,6 @@ const categories = [
 ---
 
 <Layout title="Efímera">
-    <div class="category-filter">
-        {
-            categories.map((cat, i) => (
-                <a
-                    href={i === 0 ? "/" : `/category/${cat.toLowerCase()}`}
-                    class:list={[{ active: i === 0 }]}
-                >
-                    {cat}
-                </a>
-            ))
-        }
-    </div>
-
     <div class="article-grid">
         {
             articles.map((article) => (

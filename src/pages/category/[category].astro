@@ -80,21 +80,6 @@ const categories = [
 ---
 
 <Layout title={`${categoryTitle} — Revista`}>
-    <div class="category-filter">
-        {
-            categories.map((cat) => (
-                <a
-                    href={
-                        cat === "All" ? "/" : `/category/${cat.toLowerCase()}`
-                    }
-                    class:list={[{ active: cat.toLowerCase() === category }]}
-                >
-                    {cat}
-                </a>
-            ))
-        }
-    </div>
-
     {
         articles.length > 0 ? (
             <div class="article-grid">

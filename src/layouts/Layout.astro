@@ -10,6 +10,7 @@ const { title = "Efímera", description = "Espacio de arte contemporáneo " } =
     Astro.props;
 
 const categories = [
+    "Todos",
     "Actividades",
     "Artistas",
     "Exposiciones",
@@ -56,20 +57,20 @@ const currentPath = Astro.url.pathname;
 
             <nav class="site-nav">
                 {
-                    categories.map((category) => (
-                        <a
-                            href={`/category/${category.toLowerCase()}`}
-                            class:list={[
-                                {
-                                    active: currentPath.includes(
-                                        category.toLowerCase(),
-                                    ),
-                                },
-                            ]}
-                        >
-                            {category}
-                        </a>
-                    ))
+                    categories.map((category) => {
+                        const isAll = category === "Todos";
+                        const href = isAll
+                            ? "/"
+                            : `/category/${category.toLowerCase()}`;
+                        const isActive = isAll
+                            ? currentPath === "/"
+                            : currentPath.includes(category.toLowerCase());
+                        return (
+                            <a href={href} class:list={[{ active: isActive }]}>
+                                {category}
+                            </a>
+                        );
+                    })
                 }
             </nav>
         </header>

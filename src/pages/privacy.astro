@@ -2,10 +2,123 @@
 import Layout from "../layouts/Layout.astro";
 ---
 
-<Layout title="Privacidad | Efímera" description="Política de privacidad de Efímera">
+<Layout
+    title="Privacidad | Efímera"
+    description="Política de privacidad de Efímera"
+>
     <div class="page-content">
-        <h1>Privacidad</h1>
-        <p>Tu privacidad es importante para nosotros.</p>
+        <h1>Política de Privacidad</h1>
+
+        <p class="intro">
+            En Efímera, respetamos tu privacidad y nos comprometemos a proteger
+            tus datos personales. Esta política explica cómo recopilamos, usamos
+            y protegemos tu información de acuerdo con el Reglamento General de
+            Protección de Datos (RGPD) de la Unión Europea.
+        </p>
+
+        <h2>Responsable del tratamiento</h2>
+        <p>
+            Efímera es el responsable del tratamiento de los datos personales
+            recogidos a través de este sitio web.
+        </p>
+
+        <h2>Datos que recopilamos</h2>
+        <p>Podemos recopilar los siguientes tipos de información:</p>
+        <ul>
+            <li>
+                <strong>Datos de contacto:</strong> nombre, dirección de correo electrónico
+                cuando nos contactas voluntariamente.
+            </li>
+            <li>
+                <strong>Datos de navegación:</strong> dirección IP, tipo de navegador,
+                páginas visitadas y tiempo de permanencia.
+            </li>
+            <li>
+                <strong>Cookies:</strong> utilizamos cookies técnicas necesarias para
+                el funcionamiento del sitio.
+            </li>
+        </ul>
+
+        <h2>Finalidad del tratamiento</h2>
+        <p>Utilizamos tus datos para:</p>
+        <ul>
+            <li>Responder a tus consultas y solicitudes.</li>
+            <li>Mejorar la experiencia de navegación en nuestro sitio.</li>
+            <li>Cumplir con obligaciones legales.</li>
+        </ul>
+
+        <h2>Base legal</h2>
+        <p>El tratamiento de tus datos se basa en:</p>
+        <ul>
+            <li>
+                <strong>Consentimiento:</strong> cuando nos proporcionas tus datos
+                voluntariamente.
+            </li>
+            <li>
+                <strong>Interés legítimo:</strong> para mejorar nuestros servicios
+                y la seguridad del sitio.
+            </li>
+            <li>
+                <strong>Obligación legal:</strong> cuando sea necesario para cumplir
+                con la ley.
+            </li>
+        </ul>
+
+        <h2>Conservación de datos</h2>
+        <p>
+            Conservamos tus datos personales únicamente durante el tiempo
+            necesario para cumplir con las finalidades descritas, o según lo
+            exija la legislación aplicable.
+        </p>
+
+        <h2>Tus derechos</h2>
+        <p>De acuerdo con el RGPD, tienes derecho a:</p>
+        <ul>
+            <li>
+                <strong>Acceso:</strong> solicitar una copia de tus datos personales.
+            </li>
+            <li>
+                <strong>Rectificación:</strong> corregir datos inexactos o incompletos.
+            </li>
+            <li>
+                <strong>Supresión:</strong> solicitar la eliminación de tus datos.
+            </li>
+            <li>
+                <strong>Limitación:</strong> restringir el tratamiento de tus datos.
+            </li>
+            <li>
+                <strong>Portabilidad:</strong> recibir tus datos en un formato estructurado.
+            </li>
+            <li>
+                <strong>Oposición:</strong> oponerte al tratamiento de tus datos.
+            </li>
+        </ul>
+        <p>
+            Para ejercer estos derechos, contáctanos a través de nuestra página
+            de contacto.
+        </p>
+
+        <h2>Seguridad</h2>
+        <p>
+            Implementamos medidas técnicas y organizativas apropiadas para
+            proteger tus datos personales contra acceso no autorizado, pérdida o
+            destrucción.
+        </p>
+
+        <h2>Cookies</h2>
+        <p>
+            Este sitio utiliza cookies técnicas esenciales para su
+            funcionamiento. No utilizamos cookies de seguimiento ni publicidad
+            sin tu consentimiento explícito.
+        </p>
+
+        <h2>Cambios en esta política</h2>
+        <p>
+            Podemos actualizar esta política de privacidad ocasionalmente. Te
+            recomendamos revisarla periódicamente.
+        </p>
+
+        <p class="updated">Última actualización: Enero 2025</p>
     </div>
 </Layout>
 
@@ -18,5 +131,34 @@ import Layout from "../layouts/Layout.astro";
 
     h1 {
         margin-bottom: var(--space-md);
+    }
+
+    h2 {
+        margin-top: var(--space-lg);
+        margin-bottom: var(--space-sm);
+    }
+
+    p {
+        margin-bottom: var(--space-sm);
+    }
+
+    .intro {
+        font-size: 1.1rem;
+        margin-bottom: var(--space-md);
+    }
+
+    ul {
+        margin-bottom: var(--space-sm);
+        padding-left: var(--space-md);
+    }
+
+    li {
+        margin-bottom: var(--space-xs);
+    }
+
+    .updated {
+        margin-top: var(--space-lg);
+        color: var(--color-text-muted);
+        font-size: 0.875rem;
     }
 </style>

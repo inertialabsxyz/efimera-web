@@ -67,6 +67,14 @@ export default {
       description: "Brief summary for previews",
     },
     {
+      name: "featured",
+      title: "Destacado",
+      type: "boolean",
+      description:
+        "Mostrar este artículo como destacado en la página principal",
+      initialValue: false,
+    },
+    {
       name: "publishedAt",
       title: "Published At",
       type: "datetime",

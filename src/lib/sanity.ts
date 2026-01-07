@@ -57,6 +57,7 @@ export async function getArticle(slug: string) {
       publishedAt,
       category,
       mainImage,
+      gallery,
       "author": author->{name, image}
     }
   `,

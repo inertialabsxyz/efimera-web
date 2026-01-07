@@ -42,6 +42,30 @@ export default {
           type: "string",
         },
       ],
+      hidden: ({ document }) => document?.gallery?.length > 0,
+      description: "Single hero image (hidden if gallery is used)",
+    },
+    {
+      name: "gallery",
+      title: "Image Gallery",
+      type: "array",
+      of: [
+        {
+          type: "image",
+          options: {
+            hotspot: true,
+          },
+          fields: [
+            {
+              name: "alt",
+              title: "Alt Text",
+              type: "string",
+            },
+          ],
+        },
+      ],
+      description:
+        "Add multiple images for a carousel. If gallery has images, the main image above will be hidden.",
     },
     {
       name: "category",

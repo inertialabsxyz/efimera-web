@@ -1,0 +1,114 @@
+---
+interface Image {
+    url: string;
+    alt?: string;
+}
+
+interface Props {
+    images: Image[];
+    articleTitle: string;
+}
+
+const { images, articleTitle } = Astro.props;
+const hasMultipleImages = images.length > 1;
+---
+
+<div class="carousel" data-carousel>
+    <div class="carousel-track" data-carousel-track>
+        {images.map((image, index) => (
+            <div class="carousel-slide" data-index={index}>
+                <img src={image.url} alt={image.alt || articleTitle} />
+            </div>
+        ))}
+    </div>
+
+    {hasMultipleImages && (
+        <>
+            <button class="carousel-btn carousel-btn-prev" data-carousel-prev aria-label="Previous image">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <button class="carousel-btn carousel-btn-next" data-carousel-next aria-label="Next image">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                    <polyline points="9 6 15 12 9 18"></polyline>
+                </svg>
+            </button>
+
+            <div class="carousel-indicators" data-carousel-indicators>
+                {images.map((_, index) => (
+                    <button
+                        class:list={["carousel-indicator", { active: index === 0 }]}
+                        data-index={index}
+                        aria-label={`Go to image ${index + 1}`}
+                    />
+                ))}
+            </div>
+        </>
+    )}
+</div>
+
+<script>
+    function initCarousel(carousel: HTMLElement) {
+        const track = carousel.querySelector('[data-carousel-track]') as HTMLElement;
+        const slides = carousel.querySelectorAll('.carousel-slide');
+        const prevBtn = carousel.querySelector('[data-carousel-prev]');
+        const nextBtn = carousel.querySelector('[data-carousel-next]');
+        const indicators = carousel.querySelectorAll('.carousel-indicator');
+
+        if (!track || slides.length === 0) return;
+
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        function goToSlide(index: number) {
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+
+            currentIndex = index;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle('active', i === currentIndex);
+            });
+        }
+
+        prevBtn?.addEventListener('click', () => goToSlide(currentIndex - 1));
+        nextBtn?.addEventListener('click', () => goToSlide(currentIndex + 1));
+
+        indicators.forEach((indicator) => {
+            indicator.addEventListener('click', () => {
+                const index = parseInt(indicator.getAttribute('data-index') || '0');
+                goToSlide(index);
+            });
+        });
+
+        // Keyboard navigation
+        carousel.addEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === 'ArrowLeft') goToSlide(currentIndex - 1);
+            if (e.key === 'ArrowRight') goToSlide(currentIndex + 1);
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        carousel.addEventListener('touchstart', (e: TouchEvent) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', (e: TouchEvent) => {
+            touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            if (Math.abs(diff) > 50) {
+                if (diff > 0) goToSlide(currentIndex + 1);
+                else goToSlide(currentIndex - 1);
+            }
+        }, { passive: true });
+    }
+
+    // Initialize all carousels on the page
+    document.querySelectorAll('[data-carousel]').forEach((carousel) => {
+        initCarousel(carousel as HTMLElement);
+    });
+</script>

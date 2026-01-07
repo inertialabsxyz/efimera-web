@@ -2,6 +2,7 @@
 export const prerender = false;
 
 import Layout from "../../layouts/Layout.astro";
+import ImageCarousel from "../../components/ImageCarousel.astro";
 import { getArticle, urlFor } from "../../lib/sanity";
 import { toHTML } from "@portabletext/to-html";
 
@@ -55,9 +56,26 @@ const formattedDate = new Date(article.publishedAt).toLocaleDateString(
     },
 );
 
-const imageUrl = article.mainImage
-    ? urlFor(article.mainImage).width(1600).height(900).url()
-    : `https://picsum.photos/seed/${slug}/1600/900`;
+// Prepare gallery images if available, otherwise use mainImage
+const hasGallery = article.gallery && article.gallery.length > 0;
+const galleryImages = hasGallery
+    ? article.gallery.map((img: any) => ({
+          url: urlFor(img).width(1600).height(900).url(),
+          alt: img.alt || article.title,
+      }))
+    : article.mainImage
+      ? [
+            {
+                url: urlFor(article.mainImage).width(1600).height(900).url(),
+                alt: article.mainImage.alt || article.title,
+            },
+        ]
+      : [
+            {
+                url: `https://picsum.photos/seed/${slug}/1600/900`,
+                alt: article.title,
+            },
+        ];
 
 // Convert Portable Text to HTML
 function renderImage({ value }: { value: any }) {
@@ -100,7 +118,10 @@ const bodyHtml = article.body
         </header>
 
         <div class="article-hero">
-            <img src={imageUrl} alt={article.title} />
+            <ImageCarousel
+                images={galleryImages}
+                articleTitle={article.title}
+            />
         </div>
 
         <div class="article-content" set:html={bodyHtml} />

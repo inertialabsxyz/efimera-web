@@ -1,4 +1,6 @@
 ---
+import { Image } from "astro:assets";
+
 interface Props {
     title: string;
     slug: string;
@@ -17,7 +19,14 @@ const imageUrl = image || `https://picsum.photos/seed/${slug}/800/600`;
 <a href={`/article/${slug}`} class:list={["article-card", { featured }]}>
     <span class="article-card-category">{category}</span>
     <div class="article-card-image">
-        <img src={imageUrl} alt={title} loading="lazy" decoding="async" />
+        <Image
+            src={imageUrl}
+            alt={title}
+            width={800}
+            height={600}
+            loading="lazy"
+            decoding="async"
+        />
     </div>
     <div class="article-card-content">
         <h2 class="article-card-title">{title}</h2>

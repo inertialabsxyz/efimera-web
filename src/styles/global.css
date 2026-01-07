@@ -259,6 +259,7 @@ main {
     font-weight: 500;
     color: var(--color-text);
     line-height: 1.25;
+    text-transform: uppercase;
 }
 
 .article-card-excerpt {

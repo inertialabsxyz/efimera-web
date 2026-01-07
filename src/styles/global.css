@@ -131,7 +131,7 @@ p {
 }
 
 .site-nav a {
-    font-size: 1rem;
+    font-size: 0.875rem;
     letter-spacing: 0.05em;
     opacity: 0.7;
     transition: opacity 0.2s ease;

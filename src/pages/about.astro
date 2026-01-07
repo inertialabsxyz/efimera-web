@@ -5,7 +5,11 @@ import Layout from "../layouts/Layout.astro";
 <Layout title="Acerca de | Efímera" description="Acerca de Efímera">
     <div class="page-content">
         <h1>Acerca de</h1>
-        <p>Efímera es un espacio de arte contemporáneo.</p>
+        <p>
+            Efímera es un proyecto expositivo y editorial que explora nuevas
+            formas de representación en el arte contemporáneo, conectando
+            prácticas locales con escenas y miradas de otros contextos.
+        </p>
     </div>
 </Layout>
 
@@ -18,5 +22,11 @@ import Layout from "../layouts/Layout.astro";
 
     h1 {
         margin-bottom: var(--space-md);
+    }
+
+    p {
+        font-family: var(--font-display);
+        font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+        line-height: 1.6;
     }
 </style>

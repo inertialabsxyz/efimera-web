@@ -90,13 +90,7 @@ export default {
       rows: 3,
       description: "Brief summary for previews",
     },
-    {
-      name: "featured",
-      title: "Featured",
-      type: "boolean",
-      description: "Show this article as featured on the main page",
-      initialValue: false,
-    },
+
     {
       name: "publishedAt",
       title: "Published At",

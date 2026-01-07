@@ -1,10 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import ArticleCard from "../components/ArticleCard.astro";
-import { getArticles, urlFor } from "../lib/sanity";
+import FeaturedGallery from "../components/FeaturedGallery.astro";
+import { getArticles, getFeaturedGallery, urlFor } from "../lib/sanity";
 
-// For production, uncomment the above and use:
 const articles = await getArticles();
+const featuredGallery = await getFeaturedGallery();
 
 // Demo articles for preview
 // const articles = [
@@ -85,6 +86,14 @@ const categories = [
 ---
 
 <Layout title="Efímera">
+    {
+        featuredGallery?.slides && featuredGallery.slides.length > 0 && (
+            <>
+                <FeaturedGallery slides={featuredGallery.slides} />
+                <hr class="gallery-divider" />
+            </>
+        )
+    }
     <div class="article-grid">
         {
             articles.map((article) => (
@@ -101,7 +110,6 @@ const categories = [
                             : undefined
                     }
                     excerpt={article.excerpt}
-                    featured={article.featured}
                 />
             ))
         }

@@ -16,8 +16,8 @@ export function urlFor(source: any) {
 
 // Queries
 export async function getArticles(limit = 20) {
-  const featured = await client.fetch(`
-    *[_type == "article" && featured == true] | order(publishedAt desc) {
+  return client.fetch(`
+    *[_type == "article"] | order(publishedAt desc)[0...${limit}] {
       _id,
       title,
       slug,
@@ -25,24 +25,9 @@ export async function getArticles(limit = 20) {
       publishedAt,
       category,
       mainImage,
-      featured,
       "author": author->name
     }
   `);
-  const nonFeatured = await client.fetch(`
-    *[_type == "article" && featured != true] | order(publishedAt desc)[0...${limit}] {
-      _id,
-      title,
-      slug,
-      excerpt,
-      publishedAt,
-      category,
-      mainImage,
-      featured,
-      "author": author->name
-    }
-  `);
-  return [...featured, ...nonFeatured];
 }
 
 export async function getArticle(slug: string) {
@@ -86,5 +71,25 @@ export async function getArticlesByCategory(category: string) {
 export async function getCategories() {
   return client.fetch(`
     array::unique(*[_type == "article"].category)
+  `);
+}
+
+export async function getFeaturedGallery() {
+  return client.fetch(`
+    *[_type == "featuredGallery"][0] {
+      slides[] {
+        image,
+        title,
+        excerpt,
+        displayWidth,
+        displayHeight,
+        "article": article->{
+          _id,
+          title,
+          slug,
+          excerpt
+        }
+      }
+    }
   `);
 }

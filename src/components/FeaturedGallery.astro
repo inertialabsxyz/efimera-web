@@ -1,0 +1,270 @@
+---
+import { urlFor } from "../lib/sanity";
+
+interface Slide {
+    image: any;
+    title?: string;
+    excerpt?: string;
+    displayWidth?: number;
+    displayHeight?: number;
+    article?: {
+        _id: string;
+        title: string;
+        slug: { current: string };
+        excerpt?: string;
+    };
+}
+
+interface Props {
+    slides: Slide[];
+}
+
+const { slides } = Astro.props;
+
+if (!slides || slides.length === 0) {
+    return null;
+}
+
+const hasMultipleSlides = slides.length > 1;
+
+// Prepare slides with resolved titles/excerpts
+const preparedSlides = slides.map((slide) => ({
+    imageUrl: urlFor(slide.image).url(),
+    alt:
+        slide.image?.alt ||
+        slide.title ||
+        slide.article?.title ||
+        "Featured image",
+    title: slide.title || slide.article?.title,
+    excerpt: slide.excerpt || slide.article?.excerpt,
+    href: slide.article?.slug?.current
+        ? `/article/${slide.article.slug.current}`
+        : null,
+    displayWidth: slide.displayWidth,
+    displayHeight: slide.displayHeight,
+}));
+---
+
+<div class="featured-gallery" data-gallery>
+    <div class="featured-gallery-track" data-gallery-track>
+        {
+            preparedSlides.map((slide, index) => (
+                <div class="featured-gallery-slide" data-index={index}>
+                    {slide.href ? (
+                        <a href={slide.href} class="featured-gallery-link">
+                            <img
+                                src={slide.imageUrl}
+                                alt={slide.alt}
+                                style={
+                                    slide.displayWidth || slide.displayHeight
+                                        ? `${slide.displayWidth ? `width: ${slide.displayWidth}px;` : ""} ${slide.displayHeight ? `height: ${slide.displayHeight}px;` : ""}`
+                                        : undefined
+                                }
+                            />
+                            {(slide.title || slide.excerpt) && (
+                                <div class="featured-gallery-content">
+                                    {slide.title && (
+                                        <h2 class="featured-gallery-title">
+                                            {slide.title}
+                                        </h2>
+                                    )}
+                                    {slide.excerpt && (
+                                        <p class="featured-gallery-excerpt">
+                                            {slide.excerpt}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </a>
+                    ) : (
+                        <>
+                            <img
+                                src={slide.imageUrl}
+                                alt={slide.alt}
+                                style={
+                                    slide.displayWidth || slide.displayHeight
+                                        ? `${slide.displayWidth ? `width: ${slide.displayWidth}px;` : ""} ${slide.displayHeight ? `height: ${slide.displayHeight}px;` : ""}`
+                                        : undefined
+                                }
+                            />
+                            {(slide.title || slide.excerpt) && (
+                                <div class="featured-gallery-content">
+                                    {slide.title && (
+                                        <h2 class="featured-gallery-title">
+                                            {slide.title}
+                                        </h2>
+                                    )}
+                                    {slide.excerpt && (
+                                        <p class="featured-gallery-excerpt">
+                                            {slide.excerpt}
+                                        </p>
+                                    )}
+                                </div>
+                            )}
+                        </>
+                    )}
+                </div>
+            ))
+        }
+    </div>
+
+    {
+        hasMultipleSlides && (
+            <>
+                <button
+                    class="featured-gallery-btn featured-gallery-btn-prev"
+                    data-gallery-prev
+                    aria-label="Previous slide"
+                >
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                    >
+                        <polyline points="15 18 9 12 15 6" />
+                    </svg>
+                </button>
+                <button
+                    class="featured-gallery-btn featured-gallery-btn-next"
+                    data-gallery-next
+                    aria-label="Next slide"
+                >
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                    >
+                        <polyline points="9 6 15 12 9 18" />
+                    </svg>
+                </button>
+
+                <div
+                    class="featured-gallery-indicators"
+                    data-gallery-indicators
+                >
+                    {preparedSlides.map((_, index) => (
+                        <button
+                            class:list={[
+                                "featured-gallery-indicator",
+                                { active: index === 0 },
+                            ]}
+                            data-index={index}
+                            aria-label={`Go to slide ${index + 1}`}
+                        />
+                    ))}
+                </div>
+            </>
+        )
+    }
+</div>
+
+<script>
+    function initGallery(gallery: HTMLElement) {
+        const track = gallery.querySelector(
+            "[data-gallery-track]",
+        ) as HTMLElement;
+        const slides = gallery.querySelectorAll(".featured-gallery-slide");
+        const prevBtn = gallery.querySelector("[data-gallery-prev]");
+        const nextBtn = gallery.querySelector("[data-gallery-next]");
+        const indicators = gallery.querySelectorAll(
+            ".featured-gallery-indicator",
+        );
+
+        if (!track || slides.length === 0) return;
+
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+
+        function goToSlide(index: number) {
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+
+            currentIndex = index;
+            track.style.transform = `translateX(-${currentIndex * 100}%)`;
+
+            indicators.forEach((indicator, i) => {
+                indicator.classList.toggle("active", i === currentIndex);
+            });
+        }
+
+        // Auto-rotate timer
+        let autoRotateInterval: number | null = null;
+
+        function startAutoRotate() {
+            if (totalSlides <= 1) return;
+            autoRotateInterval = window.setInterval(() => {
+                goToSlide(currentIndex + 1);
+            }, 8000);
+        }
+
+        function resetAutoRotate() {
+            if (autoRotateInterval) {
+                clearInterval(autoRotateInterval);
+            }
+            startAutoRotate();
+        }
+
+        startAutoRotate();
+
+        prevBtn?.addEventListener("click", () => {
+            goToSlide(currentIndex - 1);
+            resetAutoRotate();
+        });
+        nextBtn?.addEventListener("click", () => {
+            goToSlide(currentIndex + 1);
+            resetAutoRotate();
+        });
+
+        indicators.forEach((indicator) => {
+            indicator.addEventListener("click", () => {
+                const index = parseInt(
+                    indicator.getAttribute("data-index") || "0",
+                );
+                goToSlide(index);
+                resetAutoRotate();
+            });
+        });
+
+        // Keyboard navigation
+        gallery.addEventListener("keydown", (e: KeyboardEvent) => {
+            if (e.key === "ArrowLeft") goToSlide(currentIndex - 1);
+            if (e.key === "ArrowRight") goToSlide(currentIndex + 1);
+        });
+
+        // Touch/swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        gallery.addEventListener(
+            "touchstart",
+            (e: TouchEvent) => {
+                touchStartX = e.changedTouches[0].screenX;
+            },
+            { passive: true },
+        );
+
+        gallery.addEventListener(
+            "touchend",
+            (e: TouchEvent) => {
+                touchEndX = e.changedTouches[0].screenX;
+                const diff = touchStartX - touchEndX;
+                if (Math.abs(diff) > 50) {
+                    if (diff > 0) goToSlide(currentIndex + 1);
+                    else goToSlide(currentIndex - 1);
+                }
+            },
+            { passive: true },
+        );
+    }
+
+    // Initialize all galleries on the page
+    document.querySelectorAll("[data-gallery]").forEach((gallery) => {
+        initGallery(gallery as HTMLElement);
+    });
+</script>

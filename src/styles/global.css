@@ -499,15 +499,22 @@ main {
 }
 
 .article-hero {
-    width: 100%;
-    height: 40vh;
+    max-width: 1080px;
+    margin: 0 auto;
+    aspect-ratio: 1080/726;
+    background: #f8f8f8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     overflow: hidden;
 }
 
 .article-hero img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 /* Image Carousel */
@@ -526,13 +533,17 @@ main {
 
 .carousel-slide {
     flex: 0 0 100%;
-    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .carousel-slide img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
 }
 
 .carousel-btn {

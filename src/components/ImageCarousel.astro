@@ -1,6 +1,4 @@
 ---
-import { Image } from "astro:assets";
-
 interface ImageData {
     url: string;
     alt?: string;
@@ -20,12 +18,7 @@ const hasMultipleImages = images.length > 1;
         {
             images.map((image, index) => (
                 <div class="carousel-slide" data-index={index}>
-                    <Image
-                        src={image.url}
-                        alt={image.alt || articleTitle}
-                        width={1600}
-                        height={900}
-                    />
+                    <img src={image.url} alt={image.alt || articleTitle} />
                 </div>
             ))
         }

@@ -57,22 +57,23 @@ const formattedDate = new Date(article.publishedAt).toLocaleDateString(
 );
 
 // Prepare gallery images if available, otherwise use mainImage
+// Don't force resize - let images display at natural size up to max dimensions
 const hasGallery = article.gallery && article.gallery.length > 0;
 const galleryImages = hasGallery
     ? article.gallery.map((img: any) => ({
-          url: urlFor(img).width(1600).height(900).url(),
+          url: urlFor(img).url(),
           alt: img.alt || article.title,
       }))
     : article.mainImage
       ? [
             {
-                url: urlFor(article.mainImage).width(1600).height(900).url(),
+                url: urlFor(article.mainImage).url(),
                 alt: article.mainImage.alt || article.title,
             },
         ]
       : [
             {
-                url: `https://picsum.photos/seed/${slug}/1600/900`,
+                url: `https://picsum.photos/seed/${slug}/1080/726`,
                 alt: article.title,
             },
         ];

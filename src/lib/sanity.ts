@@ -74,6 +74,20 @@ export async function getCategories() {
   `);
 }
 
+export async function getRevistas() {
+  return client.fetch(`
+    *[_type == "revista"] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      coverImage,
+      excerpt,
+      publishedAt,
+      "pdfUrl": pdf.asset->url
+    }
+  `);
+}
+
 export async function getFeaturedGallery() {
   return client.fetch(`
     *[_type == "featuredGallery"][0] {

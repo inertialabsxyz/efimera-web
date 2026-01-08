@@ -59,12 +59,17 @@ const currentPath = Astro.url.pathname;
                 {
                     categories.map((category) => {
                         const isAll = category === "Efímera";
+                        const isRevista = category === "Revista";
                         const href = isAll
                             ? "/"
-                            : `/category/${category.toLowerCase()}`;
+                            : isRevista
+                              ? "/revista"
+                              : `/category/${category.toLowerCase()}`;
                         const isActive = isAll
                             ? currentPath === "/"
-                            : currentPath.includes(category.toLowerCase());
+                            : isRevista
+                              ? currentPath === "/revista"
+                              : currentPath.includes(category.toLowerCase());
                         return (
                             <a href={href} class:list={[{ active: isActive }]}>
                                 {category}

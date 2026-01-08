@@ -1,0 +1,57 @@
+---
+export const prerender = false;
+
+import Layout from "../layouts/Layout.astro";
+import { getRevistas, urlFor } from "../lib/sanity";
+
+const revistas = await getRevistas();
+---
+
+<Layout title="Revista — Efímera">
+    {
+        revistas && revistas.length > 0 ? (
+            <div class="revista-grid">
+                {revistas.map((revista) => (
+                    <a
+                        href={revista.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="revista-card"
+                    >
+                        <div class="revista-card-image">
+                            <img
+                                src={
+                                    revista.coverImage
+                                        ? urlFor(revista.coverImage).url()
+                                        : undefined
+                                }
+                                alt={revista.coverImage?.alt || revista.title}
+                                loading="lazy"
+                            />
+                        </div>
+                        <div class="revista-card-content">
+                            <h2 class="revista-card-title">{revista.title}</h2>
+                            {revista.excerpt && (
+                                <p class="revista-card-excerpt">
+                                    {revista.excerpt}
+                                </p>
+                            )}
+                        </div>
+                    </a>
+                ))}
+            </div>
+        ) : (
+            <div class="empty-state">
+                <p>Aún no hay revistas disponibles.</p>
+            </div>
+        )
+    }
+</Layout>
+
+<style>
+    .empty-state {
+        text-align: center;
+        padding: 8rem 2rem;
+        color: var(--color-text-muted);
+    }
+</style>

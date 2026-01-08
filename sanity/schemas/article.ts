@@ -75,10 +75,10 @@ export default {
         list: [
           { title: "Actividades", value: "Actividades" },
           { title: "Artistas", value: "Artistas" },
+          { title: "Entrevistas", value: "Entrevistas" },
           { title: "Exposiciones", value: "Exposiciones" },
           { title: "Letras", value: "Letras" },
           { title: "Música", value: "Música" },
-          { title: "Revista", value: "Revista" },
         ],
       },
       validation: (Rule) => Rule.required(),

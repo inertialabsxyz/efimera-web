@@ -92,6 +92,7 @@ export async function getFeaturedGallery() {
   return client.fetch(`
     *[_type == "featuredGallery"][0] {
       slides[] {
+        _type,
         image,
         title,
         excerpt,
@@ -102,6 +103,13 @@ export async function getFeaturedGallery() {
           title,
           slug,
           excerpt
+        },
+        "revista": revista->{
+          _id,
+          title,
+          coverImage,
+          excerpt,
+          "pdfUrl": pdf.asset->url
         }
       }
     }

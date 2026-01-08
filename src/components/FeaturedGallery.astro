@@ -2,7 +2,8 @@
 import { urlFor } from "../lib/sanity";
 
 interface Slide {
-    image: any;
+    _type: string;
+    image?: any;
     title?: string;
     excerpt?: string;
     displayWidth?: number;
@@ -12,6 +13,13 @@ interface Slide {
         title: string;
         slug: { current: string };
         excerpt?: string;
+    };
+    revista?: {
+        _id: string;
+        title: string;
+        coverImage: any;
+        excerpt?: string;
+        pdfUrl: string;
     };
 }
 
@@ -28,21 +36,39 @@ if (!slides || slides.length === 0) {
 const hasMultipleSlides = slides.length > 1;
 
 // Prepare slides with resolved titles/excerpts
-const preparedSlides = slides.map((slide) => ({
-    imageUrl: urlFor(slide.image).url(),
-    alt:
-        slide.image?.alt ||
-        slide.title ||
-        slide.article?.title ||
-        "Featured image",
-    title: slide.title || slide.article?.title,
-    excerpt: slide.excerpt || slide.article?.excerpt,
-    href: slide.article?.slug?.current
-        ? `/article/${slide.article.slug.current}`
-        : null,
-    displayWidth: slide.displayWidth,
-    displayHeight: slide.displayHeight,
-}));
+const preparedSlides = slides.map((slide) => {
+    const isRevista = slide._type === "revistaSlide";
+
+    if (isRevista && slide.revista) {
+        return {
+            imageUrl: urlFor(slide.revista.coverImage).url(),
+            alt: slide.revista.coverImage?.alt || slide.revista.title,
+            title: null,
+            excerpt: null,
+            href: slide.revista.pdfUrl,
+            isExternal: true,
+            displayWidth: slide.displayWidth || 800,
+            displayHeight: slide.displayHeight || 600,
+        };
+    }
+
+    return {
+        imageUrl: slide.image ? urlFor(slide.image).url() : "",
+        alt:
+            slide.image?.alt ||
+            slide.title ||
+            slide.article?.title ||
+            "Featured image",
+        title: slide.title || slide.article?.title,
+        excerpt: slide.excerpt || slide.article?.excerpt,
+        href: slide.article?.slug?.current
+            ? `/article/${slide.article.slug.current}`
+            : null,
+        isExternal: false,
+        displayWidth: slide.displayWidth,
+        displayHeight: slide.displayHeight,
+    };
+});
 ---
 
 <div class="featured-gallery" data-gallery>
@@ -51,7 +77,16 @@ const preparedSlides = slides.map((slide) => ({
             preparedSlides.map((slide, index) => (
                 <div class="featured-gallery-slide" data-index={index}>
                     {slide.href ? (
-                        <a href={slide.href} class="featured-gallery-link">
+                        <a
+                            href={slide.href}
+                            class="featured-gallery-link"
+                            target={slide.isExternal ? "_blank" : undefined}
+                            rel={
+                                slide.isExternal
+                                    ? "noopener noreferrer"
+                                    : undefined
+                            }
+                        >
                             <img
                                 src={slide.imageUrl}
                                 alt={slide.alt}

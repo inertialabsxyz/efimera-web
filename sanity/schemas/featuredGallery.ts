@@ -13,8 +13,8 @@ export default {
       of: [
         {
           type: "object",
-          name: "slide",
-          title: "Slide",
+          name: "imageSlide",
+          title: "Image Slide",
           fields: [
             {
               name: "image",
@@ -73,7 +73,47 @@ export default {
             },
             prepare({ media, title, articleTitle }) {
               return {
-                title: title || articleTitle || "Untitled slide",
+                title: title || articleTitle || "Image Slide",
+                subtitle: "Image",
+                media,
+              };
+            },
+          },
+        },
+        {
+          type: "object",
+          name: "revistaSlide",
+          title: "Revista Slide",
+          fields: [
+            {
+              name: "revista",
+              title: "Revista",
+              type: "reference",
+              to: [{ type: "revista" }],
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "displayWidth",
+              title: "Display Width (px)",
+              type: "number",
+              description: "Optional: Set a custom display width in pixels",
+            },
+            {
+              name: "displayHeight",
+              title: "Display Height (px)",
+              type: "number",
+              description: "Optional: Set a custom display height in pixels",
+            },
+          ],
+          preview: {
+            select: {
+              title: "revista.title",
+              media: "revista.coverImage",
+            },
+            prepare({ title, media }) {
+              return {
+                title: title || "Revista Slide",
+                subtitle: "Revista PDF",
                 media,
               };
             },

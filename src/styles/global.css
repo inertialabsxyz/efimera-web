@@ -499,9 +499,9 @@ main {
 }
 
 .article-hero {
-    max-width: 1080px;
+    max-width: 800px;
     margin: 0 auto;
-    aspect-ratio: 1080/726;
+    aspect-ratio: 800/600;
     background: #f8f8f8;
     display: flex;
     align-items: center;

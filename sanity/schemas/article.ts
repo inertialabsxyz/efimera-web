@@ -147,6 +147,18 @@ export default {
               title: "Caption",
               type: "string",
             },
+            {
+              name: "displayWidth",
+              title: "Display Width (px)",
+              type: "number",
+              description: "Optional. Image will maintain aspect ratio.",
+            },
+            {
+              name: "displayHeight",
+              title: "Display Height (px)",
+              type: "number",
+              description: "Optional. Image will maintain aspect ratio.",
+            },
           ],
         },
       ],

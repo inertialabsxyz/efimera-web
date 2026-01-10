@@ -89,7 +89,18 @@ function renderImage({ value }: { value: any }) {
     const caption = value.caption
         ? `<figcaption>${value.caption}</figcaption>`
         : "";
-    return `<figure><img src="${imgUrl}" alt="${alt}" />${caption}</figure>`;
+
+    // Build inline style for custom dimensions
+    let style = "";
+    if (value.displayWidth || value.displayHeight) {
+        if (value.displayWidth)
+            style += `width: ${value.displayWidth}px; height: auto;`;
+        else if (value.displayHeight)
+            style += `height: ${value.displayHeight}px; width: auto;`;
+    }
+    const styleAttr = style ? ` style="${style}"` : "";
+
+    return `<figure><img src="${imgUrl}" alt="${alt}"${styleAttr} />${caption}</figure>`;
 }
 
 const bodyHtml = article.body
@@ -113,9 +124,6 @@ const bodyHtml = article.body
                     <p class="article-excerpt">{article.excerpt}</p>
                 )
             }
-            <p class="article-meta">
-                By {article.author?.name || "Anonymous"} · {formattedDate}
-            </p>
         </header>
 
         <div class="article-hero">

@@ -43,7 +43,7 @@ const preparedSlides = slides.map((slide) => {
         return {
             imageUrl: urlFor(slide.revista.coverImage).url(),
             alt: slide.revista.coverImage?.alt || slide.revista.title,
-            title: null,
+            title: slide.revista.title,
             excerpt: null,
             href: slide.revista.pdfUrl,
             isExternal: true,
@@ -71,145 +71,138 @@ const preparedSlides = slides.map((slide) => {
 });
 ---
 
-<div class="featured-gallery" data-gallery>
-    <div class="featured-gallery-track" data-gallery-track>
+<div class="featured-gallery-wrapper">
+    <div class="featured-gallery" data-gallery>
+        <div class="featured-gallery-track" data-gallery-track>
+            {
+                preparedSlides.map((slide, index) => (
+                    <div class="featured-gallery-slide" data-index={index}>
+                        {slide.href ? (
+                            <a
+                                href={slide.href}
+                                class="featured-gallery-link"
+                                target={slide.isExternal ? "_blank" : undefined}
+                                rel={
+                                    slide.isExternal
+                                        ? "noopener noreferrer"
+                                        : undefined
+                                }
+                            >
+                                <img
+                                    src={slide.imageUrl}
+                                    alt={slide.alt}
+                                    style={
+                                        slide.displayWidth ||
+                                        slide.displayHeight
+                                            ? `${slide.displayWidth ? `width: ${slide.displayWidth}px;` : ""} ${slide.displayHeight ? `height: ${slide.displayHeight}px;` : ""}`
+                                            : undefined
+                                    }
+                                />
+                            </a>
+                        ) : (
+                            <img
+                                src={slide.imageUrl}
+                                alt={slide.alt}
+                                style={
+                                    slide.displayWidth || slide.displayHeight
+                                        ? `${slide.displayWidth ? `width: ${slide.displayWidth}px;` : ""} ${slide.displayHeight ? `height: ${slide.displayHeight}px;` : ""}`
+                                        : undefined
+                                }
+                            />
+                        )}
+                    </div>
+                ))
+            }
+        </div>
+
+        {
+            hasMultipleSlides && (
+                <>
+                    <button
+                        class="featured-gallery-btn featured-gallery-btn-prev"
+                        data-gallery-prev
+                        aria-label="Previous slide"
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                        >
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                    </button>
+                    <button
+                        class="featured-gallery-btn featured-gallery-btn-next"
+                        data-gallery-next
+                        aria-label="Next slide"
+                    >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                        >
+                            <polyline points="9 6 15 12 9 18" />
+                        </svg>
+                    </button>
+
+                    <div
+                        class="featured-gallery-indicators"
+                        data-gallery-indicators
+                    >
+                        {preparedSlides.map((_, index) => (
+                            <button
+                                class:list={[
+                                    "featured-gallery-indicator",
+                                    { active: index === 0 },
+                                ]}
+                                data-index={index}
+                                aria-label={`Go to slide ${index + 1}`}
+                            />
+                        ))}
+                    </div>
+                </>
+            )
+        }
+    </div>
+
+    <div class="featured-gallery-captions" data-gallery-captions>
         {
             preparedSlides.map((slide, index) => (
-                <div class="featured-gallery-slide" data-index={index}>
-                    {slide.href ? (
-                        <a
-                            href={slide.href}
-                            class="featured-gallery-link"
-                            target={slide.isExternal ? "_blank" : undefined}
-                            rel={
-                                slide.isExternal
-                                    ? "noopener noreferrer"
-                                    : undefined
-                            }
-                        >
-                            <img
-                                src={slide.imageUrl}
-                                alt={slide.alt}
-                                style={
-                                    slide.displayWidth || slide.displayHeight
-                                        ? `${slide.displayWidth ? `width: ${slide.displayWidth}px;` : ""} ${slide.displayHeight ? `height: ${slide.displayHeight}px;` : ""}`
-                                        : undefined
-                                }
-                            />
-                            {(slide.title || slide.excerpt) && (
-                                <div class="featured-gallery-content">
-                                    {slide.title && (
-                                        <h2 class="featured-gallery-title">
-                                            {slide.title}
-                                        </h2>
-                                    )}
-                                    {slide.excerpt && (
-                                        <p class="featured-gallery-excerpt">
-                                            {slide.excerpt}
-                                        </p>
-                                    )}
-                                </div>
-                            )}
-                        </a>
-                    ) : (
-                        <>
-                            <img
-                                src={slide.imageUrl}
-                                alt={slide.alt}
-                                style={
-                                    slide.displayWidth || slide.displayHeight
-                                        ? `${slide.displayWidth ? `width: ${slide.displayWidth}px;` : ""} ${slide.displayHeight ? `height: ${slide.displayHeight}px;` : ""}`
-                                        : undefined
-                                }
-                            />
-                            {(slide.title || slide.excerpt) && (
-                                <div class="featured-gallery-content">
-                                    {slide.title && (
-                                        <h2 class="featured-gallery-title">
-                                            {slide.title}
-                                        </h2>
-                                    )}
-                                    {slide.excerpt && (
-                                        <p class="featured-gallery-excerpt">
-                                            {slide.excerpt}
-                                        </p>
-                                    )}
-                                </div>
-                            )}
-                        </>
+                <div
+                    class:list={[
+                        "featured-gallery-caption",
+                        { active: index === 0 },
+                    ]}
+                    data-caption-index={index}
+                >
+                    {slide.title && (
+                        <h2 class="featured-gallery-title">{slide.title}</h2>
                     )}
                 </div>
             ))
         }
     </div>
-
-    {
-        hasMultipleSlides && (
-            <>
-                <button
-                    class="featured-gallery-btn featured-gallery-btn-prev"
-                    data-gallery-prev
-                    aria-label="Previous slide"
-                >
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                    >
-                        <polyline points="15 18 9 12 15 6" />
-                    </svg>
-                </button>
-                <button
-                    class="featured-gallery-btn featured-gallery-btn-next"
-                    data-gallery-next
-                    aria-label="Next slide"
-                >
-                    <svg
-                        width="24"
-                        height="24"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                    >
-                        <polyline points="9 6 15 12 9 18" />
-                    </svg>
-                </button>
-
-                <div
-                    class="featured-gallery-indicators"
-                    data-gallery-indicators
-                >
-                    {preparedSlides.map((_, index) => (
-                        <button
-                            class:list={[
-                                "featured-gallery-indicator",
-                                { active: index === 0 },
-                            ]}
-                            data-index={index}
-                            aria-label={`Go to slide ${index + 1}`}
-                        />
-                    ))}
-                </div>
-            </>
-        )
-    }
 </div>
 
 <script>
-    function initGallery(gallery: HTMLElement) {
-        const track = gallery.querySelector(
+    function initGallery(wrapper: HTMLElement) {
+        const gallery = wrapper.querySelector("[data-gallery]") as HTMLElement;
+        const track = wrapper.querySelector(
             "[data-gallery-track]",
         ) as HTMLElement;
-        const slides = gallery.querySelectorAll(".featured-gallery-slide");
-        const prevBtn = gallery.querySelector("[data-gallery-prev]");
-        const nextBtn = gallery.querySelector("[data-gallery-next]");
-        const indicators = gallery.querySelectorAll(
+        const slides = wrapper.querySelectorAll(".featured-gallery-slide");
+        const prevBtn = wrapper.querySelector("[data-gallery-prev]");
+        const nextBtn = wrapper.querySelector("[data-gallery-next]");
+        const indicators = wrapper.querySelectorAll(
             ".featured-gallery-indicator",
         );
+        const captions = wrapper.querySelectorAll(".featured-gallery-caption");
 
         if (!track || slides.length === 0) return;
 
@@ -225,6 +218,10 @@ const preparedSlides = slides.map((slide) => {
 
             indicators.forEach((indicator, i) => {
                 indicator.classList.toggle("active", i === currentIndex);
+            });
+
+            captions.forEach((caption, i) => {
+                caption.classList.toggle("active", i === currentIndex);
             });
         }
 
@@ -299,7 +296,9 @@ const preparedSlides = slides.map((slide) => {
     }
 
     // Initialize all galleries on the page
-    document.querySelectorAll("[data-gallery]").forEach((gallery) => {
-        initGallery(gallery as HTMLElement);
-    });
+    document
+        .querySelectorAll(".featured-gallery-wrapper")
+        .forEach((wrapper) => {
+            initGallery(wrapper as HTMLElement);
+        });
 </script>

@@ -662,7 +662,11 @@ main {
 
 .article-content img {
     width: 100%;
-    margin: var(--space-lg) 0;
+    margin: var(--space-xs) 0;
+}
+
+.article-content figure {
+    margin: var(--space-xs) 0;
 }
 
 .article-content a {

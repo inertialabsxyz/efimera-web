@@ -100,7 +100,12 @@ function renderImage({ value }: { value: any }) {
     }
     const styleAttr = style ? ` style="${style}"` : "";
 
-    return `<figure><img src="${imgUrl}" alt="${alt}"${styleAttr} />${caption}</figure>`;
+    const img = `<img src="${imgUrl}" alt="${alt}"${styleAttr} />`;
+    const content = value.link
+        ? `<a href="${value.link}" target="_blank" rel="noopener noreferrer">${img}</a>`
+        : img;
+
+    return `<figure>${content}${caption}</figure>`;
 }
 
 const bodyHtml = article.body

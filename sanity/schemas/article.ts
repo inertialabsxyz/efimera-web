@@ -159,6 +159,12 @@ export default {
               type: "number",
               description: "Optional. Image will maintain aspect ratio.",
             },
+            {
+              name: "link",
+              title: "Link URL",
+              type: "url",
+              description: "Optional. Makes the image clickable.",
+            },
           ],
         },
       ],

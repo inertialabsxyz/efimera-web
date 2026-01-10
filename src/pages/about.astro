@@ -1,32 +1,195 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ImageCarousel from "../components/ImageCarousel.astro";
+
+const aboutImages = [
+    { url: "/about/EFIMERA-1 ESPACIOS X_Z.jpg", alt: "Efímera espacio X_Z" },
+    { url: "/about/EFIMERA-28.jpg", alt: "Efímera espacio" },
+    { url: "/about/EFIMERA-3 SPACIO Y.jpg", alt: "Efímera espacio Y" },
+    { url: "/about/EFIMERA-7. ESPACIO Y_Z.jpg", alt: "Efímera espacio Y_Z" },
+    {
+        url: "/about/PLANO.jpg",
+        alt: "Plano del espacio",
+    },
+];
 ---
 
 <Layout title="Acerca de | Efímera" description="Acerca de Efímera">
     <div class="page-content">
         <h1>Acerca de</h1>
         <p>
-            Efímera es un proyecto expositivo y editorial que explora nuevas
-            formas de representación en el arte contemporáneo, conectando
-            prácticas locales con escenas y miradas de otros contextos.
+            Efímera es un proyecto expositivo y editorial dedicado a visibilizar
+            las prácticas y debates del arte contemporáneo actual. A través de
+            exposiciones, actividades y la revista XYZ, reúne artistas locales y
+            propuestas desarrolladas en otros contextos, reflejando nuevas
+            tendencias y formas de pensar el presente.
         </p>
+        <p>
+            Fundado y dirigido por Belén Vera, Efímera funciona como un espacio
+            de encuentro, investigación y difusión crítica del arte
+            contemporáneo.
+        </p>
+
+        <div class="about-gallery">
+            <ImageCarousel
+                images={aboutImages}
+                articleTitle="Efímera espacio"
+            />
+            <p class="gallery-credit">Imagenes Paula Cano Vera</p>
+        </div>
+
+        <div class="contact-section">
+            <h2>Contacto</h2>
+            <div class="social-links">
+                <a href="mailto:info@efimera.xyz" aria-label="Email">
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+                        <path d="M22 6L12 13L2 6"></path>
+                    </svg>
+                </a>
+                <a
+                    href="https://www.instagram.com/_efimera_espacio_de_arte/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                >
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"
+                        ></rect>
+                        <path
+                            d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
+                        ></path>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                    </svg>
+                </a>
+                <a
+                    href="https://www.linkedin.com/company/ef%C3%ADmera/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="LinkedIn"
+                >
+                    <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.5"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                    >
+                        <path
+                            d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                        ></path>
+                        <rect x="2" y="9" width="4" height="12"></rect>
+                        <circle cx="4" cy="4" r="2"></circle>
+                    </svg>
+                </a>
+            </div>
+        </div>
+
+        <div class="location-section">
+            <h2>Ubicación</h2>
+            <p>C/ Mariano Vergara, 25, Bajo, Murcia</p>
+            <p class="note">Cita previa para visitas guiadas</p>
+        </div>
     </div>
 </Layout>
 
 <style>
     .page-content {
-        max-width: 800px;
+        max-width: 680px;
         margin: 0 auto;
-        padding: var(--space-lg) var(--space-md);
+        padding: var(--space-sm) var(--space-md);
     }
 
     h1 {
-        margin-bottom: var(--space-md);
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 400;
+        margin-bottom: var(--space-sm);
+    }
+
+    h2 {
+        font-family: var(--font-display);
+        font-size: 1.25rem;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        margin-bottom: var(--space-xs);
+        color: var(--color-text-muted);
     }
 
     p {
         font-family: var(--font-display);
-        font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+        font-size: 1.25rem;
         line-height: 1.6;
+        margin-bottom: var(--space-sm);
+    }
+
+    a {
+        text-decoration: underline;
+    }
+
+    .about-gallery {
+        margin: var(--space-sm) 0;
+        max-width: 800px;
+        aspect-ratio: 800/600;
+    }
+
+    .gallery-credit {
+        font-size: 1.1rem;
+        font-style: italic;
+        color: var(--color-text-muted);
+        margin-bottom: 0;
+    }
+
+    .contact-section,
+    .location-section {
+        margin-top: var(--space-sm);
+    }
+
+    .social-links {
+        display: flex;
+        gap: var(--space-sm);
+        margin-top: var(--space-xs);
+    }
+
+    .social-links a {
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        text-decoration: none;
+    }
+
+    .social-links a:hover {
+        text-decoration: underline;
+    }
+
+    .social-links svg {
+        flex-shrink: 0;
+    }
+
+    .note {
+        font-style: italic;
+        color: var(--color-text-muted);
     }
 </style>

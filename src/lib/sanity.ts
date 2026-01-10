@@ -15,9 +15,9 @@ export function urlFor(source: any) {
 }
 
 // Queries
-export async function getArticles(limit = 20) {
+export async function getArticles() {
   return client.fetch(`
-    *[_type == "article"] | order(publishedAt desc)[0...${limit}] {
+    *[_type == "article"] | order(publishedAt desc) {
       _id,
       title,
       slug,

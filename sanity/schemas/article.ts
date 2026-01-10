@@ -42,8 +42,8 @@ export default {
           type: "string",
         },
       ],
-      hidden: ({ document }) => document?.gallery?.length > 0,
-      description: "Single hero image (hidden if gallery is used)",
+      description:
+        "Used as thumbnail in article lists. Also shown on article page if no gallery is set.",
     },
     {
       name: "gallery",
@@ -65,7 +65,7 @@ export default {
         },
       ],
       description:
-        "Add multiple images for a carousel. If gallery has images, the main image above will be hidden.",
+        "Optional image carousel shown on the article page. If empty, the main image is shown instead.",
     },
     {
       name: "category",

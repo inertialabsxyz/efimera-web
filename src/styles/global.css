@@ -209,6 +209,7 @@ main {
 .featured-gallery-wrapper {
     max-width: 1080px;
     margin: 0 auto var(--space-xs);
+    padding: 0 var(--space-md);
 }
 
 .featured-gallery {
@@ -229,6 +230,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    width: 100%;
 }
 
 .featured-gallery-slide img {
@@ -318,10 +320,6 @@ main {
 }
 
 @media (max-width: 768px) {
-    .featured-gallery {
-        padding: var(--space-sm);
-    }
-
     .featured-gallery-btn {
         width: 40px;
         height: 40px;

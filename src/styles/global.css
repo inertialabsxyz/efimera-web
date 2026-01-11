@@ -166,6 +166,10 @@ p {
     opacity: 1;
 }
 
+.nav-social {
+    display: none;
+}
+
 @media (min-width: 769px) {
     .header-social {
         display: flex;
@@ -197,13 +201,12 @@ p {
     }
 
     .header-social {
-        display: flex;
-        margin-left: auto;
-        margin-right: var(--space-sm);
+        display: none;
     }
 
     .menu-toggle {
         display: block;
+        margin-left: auto;
     }
 
     .site-nav {

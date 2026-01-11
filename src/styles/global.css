@@ -273,7 +273,7 @@ main {
 /* Featured Gallery */
 .featured-gallery-wrapper {
     max-width: 1080px;
-    margin: 0 auto var(--space-xs);
+    margin: var(--space-md) auto var(--space-xs);
     padding: 0 var(--space-md);
 }
 

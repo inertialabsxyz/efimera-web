@@ -192,6 +192,10 @@ p {
         align-items: center;
     }
 
+    .site-logo img {
+        height: 34px;
+    }
+
     .header-social {
         display: flex;
         margin-left: auto;

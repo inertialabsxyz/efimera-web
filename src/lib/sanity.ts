@@ -43,7 +43,15 @@ export async function getArticle(slug: string) {
       category,
       mainImage,
       gallery,
-      "author": author->{name, image}
+      "author": author->{name, image},
+      "relatedArticles": relatedArticles[]->{
+        _id,
+        title,
+        slug,
+        excerpt,
+        mainImage,
+        category
+      }
     }
   `,
     { slug },

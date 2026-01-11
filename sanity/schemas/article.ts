@@ -169,6 +169,18 @@ export default {
         },
       ],
     },
+    {
+      name: "relatedArticles",
+      title: "Related Articles",
+      type: "array",
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "article" }],
+        },
+      ],
+      description: "Select articles to display as related content.",
+    },
   ],
   preview: {
     select: {

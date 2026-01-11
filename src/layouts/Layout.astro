@@ -1,5 +1,6 @@
 ---
 import "../styles/global.css";
+import Analytics from "@vercel/analytics/astro";
 
 interface Props {
     title?: string;
@@ -171,5 +172,6 @@ const currentPath = Astro.url.pathname;
                 menuToggle.setAttribute("aria-expanded", String(isOpen));
             });
         </script>
+        <Analytics />
     </body>
 </html>

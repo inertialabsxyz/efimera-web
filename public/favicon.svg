@@ -1,4 +1,15 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" fill="#1a1a1a"/>
-  <text x="16" y="22" font-family="Georgia, serif" font-size="18" fill="white" text-anchor="middle">M</text>
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="237.47 23.51 31.81 36.82" width="31.81px" height="36.82px">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #1d1d1b;
+      }
+
+      .cls-2 {
+        fill: #f97fb5;
+      }
+    </style>
+  </defs>
+  <polygon class="cls-2" points="237.47 23.6 237.47 60.33 269.28 23.51 237.47 23.6" transform="matrix(1, 0, 0, 1, 0, -7.105427357601002e-15)"/>
 </svg>

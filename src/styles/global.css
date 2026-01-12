@@ -4,7 +4,7 @@
 */
 
 @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap");
-@import url("https://fonts.cdnfonts.com/css/itc-avant-garde-gothic-std-book");
+@import url("https://fonts.cdnfonts.com/css/tex-gyre-adventor");
 
 :root {
     /* Colors - stark and minimal */
@@ -15,8 +15,10 @@
     --color-accent: #000000;
 
     /* Typography */
-    --font-display: "Cormorant Garamond", Georgia, serif;
-    --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-display:
+        "TeXGyreAdventor", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-body:
+        "TeXGyreAdventor", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
     /* Spacing */
     --space-xs: 0.5rem;

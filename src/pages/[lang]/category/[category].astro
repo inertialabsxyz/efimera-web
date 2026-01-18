@@ -1,0 +1,64 @@
+---
+export const prerender = false;
+
+import Layout from "../../../layouts/Layout.astro";
+import ArticleCard from "../../../components/ArticleCard.astro";
+import { getArticlesByCategory, getArticles, urlFor, languages, defaultLanguage } from "../../../lib/sanity";
+import type { Language } from "../../../lib/sanity";
+import { translations } from "../../../i18n/translations";
+
+const { category, lang } = Astro.params as { category: string; lang: Language };
+
+// Validate language
+if (!languages.some((l) => l.id === lang)) {
+  return Astro.redirect(`/${defaultLanguage}/category/${category}`);
+}
+
+const t = translations[lang];
+const categoryTitle = category ? category.charAt(0).toUpperCase() + category.slice(1) : "";
+
+// "Todos" means "All" - show all articles
+const isAll = category?.toLowerCase() === "todos";
+
+const articles = isAll
+  ? await getArticles(lang)
+  : await getArticlesByCategory(categoryTitle, lang);
+
+// Get translated category name for display
+const displayCategory = t.categories[categoryTitle as keyof typeof t.categories] || categoryTitle;
+---
+
+<Layout title={`${displayCategory} — Efímera`} lang={lang}>
+  {
+    articles.length > 0 ? (
+      <div class="article-grid">
+        {articles.map((article) => (
+          <ArticleCard
+            title={article.title}
+            slug={article.slug.current}
+            category={article.category}
+            image={
+              article.mainImage
+                ? urlFor(article.mainImage).width(800).height(600).url()
+                : undefined
+            }
+            excerpt={article.excerpt}
+            lang={lang}
+          />
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>{t.article.noArticles}</p>
+      </div>
+    )
+  }
+</Layout>
+
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 8rem 2rem;
+    color: var(--color-text-muted);
+  }
+</style>

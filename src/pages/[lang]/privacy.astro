@@ -1,0 +1,236 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { languages } from "../../lib/sanity";
+import type { Language } from "../../lib/sanity";
+import { translations } from "../../i18n/translations";
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({
+    params: { lang: lang.id },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Language };
+const t = translations[lang];
+
+const content = {
+  es: {
+    title: "Política de Privacidad",
+    intro:
+      "En Efímera, respetamos tu privacidad y nos comprometemos a proteger tus datos personales. Esta política explica cómo recopilamos, usamos y protegemos tu información de acuerdo con el Reglamento General de Protección de Datos (RGPD) de la Unión Europea.",
+    sections: [
+      {
+        title: "Responsable del tratamiento",
+        content:
+          "Efímera es el responsable del tratamiento de los datos personales recogidos a través de este sitio web.",
+      },
+      {
+        title: "Datos que recopilamos",
+        content: "Podemos recopilar los siguientes tipos de información:",
+        list: [
+          "<strong>Datos de contacto:</strong> nombre, dirección de correo electrónico cuando nos contactas voluntariamente.",
+          "<strong>Datos de navegación:</strong> dirección IP, tipo de navegador, páginas visitadas y tiempo de permanencia.",
+          "<strong>Cookies:</strong> utilizamos cookies técnicas necesarias para el funcionamiento del sitio.",
+        ],
+      },
+      {
+        title: "Finalidad del tratamiento",
+        content: "Utilizamos tus datos para:",
+        list: [
+          "Responder a tus consultas y solicitudes.",
+          "Mejorar la experiencia de navegación en nuestro sitio.",
+          "Cumplir con obligaciones legales.",
+        ],
+      },
+      {
+        title: "Base legal",
+        content: "El tratamiento de tus datos se basa en:",
+        list: [
+          "<strong>Consentimiento:</strong> cuando nos proporcionas tus datos voluntariamente.",
+          "<strong>Interés legítimo:</strong> para mejorar nuestros servicios y la seguridad del sitio.",
+          "<strong>Obligación legal:</strong> cuando sea necesario para cumplir con la ley.",
+        ],
+      },
+      {
+        title: "Conservación de datos",
+        content:
+          "Conservamos tus datos personales únicamente durante el tiempo necesario para cumplir con las finalidades descritas, o según lo exija la legislación aplicable.",
+      },
+      {
+        title: "Tus derechos",
+        content: "De acuerdo con el RGPD, tienes derecho a:",
+        list: [
+          "<strong>Acceso:</strong> solicitar una copia de tus datos personales.",
+          "<strong>Rectificación:</strong> corregir datos inexactos o incompletos.",
+          "<strong>Supresión:</strong> solicitar la eliminación de tus datos.",
+          "<strong>Limitación:</strong> restringir el tratamiento de tus datos.",
+          "<strong>Portabilidad:</strong> recibir tus datos en un formato estructurado.",
+          "<strong>Oposición:</strong> oponerte al tratamiento de tus datos.",
+        ],
+        footer:
+          "Para ejercer estos derechos, contáctanos a través de nuestra página de contacto.",
+      },
+      {
+        title: "Seguridad",
+        content:
+          "Implementamos medidas técnicas y organizativas apropiadas para proteger tus datos personales contra acceso no autorizado, pérdida o destrucción.",
+      },
+      {
+        title: "Cookies",
+        content:
+          "Este sitio utiliza cookies técnicas esenciales para su funcionamiento. No utilizamos cookies de seguimiento ni publicidad sin tu consentimiento explícito.",
+      },
+      {
+        title: "Cambios en esta política",
+        content:
+          "Podemos actualizar esta política de privacidad ocasionalmente. Te recomendamos revisarla periódicamente.",
+      },
+    ],
+    updated: "Última actualización: Enero 2025",
+  },
+  en: {
+    title: "Privacy Policy",
+    intro:
+      "At Efímera, we respect your privacy and are committed to protecting your personal data. This policy explains how we collect, use, and protect your information in accordance with the European Union's General Data Protection Regulation (GDPR).",
+    sections: [
+      {
+        title: "Data Controller",
+        content:
+          "Efímera is the data controller for personal data collected through this website.",
+      },
+      {
+        title: "Data We Collect",
+        content: "We may collect the following types of information:",
+        list: [
+          "<strong>Contact data:</strong> name, email address when you contact us voluntarily.",
+          "<strong>Browsing data:</strong> IP address, browser type, pages visited, and time spent.",
+          "<strong>Cookies:</strong> we use technical cookies necessary for the site to function.",
+        ],
+      },
+      {
+        title: "Purpose of Processing",
+        content: "We use your data to:",
+        list: [
+          "Respond to your inquiries and requests.",
+          "Improve the browsing experience on our site.",
+          "Comply with legal obligations.",
+        ],
+      },
+      {
+        title: "Legal Basis",
+        content: "The processing of your data is based on:",
+        list: [
+          "<strong>Consent:</strong> when you provide your data voluntarily.",
+          "<strong>Legitimate interest:</strong> to improve our services and site security.",
+          "<strong>Legal obligation:</strong> when necessary to comply with the law.",
+        ],
+      },
+      {
+        title: "Data Retention",
+        content:
+          "We retain your personal data only for as long as necessary to fulfill the purposes described, or as required by applicable law.",
+      },
+      {
+        title: "Your Rights",
+        content: "Under the GDPR, you have the right to:",
+        list: [
+          "<strong>Access:</strong> request a copy of your personal data.",
+          "<strong>Rectification:</strong> correct inaccurate or incomplete data.",
+          "<strong>Erasure:</strong> request deletion of your data.",
+          "<strong>Restriction:</strong> restrict the processing of your data.",
+          "<strong>Portability:</strong> receive your data in a structured format.",
+          "<strong>Objection:</strong> object to the processing of your data.",
+        ],
+        footer:
+          "To exercise these rights, contact us through our contact page.",
+      },
+      {
+        title: "Security",
+        content:
+          "We implement appropriate technical and organizational measures to protect your personal data against unauthorized access, loss, or destruction.",
+      },
+      {
+        title: "Cookies",
+        content:
+          "This site uses essential technical cookies for its operation. We do not use tracking or advertising cookies without your explicit consent.",
+      },
+      {
+        title: "Changes to This Policy",
+        content:
+          "We may update this privacy policy occasionally. We recommend reviewing it periodically.",
+      },
+    ],
+    updated: "Last updated: January 2025",
+  },
+};
+
+const c = content[lang];
+---
+
+<Layout title={`${c.title} | Efímera`} description={c.title} lang={lang}>
+  <div class="page-content">
+    <h1>{c.title}</h1>
+
+    <p class="intro">{c.intro}</p>
+
+    {
+      c.sections.map((section) => (
+        <>
+          <h2>{section.title}</h2>
+          <p>{section.content}</p>
+          {section.list && (
+            <ul>
+              {section.list.map((item) => (
+                <li set:html={item} />
+              ))}
+            </ul>
+          )}
+          {section.footer && <p>{section.footer}</p>}
+        </>
+      ))
+    }
+
+    <p class="updated">{c.updated}</p>
+  </div>
+</Layout>
+
+<style>
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  h1 {
+    margin-bottom: var(--space-md);
+  }
+
+  h2 {
+    margin-top: var(--space-lg);
+    margin-bottom: var(--space-sm);
+  }
+
+  p {
+    margin-bottom: var(--space-sm);
+  }
+
+  .intro {
+    font-size: 1.1rem;
+    margin-bottom: var(--space-md);
+  }
+
+  ul {
+    margin-bottom: var(--space-sm);
+    padding-left: var(--space-md);
+  }
+
+  li {
+    margin-bottom: var(--space-xs);
+  }
+
+  .updated {
+    margin-top: var(--space-lg);
+    color: var(--color-text-muted);
+    font-size: 0.875rem;
+  }
+</style>

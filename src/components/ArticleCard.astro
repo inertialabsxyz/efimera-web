@@ -8,15 +8,27 @@ interface Props {
     image?: string;
     excerpt?: string;
     featured?: boolean;
+    lang?: string;
 }
 
-const { title, slug, category, image, excerpt, featured = false } = Astro.props;
+const {
+    title,
+    slug,
+    category,
+    image,
+    excerpt,
+    featured = false,
+    lang = "es",
+} = Astro.props;
 
 // Placeholder image if none provided
 const imageUrl = image || `https://picsum.photos/seed/${slug}/800/600`;
 ---
 
-<a href={`/article/${slug}`} class:list={["article-card", { featured }]}>
+<a
+    href={`/${lang}/article/${slug}`}
+    class:list={["article-card", { featured }]}
+>
     <span class="article-card-category">{category}</span>
     <div class="article-card-image">
         <Image

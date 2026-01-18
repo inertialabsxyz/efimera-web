@@ -11,6 +11,7 @@
     "deploy": "sanity deploy"
   },
   "dependencies": {
+    "@sanity/document-internationalization": "^4.1.1",
     "@sanity/vision": "^3",
     "react": "^18",
     "react-dom": "^18",

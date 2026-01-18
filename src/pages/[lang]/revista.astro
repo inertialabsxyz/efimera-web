@@ -1,0 +1,65 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import { getRevistas, urlFor, languages, defaultLanguage } from "../../lib/sanity";
+import type { Language } from "../../lib/sanity";
+import { translations } from "../../i18n/translations";
+
+const { lang } = Astro.params as { lang: Language };
+
+// Validate language
+if (!languages.some((l) => l.id === lang)) {
+  return Astro.redirect(`/${defaultLanguage}/revista`);
+}
+
+const t = translations[lang];
+const revistas = await getRevistas(lang);
+---
+
+<Layout title={`${t.nav.magazine} — Efímera`} lang={lang}>
+  {
+    revistas && revistas.length > 0 ? (
+      <div class="revista-grid">
+        {revistas.map((revista) => (
+          <a
+            href={revista.pdfUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="revista-card"
+          >
+            <div class="revista-card-image">
+              <img
+                src={
+                  revista.coverImage
+                    ? urlFor(revista.coverImage).url()
+                    : undefined
+                }
+                alt={revista.coverImage?.alt || revista.title}
+                loading="lazy"
+              />
+            </div>
+            <div class="revista-card-content">
+              <h2 class="revista-card-title">{revista.title}</h2>
+              {revista.excerpt && (
+                <p class="revista-card-excerpt">{revista.excerpt}</p>
+              )}
+            </div>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="empty-state">
+        <p>{lang === "es" ? "Aún no hay revistas disponibles." : "No magazines available yet."}</p>
+      </div>
+    )
+  }
+</Layout>
+
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 8rem 2rem;
+    color: var(--color-text-muted);
+  }
+</style>

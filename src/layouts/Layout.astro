@@ -1,106 +1,133 @@
 ---
 import "../styles/global.css";
 import Analytics from "@vercel/analytics/astro";
+import { translations, getNavCategories } from "../i18n/translations";
+import type { Language } from "../i18n/translations";
 
 interface Props {
     title?: string;
     description?: string;
+    lang?: Language;
 }
 
-const { title = "Efímera", description = "Espacio de arte contemporáneo " } =
-    Astro.props;
+const { title = "Efímera", description, lang = "es" } = Astro.props;
 
-const categories = [
-    "Efímera",
-    "Exposiciones",
-    "Actividades",
-    "Artistas",
-    "Entrevistas",
-    "Letras",
-    "Música",
-    "Revista",
-];
+const t = translations[lang];
+const navCategories = getNavCategories(lang);
 const currentPath = Astro.url.pathname;
+
+// Get URLs for the language switcher
+const esUrl = currentPath.replace(`/${lang}`, `/es`);
+const enUrl = currentPath.replace(`/${lang}`, `/en`);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content={description} />
+        <meta
+            name="description"
+            content={description || t.meta.siteDescription}
+        />
         <title>{title}</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     </head>
     <body>
         <header class="site-header">
-            <a href="/" class="site-logo">
+            <a href={`/${lang}`} class="site-logo">
                 <img src="/efimera-logo.svg" alt="Efímera" />
             </a>
 
-            <div class="header-social">
-                <a href="mailto:info@efimera.xyz" aria-label="Email">
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+            <div class="header-right">
+                <div class="language-switcher">
+                    <a
+                        href={esUrl}
+                        class:list={["lang-link", { active: lang === "es" }]}
+                        aria-label="Español"
                     >
-                        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
-                        <path d="M22 6L12 13L2 6"></path>
-                    </svg>
-                </a>
-                <a
-                    href="https://www.instagram.com/_efimera_espacio_de_arte/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="Instagram"
-                >
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        ES
+                    </a>
+                    <span class="lang-separator">/</span>
+                    <a
+                        href={enUrl}
+                        class:list={["lang-link", { active: lang === "en" }]}
+                        aria-label="English"
                     >
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"
-                        ></rect>
-                        <path
-                            d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
-                        ></path>
-                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
-                </a>
-                <a
-                    href="https://www.linkedin.com/company/ef%C3%ADmera/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label="LinkedIn"
-                >
-                    <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
+                        EN
+                    </a>
+                </div>
+
+                <div class="header-social">
+                    <a href="mailto:info@efimera.xyz" aria-label="Email">
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect x="2" y="4" width="20" height="16" rx="2"
+                            ></rect>
+                            <path d="M22 6L12 13L2 6"></path>
+                        </svg>
+                    </a>
+                    <a
+                        href="https://www.instagram.com/_efimera_espacio_de_arte/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Instagram"
                     >
-                        <path
-                            d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                        ></path>
-                        <rect x="2" y="9" width="4" height="12"></rect>
-                        <circle cx="4" cy="4" r="2"></circle>
-                    </svg>
-                </a>
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <rect
+                                x="2"
+                                y="2"
+                                width="20"
+                                height="20"
+                                rx="5"
+                                ry="5"></rect>
+                            <path
+                                d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
+                            ></path>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                        </svg>
+                    </a>
+                    <a
+                        href="https://www.linkedin.com/company/ef%C3%ADmera/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="LinkedIn"
+                    >
+                        <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path
+                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
+                            ></path>
+                            <rect x="2" y="9" width="4" height="12"></rect>
+                            <circle cx="4" cy="4" r="2"></circle>
+                        </svg>
+                    </a>
+                </div>
             </div>
 
             <button
@@ -124,26 +151,39 @@ const currentPath = Astro.url.pathname;
 
             <nav class="site-nav">
                 {
-                    categories.map((category) => {
-                        const isAll = category === "Efímera";
-                        const isRevista = category === "Revista";
-                        const href = isAll
-                            ? "/"
-                            : isRevista
-                              ? "/revista"
-                              : `/category/${category.toLowerCase()}`;
-                        const isActive = isAll
-                            ? currentPath === "/"
-                            : isRevista
-                              ? currentPath === "/revista"
-                              : currentPath.includes(category.toLowerCase());
+                    navCategories.map((item) => {
+                        const isActive =
+                            item.key === "home"
+                                ? currentPath === `/${lang}` ||
+                                  currentPath === `/${lang}/`
+                                : currentPath.includes(item.key);
                         return (
-                            <a href={href} class:list={[{ active: isActive }]}>
-                                {category}
+                            <a
+                                href={item.href}
+                                class:list={[{ active: isActive }]}
+                            >
+                                {item.label}
                             </a>
                         );
                     })
                 }
+                <div class="nav-language-switcher">
+                    <a
+                        href={esUrl}
+                        class:list={["lang-link", { active: lang === "es" }]}
+                        aria-label="Español"
+                    >
+                        ES
+                    </a>
+                    <span class="lang-separator">/</span>
+                    <a
+                        href={enUrl}
+                        class:list={["lang-link", { active: lang === "en" }]}
+                        aria-label="English"
+                    >
+                        EN
+                    </a>
+                </div>
                 <div class="nav-social">
                     <a href="mailto:info@efimera.xyz" aria-label="Email">
                         <svg
@@ -223,12 +263,12 @@ const currentPath = Astro.url.pathname;
 
         <footer class="site-footer">
             <div class="footer-links">
-                <a href="/about">Acerca de</a>
-                <a href="/contact">Contacto</a>
-                <a href="/privacy">Privacidad</a>
+                <a href={`/${lang}/about`}>{t.footer.about}</a>
+                <a href={`/${lang}/contact`}>{t.footer.contact}</a>
+                <a href={`/${lang}/privacy`}>{t.footer.privacy}</a>
             </div>
             <p class="footer-copyright">
-                © {new Date().getFullYear()} Efímera
+                &copy; {new Date().getFullYear()} Efímera
             </p>
         </footer>
 
@@ -245,3 +285,56 @@ const currentPath = Astro.url.pathname;
         <Analytics />
     </body>
 </html>
+
+<style>
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .language-switcher {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .lang-link {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .lang-link:hover,
+    .lang-link.active {
+        color: var(--color-text);
+    }
+
+    .lang-separator {
+        color: var(--color-text-muted);
+    }
+
+    .nav-language-switcher {
+        display: none;
+        padding: 1rem 0;
+        border-top: 1px solid var(--color-border);
+        margin-top: 1rem;
+    }
+
+    @media (max-width: 768px) {
+        .language-switcher {
+            display: none;
+        }
+
+        .nav-language-switcher {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+        }
+    }
+</style>

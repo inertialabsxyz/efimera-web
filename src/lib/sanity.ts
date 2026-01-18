@@ -14,10 +14,21 @@ export function urlFor(source: any) {
   return builder.image(source);
 }
 
+// Supported languages
+export const languages = [
+  { id: "es", title: "Español" },
+  { id: "en", title: "English" },
+] as const;
+
+export type Language = (typeof languages)[number]["id"];
+
+export const defaultLanguage: Language = "es";
+
 // Queries
-export async function getArticles() {
-  return client.fetch(`
-    *[_type == "article"] | order(publishedAt desc) {
+export async function getArticles(language: Language = defaultLanguage) {
+  return client.fetch(
+    `
+    *[_type == "article" && language == $language] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -25,15 +36,21 @@ export async function getArticles() {
       publishedAt,
       category,
       mainImage,
+      language,
       "author": author->name
     }
-  `);
+  `,
+    { language },
+  );
 }
 
-export async function getArticle(slug: string) {
+export async function getArticle(
+  slug: string,
+  language: Language = defaultLanguage,
+) {
   return client.fetch(
     `
-    *[_type == "article" && slug.current == $slug][0] {
+    *[_type == "article" && slug.current == $slug && language == $language][0] {
       _id,
       title,
       slug,
@@ -43,6 +60,7 @@ export async function getArticle(slug: string) {
       category,
       mainImage,
       gallery,
+      language,
       "author": author->{name, image},
       "relatedArticles": relatedArticles[]->{
         _id,
@@ -54,14 +72,17 @@ export async function getArticle(slug: string) {
       }
     }
   `,
-    { slug },
+    { slug, language },
   );
 }
 
-export async function getArticlesByCategory(category: string) {
+export async function getArticlesByCategory(
+  category: string,
+  language: Language = defaultLanguage,
+) {
   return client.fetch(
     `
-    *[_type == "article" && lower(category) == lower($category)] | order(publishedAt desc) {
+    *[_type == "article" && lower(category) == lower($category) && language == $language] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -69,10 +90,11 @@ export async function getArticlesByCategory(category: string) {
       publishedAt,
       category,
       mainImage,
+      language,
       "author": author->name
     }
   `,
-    { category },
+    { category, language },
   );
 }
 
@@ -82,18 +104,22 @@ export async function getCategories() {
   `);
 }
 
-export async function getRevistas() {
-  return client.fetch(`
-    *[_type == "revista"] | order(publishedAt desc) {
+export async function getRevistas(language: Language = defaultLanguage) {
+  return client.fetch(
+    `
+    *[_type == "revista" && language == $language] | order(publishedAt desc) {
       _id,
       title,
       slug,
       coverImage,
       excerpt,
       publishedAt,
+      language,
       "pdfUrl": pdf.asset->url
     }
-  `);
+  `,
+    { language },
+  );
 }
 
 export async function getFeaturedGallery() {
@@ -120,6 +146,26 @@ export async function getFeaturedGallery() {
           "pdfUrl": pdf.asset->url
         }
       }
+    }
+  `);
+}
+
+// Helper to get all article slugs for static generation
+export async function getAllArticleSlugs() {
+  return client.fetch(`
+    *[_type == "article"] {
+      "slug": slug.current,
+      language
+    }
+  `);
+}
+
+// Helper to get all revista slugs for static generation
+export async function getAllRevistaSlugs() {
+  return client.fetch(`
+    *[_type == "revista"] {
+      "slug": slug.current,
+      language
     }
   `);
 }

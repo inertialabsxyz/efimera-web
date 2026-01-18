@@ -1,0 +1,47 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { languages } from "../../lib/sanity";
+import type { Language } from "../../lib/sanity";
+import { translations } from "../../i18n/translations";
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({
+    params: { lang: lang.id },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Language };
+const t = translations[lang];
+
+const content = {
+  es: {
+    title: "Contacto",
+    description: "Para consultas, escríbenos a info@efimera.xyz",
+  },
+  en: {
+    title: "Contact",
+    description: "For inquiries, write to us at info@efimera.xyz",
+  },
+};
+
+const c = content[lang];
+---
+
+<Layout title={`${c.title} | Efímera`} description={c.title} lang={lang}>
+  <div class="page-content">
+    <h1>{c.title}</h1>
+    <p>{c.description}</p>
+  </div>
+</Layout>
+
+<style>
+  .page-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-lg) var(--space-md);
+  }
+
+  h1 {
+    margin-bottom: var(--space-md);
+  }
+</style>

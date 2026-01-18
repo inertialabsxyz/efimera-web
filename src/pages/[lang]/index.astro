@@ -1,0 +1,47 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import FeaturedGallery from "../../components/FeaturedGallery.astro";
+import { getArticles, getFeaturedGallery, urlFor, languages } from "../../lib/sanity";
+import type { Language } from "../../lib/sanity";
+
+export function getStaticPaths() {
+  return languages.map((lang) => ({
+    params: { lang: lang.id },
+  }));
+}
+
+const { lang } = Astro.params as { lang: Language };
+
+const articles = await getArticles(lang);
+const featuredGallery = await getFeaturedGallery();
+---
+
+<Layout title="Efímera" lang={lang}>
+  {
+    featuredGallery?.slides && featuredGallery.slides.length > 0 && (
+      <>
+        <FeaturedGallery slides={featuredGallery.slides} />
+        <hr class="gallery-divider" />
+      </>
+    )
+  }
+  <div class="article-grid">
+    {
+      articles.map((article) => (
+        <ArticleCard
+          title={article.title}
+          slug={article.slug.current}
+          category={article.category}
+          image={
+            article.mainImage
+              ? urlFor(article.mainImage).width(800).height(600).url()
+              : undefined
+          }
+          excerpt={article.excerpt}
+          lang={lang}
+        />
+      ))
+    }
+  </div>
+</Layout>

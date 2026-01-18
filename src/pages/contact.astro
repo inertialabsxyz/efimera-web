@@ -1,22 +1,4 @@
 ---
-import Layout from "../layouts/Layout.astro";
+// Redirect to default language
+return Astro.redirect("/es/contact");
 ---
-
-<Layout title="Contacto | Efímera" description="Contacto con Efímera">
-    <div class="page-content">
-        <h1>Contacto</h1>
-        <p>Para consultas, escríbenos a info@efimera.xyz</p>
-    </div>
-</Layout>
-
-<style>
-    .page-content {
-        max-width: 800px;
-        margin: 0 auto;
-        padding: var(--space-lg) var(--space-md);
-    }
-
-    h1 {
-        margin-bottom: var(--space-md);
-    }
-</style>

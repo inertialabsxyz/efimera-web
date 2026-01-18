@@ -32,6 +32,31 @@
     --header-height: 60px;
 }
 
+/* Staging Banner */
+.staging-banner {
+    background: #ff6b00;
+    color: white;
+    text-align: center;
+    padding: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1001;
+}
+
+body:has(.staging-banner) .site-header {
+    top: 22px;
+}
+
+body:has(.staging-banner) main {
+    padding-top: 22px;
+}
+
 /* Reset */
 *,
 *::before,

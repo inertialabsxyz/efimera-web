@@ -7,73 +7,6 @@ import { getArticles, getFeaturedGallery, urlFor } from "../lib/sanity";
 const articles = await getArticles();
 const featuredGallery = await getFeaturedGallery();
 
-// Demo articles for preview
-// const articles = [
-//     {
-//         _id: "1",
-//         title: "The Architecture of Silence: A Journey Through Tadao Ando's Concrete Sanctuaries",
-//         slug: { current: "architecture-of-silence" },
-//         category: "Art",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "2",
-//         title: "Backstage at Maison Margiela Artisanal",
-//         slug: { current: "maison-margiela-artisanal" },
-//         category: "Fashion",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "3",
-//         title: "Berlin After Dark: The Clubs Shaping a New Generation",
-//         slug: { current: "berlin-after-dark" },
-//         category: "Night",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "4",
-//         title: "In Conversation with Ryuichi Sakamoto",
-//         slug: { current: "ryuichi-sakamoto-interview" },
-//         category: "Music",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "5",
-//         title: "The Wabi-Sabi of Oaxacan Ceramics",
-//         slug: { current: "oaxacan-ceramics" },
-//         category: "Travel",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "6",
-//         title: "Notes from the Venice Biennale",
-//         slug: { current: "venice-biennale-notes" },
-//         category: "Diary",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "7",
-//         title: "The Return of Analog Photography",
-//         slug: { current: "analog-photography-return" },
-//         category: "Art",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "8",
-//         title: "A Week in Kyoto's Hidden Gardens",
-//         slug: { current: "kyoto-hidden-gardens" },
-//         category: "Travel",
-//         mainImage: null,
-//     },
-//     {
-//         _id: "9",
-//         title: "Emerging Designers at Paris Fashion Week",
-//         slug: { current: "paris-emerging-designers" },
-//         category: "Fashion",
-//         mainImage: null,
-//     },
-// ];
-
 const categories = [
     "Todos",
     "Actividades",
@@ -94,6 +27,7 @@ const categories = [
             </>
         )
     }
+
     <div class="article-grid">
         {
             articles.map((article) => (

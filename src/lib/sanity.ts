@@ -25,10 +25,12 @@ export type Language = (typeof languages)[number]["id"];
 export const defaultLanguage: Language = "es";
 
 // Queries
+// Note: We use (language == $language || (!defined(language) && $language == "es"))
+// to treat articles without a language field as Spanish (backwards compatible)
 export async function getArticles(language: Language = defaultLanguage) {
   return client.fetch(
     `
-    *[_type == "article" && language == $language] | order(publishedAt desc) {
+    *[_type == "article" && (language == $language || (!defined(language) && $language == "es"))] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -50,7 +52,7 @@ export async function getArticle(
 ) {
   return client.fetch(
     `
-    *[_type == "article" && slug.current == $slug && language == $language][0] {
+    *[_type == "article" && slug.current == $slug && (language == $language || (!defined(language) && $language == "es"))][0] {
       _id,
       title,
       slug,
@@ -82,7 +84,7 @@ export async function getArticlesByCategory(
 ) {
   return client.fetch(
     `
-    *[_type == "article" && lower(category) == lower($category) && language == $language] | order(publishedAt desc) {
+    *[_type == "article" && lower(category) == lower($category) && (language == $language || (!defined(language) && $language == "es"))] | order(publishedAt desc) {
       _id,
       title,
       slug,
@@ -107,7 +109,7 @@ export async function getCategories() {
 export async function getRevistas(language: Language = defaultLanguage) {
   return client.fetch(
     `
-    *[_type == "revista" && language == $language] | order(publishedAt desc) {
+    *[_type == "revista" && (language == $language || (!defined(language) && $language == "es"))] | order(publishedAt desc) {
       _id,
       title,
       slug,

@@ -14,7 +14,7 @@ const { title = "Efímera", description, lang = "es" } = Astro.props;
 
 const t = translations[lang];
 const navCategories = getNavCategories(lang);
-const currentPath = Astro.url.pathname;
+const currentPath = decodeURIComponent(Astro.url.pathname);
 
 // Get URLs for the language switcher
 const esUrl = currentPath.replace(`/${lang}`, `/es`);
@@ -152,11 +152,20 @@ const enUrl = currentPath.replace(`/${lang}`, `/en`);
             <nav class="site-nav">
                 {
                     navCategories.map((item) => {
-                        const isActive =
-                            item.key === "home"
-                                ? currentPath === `/${lang}` ||
-                                  currentPath === `/${lang}/`
-                                : currentPath.includes(item.key);
+                        let isActive = false;
+                        if (item.key === "home") {
+                            isActive =
+                                currentPath === `/${lang}` ||
+                                currentPath === `/${lang}/`;
+                        } else if (item.key === "revista") {
+                            isActive = currentPath.startsWith(
+                                `/${lang}/revista`,
+                            );
+                        } else {
+                            isActive = currentPath.includes(
+                                `/category/${item.key}`,
+                            );
+                        }
                         return (
                             <a
                                 href={item.href}

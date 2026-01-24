@@ -1,0 +1,57 @@
+---
+export const prerender = false;
+
+import Layout from "../layouts/Layout.astro";
+import { getPrensa, urlFor } from "../lib/sanity";
+
+const prensaItems = await getPrensa();
+---
+
+<Layout title="Prensa — Efímera">
+    {
+        prensaItems && prensaItems.length > 0 ? (
+            <div class="prensa-grid">
+                {prensaItems.map((prensa) => (
+                    <a
+                        href={prensa.pdfUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="prensa-card"
+                    >
+                        <div class="prensa-card-image">
+                            <img
+                                src={
+                                    prensa.coverImage
+                                        ? urlFor(prensa.coverImage).url()
+                                        : undefined
+                                }
+                                alt={prensa.coverImage?.alt || prensa.title}
+                                loading="lazy"
+                            />
+                        </div>
+                        <div class="prensa-card-content">
+                            <h2 class="prensa-card-title">{prensa.title}</h2>
+                            {prensa.excerpt && (
+                                <p class="prensa-card-excerpt">
+                                    {prensa.excerpt}
+                                </p>
+                            )}
+                        </div>
+                    </a>
+                ))}
+            </div>
+        ) : (
+            <div class="empty-state">
+                <p>Aún no hay artículos de prensa disponibles.</p>
+            </div>
+        )
+    }
+</Layout>
+
+<style>
+    .empty-state {
+        text-align: center;
+        padding: 8rem 2rem;
+        color: var(--color-text-muted);
+    }
+</style>

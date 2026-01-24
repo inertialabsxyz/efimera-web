@@ -179,7 +179,7 @@ export async function getPrensa() {
       coverImage,
       excerpt,
       publishedAt,
-      "pdfUrl": pdf.asset->url
+      "zipUrl": zipFile.asset->url
     }
   `);
 }

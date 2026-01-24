@@ -13,10 +13,11 @@ const prensaItems = await getPrensa();
             <div class="prensa-grid">
                 {prensaItems.map((prensa) => (
                     <a
-                        href={prensa.pdfUrl}
+                        href={prensa.zipUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         class="prensa-card"
+                        download
                     >
                         <div class="prensa-card-image">
                             <img

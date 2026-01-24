@@ -1,4 +1,4 @@
-// Prensa PDF schema for Sanity Studio
+// Prensa ZIP schema for Sanity Studio
 
 export default {
   name: "prensa",
@@ -39,11 +39,11 @@ export default {
       validation: (Rule) => Rule.required(),
     },
     {
-      name: "pdf",
-      title: "PDF File",
+      name: "zipFile",
+      title: "ZIP File",
       type: "file",
       options: {
-        accept: ".pdf",
+        accept: ".zip",
       },
       validation: (Rule) => Rule.required(),
     },

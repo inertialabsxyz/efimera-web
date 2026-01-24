@@ -170,6 +170,20 @@ export async function getRevistas() {
   `);
 }
 
+export async function getPrensa() {
+  return client.fetch(`
+    *[_type == "prensa"] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      coverImage,
+      excerpt,
+      publishedAt,
+      "pdfUrl": pdf.asset->url
+    }
+  `);
+}
+
 export async function getFeaturedGallery() {
   return client.fetch(`
     *[_type == "featuredGallery"][0] {

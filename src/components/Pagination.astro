@@ -1,0 +1,53 @@
+---
+interface Props {
+    currentPage: number;
+    totalPages: number;
+    baseUrl: string;
+}
+
+const { currentPage, totalPages, baseUrl } = Astro.props;
+
+// Don't render pagination if only one page
+if (totalPages <= 1) {
+    return;
+}
+
+const hasPrev = currentPage > 1;
+const hasNext = currentPage < totalPages;
+
+// Build URL with page parameter
+function getPageUrl(page: number): string {
+    if (page === 1) {
+        // First page doesn't need page param
+        return baseUrl;
+    }
+    const separator = baseUrl.includes('?') ? '&' : '?';
+    return `${baseUrl}${separator}page=${page}`;
+}
+---
+
+<nav class="pagination" aria-label="Pagination">
+    {hasPrev ? (
+        <a href={getPageUrl(currentPage - 1)} class="pagination-link pagination-prev">
+            <span aria-hidden="true">&larr;</span> Anterior
+        </a>
+    ) : (
+        <span class="pagination-link pagination-prev pagination-disabled">
+            <span aria-hidden="true">&larr;</span> Anterior
+        </span>
+    )}
+
+    <span class="pagination-info">
+        {currentPage} / {totalPages}
+    </span>
+
+    {hasNext ? (
+        <a href={getPageUrl(currentPage + 1)} class="pagination-link pagination-next">
+            Siguiente <span aria-hidden="true">&rarr;</span>
+        </a>
+    ) : (
+        <span class="pagination-link pagination-next pagination-disabled">
+            Siguiente <span aria-hidden="true">&rarr;</span>
+        </span>
+    )}
+</nav>

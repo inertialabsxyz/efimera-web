@@ -30,6 +30,41 @@ export async function getArticles() {
   `);
 }
 
+export async function getArticlesPaginated(
+  page: number = 1,
+  pageSize: number = 10,
+) {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+
+  const [articles, total] = await Promise.all([
+    client.fetch(
+      `
+      *[_type == "article"] | order(publishedAt desc) [$start...$end] {
+        _id,
+        title,
+        slug,
+        excerpt,
+        publishedAt,
+        category,
+        mainImage,
+        "author": author->name
+      }
+    `,
+      { start, end },
+    ),
+    client.fetch(`count(*[_type == "article"])`),
+  ]);
+
+  return {
+    articles,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total / pageSize),
+  };
+}
+
 export async function getArticle(slug: string) {
   return client.fetch(
     `
@@ -74,6 +109,45 @@ export async function getArticlesByCategory(category: string) {
   `,
     { category },
   );
+}
+
+export async function getArticlesByCategoryPaginated(
+  category: string,
+  page: number = 1,
+  pageSize: number = 10,
+) {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+
+  const [articles, total] = await Promise.all([
+    client.fetch(
+      `
+      *[_type == "article" && lower(category) == lower($category)] | order(publishedAt desc) [$start...$end] {
+        _id,
+        title,
+        slug,
+        excerpt,
+        publishedAt,
+        category,
+        mainImage,
+        "author": author->name
+      }
+    `,
+      { category, start, end },
+    ),
+    client.fetch(
+      `count(*[_type == "article" && lower(category) == lower($category)])`,
+      { category },
+    ),
+  ]);
+
+  return {
+    articles,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total / pageSize),
+  };
 }
 
 export async function getCategories() {

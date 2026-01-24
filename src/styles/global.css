@@ -961,6 +961,53 @@ main {
     overflow: hidden;
 }
 
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-lg) var(--space-md);
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.pagination-link {
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    color: var(--color-text);
+    padding: var(--space-xs) var(--space-sm);
+    transition: opacity 0.2s ease;
+}
+
+.pagination-link:hover {
+    opacity: 0.7;
+}
+
+.pagination-disabled {
+    color: var(--color-text-muted);
+    pointer-events: none;
+    opacity: 0.4;
+}
+
+.pagination-info {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    min-width: 60px;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .pagination {
+        gap: var(--space-sm);
+    }
+
+    .pagination-link {
+        font-size: 0.8rem;
+        padding: var(--space-xs);
+    }
+}
+
 /* Prensa Grid */
 .prensa-grid {
     display: grid;
@@ -1030,7 +1077,6 @@ main {
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
-
 /* Utility classes */
 .sr-only {
     position: absolute;

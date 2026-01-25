@@ -219,6 +219,30 @@ p {
     .site-nav {
         margin-left: var(--space-md);
     }
+
+    .header-right {
+        display: flex;
+        align-items: center;
+        gap: var(--space-md);
+        margin-left: auto;
+    }
+
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .header-actions a {
+        opacity: 0.6;
+        transition: opacity 0.2s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .header-actions a:hover {
+        opacity: 1;
+    }
 }
 
 /* Mobile menu toggle */
@@ -244,9 +268,17 @@ p {
         display: none;
     }
 
+    .header-right {
+        margin-left: auto;
+    }
+
+    .header-actions {
+        display: none;
+    }
+
     .menu-toggle {
         display: block;
-        margin-left: auto;
+        color: var(--color-text);
     }
 
     .site-nav {

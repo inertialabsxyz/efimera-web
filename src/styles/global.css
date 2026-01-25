@@ -13,6 +13,8 @@
     --color-text-muted: #666666;
     --color-border: #e5e5e5;
     --color-accent: #000000;
+    --color-card-bg: #f8f8f8;
+    --color-card-bg-alt: #f5f5f5;
 
     /* Typography */
     --font-display:
@@ -30,6 +32,17 @@
     /* Layout */
     --max-width: 1400px;
     --header-height: 60px;
+}
+
+/* Dark mode */
+[data-theme="dark"] {
+    --color-bg: #121212;
+    --color-text: #e5e5e5;
+    --color-text-muted: #999999;
+    --color-border: #333333;
+    --color-accent: #ffffff;
+    --color-card-bg: #1e1e1e;
+    --color-card-bg-alt: #252525;
 }
 
 /* Staging Banner */
@@ -455,7 +468,7 @@ main {
 .article-card {
     display: flex;
     flex-direction: column;
-    background: #f8f8f8;
+    background: var(--color-card-bg);
     padding: var(--space-sm);
     padding-bottom: var(--space-md);
     border-bottom: 1px solid var(--color-border);
@@ -464,7 +477,7 @@ main {
 .article-card-image {
     aspect-ratio: 4/3;
     overflow: hidden;
-    background: #f5f5f5;
+    background: var(--color-card-bg-alt);
 }
 
 .article-card-image img {
@@ -524,7 +537,7 @@ main {
 
 .article-card.featured .article-card-image {
     aspect-ratio: 1280/860;
-    background: #f8f8f8;
+    background: var(--color-card-bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -599,7 +612,7 @@ main {
     max-width: 800px;
     margin: 0 auto;
     aspect-ratio: 800/600;
-    background: #f8f8f8;
+    background: var(--color-card-bg);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -910,7 +923,7 @@ main {
 .revista-card {
     display: flex;
     flex-direction: column;
-    background: #f8f8f8;
+    background: var(--color-card-bg);
     padding: var(--space-sm);
     padding-bottom: var(--space-md);
     border-bottom: 1px solid var(--color-border);
@@ -920,7 +933,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f5f5f5;
+    background: var(--color-card-bg-alt);
     padding: var(--space-md);
 }
 
@@ -1027,7 +1040,7 @@ main {
 .prensa-card {
     display: flex;
     flex-direction: column;
-    background: #f8f8f8;
+    background: var(--color-card-bg);
     padding: var(--space-sm);
     padding-bottom: var(--space-md);
     border-bottom: 1px solid var(--color-border);
@@ -1037,7 +1050,7 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #f5f5f5;
+    background: var(--color-card-bg-alt);
     padding: var(--space-md);
 }
 

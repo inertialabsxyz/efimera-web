@@ -1,0 +1,224 @@
+---
+interface Props {
+    variant?: 'footer' | 'homepage';
+}
+
+const { variant = 'footer' } = Astro.props;
+---
+
+<div class:list={['newsletter-form', `newsletter-form--${variant}`]}>
+    {variant === 'homepage' && (
+        <h2 class="newsletter-title">Newsletter</h2>
+    )}
+    <p class="newsletter-description">
+        {variant === 'homepage'
+            ? 'Suscríbete para recibir las últimas novedades de Efímera'
+            : 'Suscríbete a nuestro newsletter'
+        }
+    </p>
+    <form class="newsletter-form-element" data-newsletter-form>
+        <div class="newsletter-input-group">
+            <label for={`email-${variant}`} class="sr-only">Email</label>
+            <input
+                type="email"
+                id={`email-${variant}`}
+                name="email"
+                placeholder="tu@email.com"
+                required
+                class="newsletter-input"
+            />
+            <button type="submit" class="newsletter-button">
+                <span class="newsletter-button-text">Suscribir</span>
+                <span class="newsletter-button-loading" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32">
+                            <animate attributeName="stroke-dashoffset" values="32;0" dur="1s" repeatCount="indefinite" />
+                        </circle>
+                    </svg>
+                </span>
+            </button>
+        </div>
+        <p class="newsletter-message" data-newsletter-message aria-live="polite"></p>
+    </form>
+</div>
+
+<style>
+    .newsletter-form {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-xs);
+    }
+
+    .newsletter-form--homepage {
+        max-width: 500px;
+        margin: var(--space-lg) auto;
+        padding: var(--space-md);
+        text-align: center;
+    }
+
+    .newsletter-form--footer {
+        max-width: 320px;
+    }
+
+    .newsletter-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin-bottom: var(--space-xs);
+    }
+
+    .newsletter-description {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-sm);
+    }
+
+    .newsletter-form--footer .newsletter-description {
+        font-size: 0.75rem;
+    }
+
+    .newsletter-input-group {
+        display: flex;
+        gap: var(--space-xs);
+    }
+
+    .newsletter-form--homepage .newsletter-input-group {
+        justify-content: center;
+    }
+
+    .newsletter-input {
+        flex: 1;
+        max-width: 280px;
+        padding: 0.625rem 0.875rem;
+        font-family: var(--font-body);
+        font-size: 0.875rem;
+        color: var(--color-text);
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        outline: none;
+        transition: border-color 0.2s ease;
+    }
+
+    .newsletter-input:focus {
+        border-color: var(--color-text);
+    }
+
+    .newsletter-input::placeholder {
+        color: var(--color-text-muted);
+    }
+
+    .newsletter-button {
+        padding: 0.625rem 1rem;
+        font-family: var(--font-body);
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--color-bg);
+        background: var(--color-text);
+        border: 1px solid var(--color-text);
+        cursor: pointer;
+        transition: opacity 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 90px;
+    }
+
+    .newsletter-button:hover:not(:disabled) {
+        opacity: 0.8;
+    }
+
+    .newsletter-button:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .newsletter-button-loading {
+        display: none;
+    }
+
+    .newsletter-button.loading .newsletter-button-text {
+        display: none;
+    }
+
+    .newsletter-button.loading .newsletter-button-loading {
+        display: block;
+    }
+
+    .newsletter-message {
+        font-size: 0.75rem;
+        margin-top: var(--space-xs);
+        min-height: 1.2em;
+    }
+
+    .newsletter-message.success {
+        color: #22c55e;
+    }
+
+    .newsletter-message.error {
+        color: #ef4444;
+    }
+
+    .newsletter-form--homepage .newsletter-message {
+        text-align: center;
+    }
+
+    @media (max-width: 480px) {
+        .newsletter-input-group {
+            flex-direction: column;
+        }
+
+        .newsletter-input {
+            max-width: none;
+        }
+
+        .newsletter-button {
+            width: 100%;
+        }
+    }
+</style>
+
+<script>
+    document.querySelectorAll('[data-newsletter-form]').forEach((form) => {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formEl = e.target as HTMLFormElement;
+            const button = formEl.querySelector('button') as HTMLButtonElement;
+            const message = formEl.querySelector('[data-newsletter-message]') as HTMLElement;
+            const emailInput = formEl.querySelector('input[type="email"]') as HTMLInputElement;
+            const email = emailInput.value;
+
+            button.disabled = true;
+            button.classList.add('loading');
+            message.textContent = '';
+            message.className = 'newsletter-message';
+
+            try {
+                const response = await fetch('/api/subscribe', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email }),
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    message.textContent = '¡Gracias por suscribirte!';
+                    message.classList.add('success');
+                    emailInput.value = '';
+                } else {
+                    message.textContent = data.error || 'Error al suscribirse. Inténtalo de nuevo.';
+                    message.classList.add('error');
+                }
+            } catch (error) {
+                message.textContent = 'Error de conexión. Inténtalo de nuevo.';
+                message.classList.add('error');
+            } finally {
+                button.disabled = false;
+                button.classList.remove('loading');
+            }
+        });
+    });
+</script>

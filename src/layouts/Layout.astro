@@ -2,6 +2,7 @@
 import "../styles/global.css";
 import Analytics from "@vercel/analytics/astro";
 import SearchModal from "../components/SearchModal.astro";
+import NewsletterForm from "../components/NewsletterForm.astro";
 import { getArticles, urlFor } from "../lib/sanity";
 
 interface Props {
@@ -326,15 +327,18 @@ const currentPath = Astro.url.pathname;
         </main>
 
         <footer class="site-footer">
-            <div class="footer-links">
-                <a href="/about">Acerca de</a>
-                <a href="/contact">Contacto</a>
-                <a href="/privacy">Privacidad</a>
-                <a href="/prensa">Prensa</a>
+            <div class="footer-left">
+                <div class="footer-links">
+                    <a href="/about">Acerca de</a>
+                    <a href="/contact">Contacto</a>
+                    <a href="/privacy">Privacidad</a>
+                    <a href="/prensa">Prensa</a>
+                </div>
+                <p class="footer-copyright">
+                    © {new Date().getFullYear()} Efímera
+                </p>
             </div>
-            <p class="footer-copyright">
-                © {new Date().getFullYear()} Efímera
-            </p>
+            <NewsletterForm variant="footer" />
         </footer>
 
         <SearchModal articles={articles} />

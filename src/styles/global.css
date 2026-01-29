@@ -838,8 +838,16 @@ main {
 .site-footer {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     padding: var(--space-lg) var(--space-md);
+    gap: var(--space-lg);
+    border-top: 1px solid var(--color-border);
+}
+
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
 }
 
 .footer-links {
@@ -868,8 +876,13 @@ main {
 @media (max-width: 640px) {
     .site-footer {
         flex-direction: column;
-        gap: var(--space-sm);
+        gap: var(--space-md);
         text-align: center;
+        align-items: center;
+    }
+
+    .footer-left {
+        align-items: center;
     }
 }
 

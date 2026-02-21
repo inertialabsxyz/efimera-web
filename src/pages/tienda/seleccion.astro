@@ -1,0 +1,188 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="Mi selección — Tienda — Efímera">
+    <div class="seleccion-page">
+        <a href="/tienda" class="product-back-link">← Volver a la tienda</a>
+        <h1 class="store-title">Mi selección</h1>
+
+        <div id="seleccion-empty" class="seleccion-empty" style="display: none;">
+            <p>No has seleccionado ningún producto todavía.</p>
+            <a href="/tienda" class="product-inquiry-btn">Ver tienda</a>
+        </div>
+
+        <div id="seleccion-content" style="display: none;">
+            <div id="seleccion-list" class="seleccion-list"></div>
+
+            <form id="inquiry-form" class="inquiry-form">
+                <h2 class="inquiry-form-title">Enviar consulta</h2>
+                <p class="inquiry-form-description">
+                    Déjanos tus datos y te responderemos con más información sobre los productos seleccionados.
+                </p>
+                <div class="inquiry-field">
+                    <label for="inquiry-name">Nombre *</label>
+                    <input
+                        type="text"
+                        id="inquiry-name"
+                        name="name"
+                        required
+                        class="inquiry-input"
+                    />
+                </div>
+                <div class="inquiry-field">
+                    <label for="inquiry-email">Email *</label>
+                    <input
+                        type="email"
+                        id="inquiry-email"
+                        name="email"
+                        required
+                        class="inquiry-input"
+                    />
+                </div>
+                <div class="inquiry-field">
+                    <label for="inquiry-message">Mensaje (opcional)</label>
+                    <textarea
+                        id="inquiry-message"
+                        name="message"
+                        rows="4"
+                        class="inquiry-textarea"
+                    ></textarea>
+                </div>
+                <button type="submit" class="inquiry-submit" id="inquiry-submit">
+                    <span class="inquiry-submit-text">Enviar consulta</span>
+                    <span class="inquiry-submit-loading" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32">
+                                <animate attributeName="stroke-dashoffset" values="32;0" dur="1s" repeatCount="indefinite" />
+                            </circle>
+                        </svg>
+                    </span>
+                </button>
+                <p class="inquiry-message" id="inquiry-status" aria-live="polite"></p>
+            </form>
+        </div>
+
+        <div id="seleccion-success" class="seleccion-success" style="display: none;">
+            <h2>¡Consulta enviada!</h2>
+            <p>Gracias por tu interés. Te responderemos lo antes posible.</p>
+            <a href="/tienda" class="product-inquiry-btn">Seguir navegando</a>
+        </div>
+    </div>
+</Layout>
+
+<script>
+    function formatPrice(price) {
+        return new Intl.NumberFormat("es-ES", {
+            style: "currency",
+            currency: "EUR",
+        }).format(price);
+    }
+
+    function render() {
+        const items = window.seleccionGet ? window.seleccionGet() : [];
+        const emptyEl = document.getElementById("seleccion-empty");
+        const contentEl = document.getElementById("seleccion-content");
+        const listEl = document.getElementById("seleccion-list");
+
+        if (items.length === 0) {
+            emptyEl.style.display = "block";
+            contentEl.style.display = "none";
+            return;
+        }
+
+        emptyEl.style.display = "none";
+        contentEl.style.display = "block";
+
+        listEl.innerHTML = items
+            .map(
+                (item) => `
+            <div class="seleccion-item" data-id="${item.id}">
+                <a href="/tienda/${item.slug}" class="seleccion-item-image">
+                    <img src="${item.image}" alt="${item.title}" width="120" height="120" loading="lazy" />
+                </a>
+                <div class="seleccion-item-info">
+                    <a href="/tienda/${item.slug}" class="seleccion-item-title">${item.title}</a>
+                    <p class="seleccion-item-price">${formatPrice(item.price)}</p>
+                </div>
+                <button class="seleccion-item-remove" aria-label="Eliminar ${item.title}" data-id="${item.id}">&times;</button>
+            </div>
+        `,
+            )
+            .join("");
+
+        // Bind remove buttons
+        listEl.querySelectorAll(".seleccion-item-remove").forEach((btn) => {
+            btn.addEventListener("click", () => {
+                if (window.seleccionRemove) {
+                    window.seleccionRemove(btn.dataset.id);
+                    render();
+                }
+            });
+        });
+    }
+
+    render();
+
+    // Form submission
+    const form = document.getElementById("inquiry-form");
+    form?.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const submitBtn = document.getElementById("inquiry-submit");
+        const status = document.getElementById("inquiry-status");
+        const items = window.seleccionGet ? window.seleccionGet() : [];
+
+        if (items.length === 0) {
+            status.textContent = "No hay productos en tu selección.";
+            status.className = "inquiry-message error";
+            return;
+        }
+
+        const name = document.getElementById("inquiry-name").value.trim();
+        const email = document.getElementById("inquiry-email").value.trim();
+        const message = document.getElementById("inquiry-message").value.trim();
+
+        submitBtn.disabled = true;
+        submitBtn.classList.add("loading");
+        status.textContent = "";
+        status.className = "inquiry-message";
+
+        try {
+            const response = await fetch("/api/inquiry", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    message,
+                    items: items.map((i) => ({
+                        title: i.title,
+                        price: i.price,
+                        slug: i.slug,
+                    })),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                if (window.seleccionClear) window.seleccionClear();
+                document.getElementById("seleccion-content").style.display = "none";
+                document.getElementById("seleccion-success").style.display = "block";
+            } else {
+                status.textContent =
+                    data.error || "Error al enviar. Inténtalo de nuevo.";
+                status.className = "inquiry-message error";
+            }
+        } catch {
+            status.textContent = "Error de conexión. Inténtalo de nuevo.";
+            status.className = "inquiry-message error";
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("loading");
+        }
+    });
+</script>

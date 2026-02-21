@@ -184,6 +184,61 @@ export async function getPrensa() {
   `);
 }
 
+// Product queries
+export async function getProducts() {
+  return client.fetch(`
+    *[_type == "product"] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      mainImage,
+      category,
+      price,
+      available,
+      description
+    }
+  `);
+}
+
+export async function getProductsByCategory(category: string) {
+  return client.fetch(
+    `
+    *[_type == "product" && category == $category] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      mainImage,
+      category,
+      price,
+      available,
+      description
+    }
+  `,
+    { category },
+  );
+}
+
+export async function getProduct(slug: string) {
+  return client.fetch(
+    `
+    *[_type == "product" && slug.current == $slug][0] {
+      _id,
+      title,
+      slug,
+      mainImage,
+      gallery,
+      category,
+      price,
+      available,
+      description,
+      body,
+      publishedAt
+    }
+  `,
+    { slug },
+  );
+}
+
 export async function getFeaturedGallery() {
   return client.fetch(`
     *[_type == "featuredGallery"][0] {

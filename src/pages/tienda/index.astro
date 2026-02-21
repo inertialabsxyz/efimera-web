@@ -1,0 +1,66 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import ProductCard from "../../components/ProductCard.astro";
+import { getProducts, getProductsByCategory, urlFor } from "../../lib/sanity";
+
+const categoryParam = Astro.url.searchParams.get("category");
+
+const allCategories = ["Obra original", "Fotografías seriadas", "Revista"];
+
+const products = categoryParam
+    ? await getProductsByCategory(categoryParam)
+    : await getProducts();
+---
+
+<Layout title="Tienda — Efímera">
+    <div class="store-header">
+        <h1 class="store-title">Tienda</h1>
+        <nav class="store-categories">
+            <a
+                href="/tienda"
+                class:list={[{ active: !categoryParam }]}
+            >
+                Todos
+            </a>
+            {allCategories.map((cat) => (
+                <a
+                    href={`/tienda?category=${encodeURIComponent(cat)}`}
+                    class:list={[{ active: categoryParam === cat }]}
+                >
+                    {cat}
+                </a>
+            ))}
+        </nav>
+    </div>
+
+    {products && products.length > 0 ? (
+        <div class="product-grid">
+            {products.map((product, index) => (
+                <div class="product-grid-item" style={`animation-delay: ${index * 0.05}s`}>
+                    <ProductCard
+                        title={product.title}
+                        slug={product.slug.current}
+                        image={product.mainImage ? urlFor(product.mainImage).width(800).height(800).url() : undefined}
+                        price={product.price}
+                        category={product.category}
+                        available={product.available !== false}
+                    />
+                </div>
+            ))}
+        </div>
+    ) : (
+        <div class="empty-state">
+            <p>Aún no hay productos disponibles.</p>
+        </div>
+    )}
+</Layout>
+
+<style>
+    .empty-state {
+        text-align: center;
+        padding: 8rem 2rem;
+        color: var(--color-text-muted);
+    }
+</style>

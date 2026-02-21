@@ -31,6 +31,7 @@ const categories = [
     "Letras",
     "Música",
     "Revista",
+    "Tienda",
 ];
 const currentPath = Astro.url.pathname;
 ---
@@ -70,18 +71,23 @@ const currentPath = Astro.url.pathname;
                         categories.map((category) => {
                             const isAll = category === "Efímera";
                             const isRevista = category === "Revista";
+                            const isTienda = category === "Tienda";
                             const href = isAll
                                 ? "/"
                                 : isRevista
                                   ? "/revista"
-                                  : `/category/${category.toLowerCase()}`;
+                                  : isTienda
+                                    ? "/tienda"
+                                    : `/category/${category.toLowerCase()}`;
                             const isActive = isAll
                                 ? currentPath === "/"
                                 : isRevista
                                   ? currentPath === "/revista"
-                                  : currentPath.includes(
-                                        category.toLowerCase(),
-                                    );
+                                  : isTienda
+                                    ? currentPath.startsWith("/tienda")
+                                    : currentPath.includes(
+                                          category.toLowerCase(),
+                                      );
                             return (
                                 <a
                                     href={href}
@@ -166,6 +172,28 @@ const currentPath = Astro.url.pathname;
                 </nav>
 
                 <div class="header-actions">
+                    <a
+                        href="/tienda/seleccion"
+                        class="seleccion-link"
+                        id="seleccion-link"
+                        aria-label="Mi selección"
+                    >
+                        <svg
+                            width="18"
+                            height="18"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1.5"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        >
+                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                        <span class="seleccion-badge" id="seleccion-badge"></span>
+                    </a>
                     <button
                         id="theme-toggle"
                         class="theme-toggle"
@@ -370,6 +398,55 @@ const currentPath = Astro.url.pathname;
                 document.documentElement.setAttribute("data-theme", newTheme);
                 localStorage.setItem("theme", newTheme);
             });
+
+            // Selección (inquiry list) helpers
+            const SELECCION_KEY = "efimera-seleccion";
+
+            function seleccionGet() {
+                try {
+                    return JSON.parse(localStorage.getItem(SELECCION_KEY) || "[]");
+                } catch {
+                    return [];
+                }
+            }
+
+            function seleccionSave(items) {
+                localStorage.setItem(SELECCION_KEY, JSON.stringify(items));
+                document.dispatchEvent(new CustomEvent("seleccion-updated"));
+            }
+
+            window.seleccionGet = seleccionGet;
+            window.seleccionCount = () => seleccionGet().length;
+            window.seleccionClear = () => seleccionSave([]);
+
+            window.seleccionAdd = (item) => {
+                const items = seleccionGet();
+                if (!items.some((i) => i.id === item.id)) {
+                    items.push(item);
+                    seleccionSave(items);
+                }
+            };
+
+            window.seleccionRemove = (id) => {
+                const items = seleccionGet().filter((i) => i.id !== id);
+                seleccionSave(items);
+            };
+
+            window.seleccionHas = (id) => {
+                return seleccionGet().some((i) => i.id === id);
+            };
+
+            // Badge update
+            function updateBadge() {
+                const badge = document.getElementById("seleccion-badge");
+                if (!badge) return;
+                const count = seleccionGet().length;
+                badge.textContent = count > 0 ? String(count) : "";
+                badge.style.display = count > 0 ? "flex" : "none";
+            }
+
+            document.addEventListener("seleccion-updated", updateBadge);
+            updateBadge();
         </script>
         <Analytics />
     </body>
@@ -377,7 +454,8 @@ const currentPath = Astro.url.pathname;
 
 <style>
     .search-button,
-    .theme-toggle {
+    .theme-toggle,
+    .seleccion-link {
         background: none;
         border: none;
         color: var(--color-text);
@@ -387,11 +465,31 @@ const currentPath = Astro.url.pathname;
         align-items: center;
         justify-content: center;
         transition: color 0.2s ease;
+        text-decoration: none;
+        position: relative;
     }
 
     .search-button:hover,
-    .theme-toggle:hover {
+    .theme-toggle:hover,
+    .seleccion-link:hover {
         color: var(--color-text-muted);
+    }
+
+    .seleccion-badge {
+        position: absolute;
+        top: -4px;
+        right: -6px;
+        background: var(--color-text);
+        color: var(--color-bg);
+        font-size: 0.6rem;
+        font-weight: 600;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
     }
 
     .header-right {

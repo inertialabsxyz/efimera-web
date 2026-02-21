@@ -1,0 +1,182 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import ImageCarousel from "../../components/ImageCarousel.astro";
+import { getProduct, getProductsByCategory, urlFor } from "../../lib/sanity";
+import { toHTML } from "@portabletext/to-html";
+
+const { slug } = Astro.params;
+const product = await getProduct(slug);
+
+if (!product) {
+    return Astro.redirect("/404");
+}
+
+const formattedPrice = new Intl.NumberFormat("es-ES", {
+    style: "currency",
+    currency: "EUR",
+}).format(product.price);
+
+// Prepare gallery images
+const hasGallery = product.gallery && product.gallery.length > 0;
+const galleryImages = hasGallery
+    ? product.gallery.map((img: any) => ({
+          url: urlFor(img).url(),
+          alt: img.alt || product.title,
+      }))
+    : product.mainImage
+      ? [
+            {
+                url: urlFor(product.mainImage).url(),
+                alt: product.mainImage.alt || product.title,
+            },
+        ]
+      : [
+            {
+                url: `https://picsum.photos/seed/${slug}/800/800`,
+                alt: product.title,
+            },
+        ];
+
+// Convert Portable Text to HTML
+function renderImage({ value }: { value: any }) {
+    if (!value?.asset?._ref) {
+        return "";
+    }
+    const imgUrl = urlFor(value).width(1200).url();
+    const alt = value.alt || "";
+    const caption = value.caption
+        ? `<figcaption>${value.caption}</figcaption>`
+        : "";
+    const img = `<img src="${imgUrl}" alt="${alt}" />`;
+    return `<figure>${img}${caption}</figure>`;
+}
+
+const bodyHtml = product.body
+    ? toHTML(product.body, {
+          components: {
+              types: {
+                  image: renderImage,
+              },
+          },
+      })
+    : "";
+
+// Product data for selection
+const productData = JSON.stringify({
+    id: product._id,
+    slug: product.slug.current,
+    title: product.title,
+    price: product.price,
+    image: galleryImages[0]?.url || "",
+});
+
+// Related products from same category
+const relatedProducts = await getProductsByCategory(product.category);
+const otherProducts = relatedProducts
+    .filter((p: any) => p._id !== product._id)
+    .slice(0, 4);
+---
+
+<Layout title={`${product.title} — Tienda — Efímera`}>
+    <div class="product-detail">
+        <a href="/tienda" class="product-back-link">← Volver a la tienda</a>
+
+        <div class="product-detail-layout">
+            <div class="product-detail-images">
+                <ImageCarousel
+                    images={galleryImages}
+                    articleTitle={product.title}
+                />
+            </div>
+
+            <div class="product-detail-info">
+                <span class="product-detail-category">{product.category}</span>
+                <h1 class="product-detail-title">{product.title}</h1>
+                <p class="product-detail-price">{formattedPrice}</p>
+
+                {product.available === false && (
+                    <p class="product-detail-unavailable">Agotado</p>
+                )}
+
+                {product.description && (
+                    <p class="product-detail-description">{product.description}</p>
+                )}
+
+                {product.available !== false && (
+                    <button
+                        class="product-inquiry-btn"
+                        id="add-to-seleccion"
+                        data-product={productData}
+                    >
+                        Añadir a mi selección
+                    </button>
+                )}
+
+                {bodyHtml && (
+                    <div class="product-detail-body" set:html={bodyHtml} />
+                )}
+            </div>
+        </div>
+
+        {otherProducts.length > 0 && (
+            <section class="product-related">
+                <h2>Más en {product.category}</h2>
+                <div class="product-related-grid">
+                    {otherProducts.map((p: any) => (
+                        <a href={`/tienda/${p.slug.current}`} class="product-related-card">
+                            {p.mainImage && (
+                                <div class="product-related-image">
+                                    <img
+                                        src={urlFor(p.mainImage).width(400).height(400).url()}
+                                        alt={p.mainImage.alt || p.title}
+                                        loading="lazy"
+                                    />
+                                </div>
+                            )}
+                            <h3>{p.title}</h3>
+                            <p class="product-card-price">
+                                {new Intl.NumberFormat("es-ES", {
+                                    style: "currency",
+                                    currency: "EUR",
+                                }).format(p.price)}
+                            </p>
+                        </a>
+                    ))}
+                </div>
+            </section>
+        )}
+    </div>
+</Layout>
+
+<script>
+    const btn = document.getElementById("add-to-seleccion");
+    if (btn) {
+        const product = JSON.parse(btn.dataset.product || "{}");
+
+        function updateButtonState() {
+            if (window.seleccionHas && window.seleccionHas(product.id)) {
+                btn.textContent = "Ya en tu selección";
+                btn.classList.add("added");
+            }
+        }
+
+        updateButtonState();
+
+        btn.addEventListener("click", () => {
+            if (window.seleccionHas && window.seleccionHas(product.id)) {
+                window.location.href = "/tienda/seleccion";
+                return;
+            }
+            if (window.seleccionAdd) {
+                window.seleccionAdd(product);
+                btn.textContent = "Añadido ✓";
+                btn.classList.add("added");
+                setTimeout(() => {
+                    btn.textContent = "Ya en tu selección";
+                }, 1500);
+            }
+        });
+    }
+</script>

@@ -193,6 +193,7 @@ export async function getProducts() {
       slug,
       mainImage,
       category,
+      artist,
       price,
       available,
       description
@@ -209,6 +210,7 @@ export async function getProductsByCategory(category: string) {
       slug,
       mainImage,
       category,
+      artist,
       price,
       available,
       description
@@ -228,6 +230,7 @@ export async function getProduct(slug: string) {
       mainImage,
       gallery,
       category,
+      artist,
       price,
       available,
       description,
@@ -236,6 +239,25 @@ export async function getProduct(slug: string) {
     }
   `,
     { slug },
+  );
+}
+
+export async function getProductsByArtist(artist: string) {
+  return client.fetch(
+    `
+    *[_type == "product" && artist == $artist] | order(publishedAt desc) {
+      _id,
+      title,
+      slug,
+      mainImage,
+      category,
+      artist,
+      price,
+      available,
+      description
+    }
+  `,
+    { artist },
   );
 }
 

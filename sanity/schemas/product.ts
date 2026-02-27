@@ -71,6 +71,12 @@ export default {
       validation: (Rule) => Rule.required(),
     },
     {
+      name: "artist",
+      title: "Artist",
+      type: "string",
+      description: "The artist associated with this product.",
+    },
+    {
       name: "price",
       title: "Price (€)",
       type: "number",

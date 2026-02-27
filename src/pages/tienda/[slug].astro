@@ -3,7 +3,7 @@ export const prerender = false;
 
 import Layout from "../../layouts/Layout.astro";
 import ImageCarousel from "../../components/ImageCarousel.astro";
-import { getProduct, getProductsByCategory, urlFor } from "../../lib/sanity";
+import { getProduct, getProductsByArtist, urlFor } from "../../lib/sanity";
 import { toHTML } from "@portabletext/to-html";
 
 const { slug } = Astro.params;
@@ -72,8 +72,10 @@ const productData = JSON.stringify({
     image: galleryImages[0]?.url || "",
 });
 
-// Related products from same category
-const relatedProducts = await getProductsByCategory(product.category);
+// Related products from same artist
+const relatedProducts = product.artist
+    ? await getProductsByArtist(product.artist)
+    : [];
 const otherProducts = relatedProducts
     .filter((p: any) => p._id !== product._id)
     .slice(0, 4);
@@ -122,7 +124,7 @@ const otherProducts = relatedProducts
 
         {otherProducts.length > 0 && (
             <section class="product-related">
-                <h2>Más en {product.category}</h2>
+                <h2>Más de {product.artist}</h2>
                 <div class="product-related-grid">
                     {otherProducts.map((p: any) => (
                         <a href={`/tienda/${p.slug.current}`} class="product-related-card">

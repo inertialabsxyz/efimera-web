@@ -1282,6 +1282,13 @@ main {
     margin: 0;
 }
 
+.product-card-description {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+    margin-top: 0.35rem;
+    line-height: 1.4;
+}
+
 .product-card-price {
     font-size: 0.9rem;
     color: var(--color-text);

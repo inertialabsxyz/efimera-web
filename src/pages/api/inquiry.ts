@@ -96,7 +96,7 @@ export const POST: APIRoute = async ({ request }) => {
     `;
 
     const result = await resend.emails.send({
-      from: "Efímera Tienda <onboarding@resend.dev>",
+      from: "Efímera Tienda <tienda@efimera.xyz>",
       to: "info@efimera.xyz",
       replyTo: email,
       subject: `Nueva consulta de tienda — ${name.trim()}`,

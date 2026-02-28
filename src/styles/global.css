@@ -1264,14 +1264,7 @@ main {
     padding: var(--space-xs) 0;
 }
 
-.product-card-category {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--color-text-muted);
-    display: block;
-    margin-bottom: 0.25rem;
-}
+
 
 .product-card-title {
     font-family: var(--font-display);
@@ -1336,14 +1329,6 @@ main {
     }
 }
 
-.product-detail-category {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 0.15em;
-    color: var(--color-text-muted);
-    display: block;
-    margin-bottom: var(--space-xs);
-}
 
 .product-detail-title {
     font-family: var(--font-display);

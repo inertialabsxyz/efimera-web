@@ -1424,63 +1424,6 @@ main {
     margin-top: var(--space-xs);
 }
 
-/* Related Products */
-.product-related {
-    margin-top: var(--space-xl);
-    border-top: 1px solid var(--color-border);
-    padding-top: var(--space-md);
-}
-
-.product-related h2 {
-    font-family: var(--font-display);
-    font-size: 1.25rem;
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: var(--space-md);
-}
-
-.product-related-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: var(--space-sm);
-}
-
-@media (max-width: 768px) {
-    .product-related-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-.product-related-card {
-    text-decoration: none;
-    color: inherit;
-}
-
-.product-related-image {
-    aspect-ratio: 1/1;
-    overflow: hidden;
-    background: var(--color-card-bg-alt);
-    margin-bottom: var(--space-xs);
-}
-
-.product-related-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s ease;
-}
-
-.product-related-card:hover .product-related-image img {
-    transform: scale(1.03);
-}
-
-.product-related-card h3 {
-    font-size: 0.9rem;
-    font-weight: 500;
-    margin: 0;
-}
-
 /* Selection / Mi selección Page */
 .seleccion-page {
     max-width: 720px;

@@ -3,7 +3,7 @@ export const prerender = false;
 
 import Layout from "../../layouts/Layout.astro";
 import ImageCarousel from "../../components/ImageCarousel.astro";
-import { getProduct, getProductsByArtist, urlFor } from "../../lib/sanity";
+import { getProduct, urlFor } from "../../lib/sanity";
 import { toHTML } from "@portabletext/to-html";
 
 const { slug } = Astro.params;
@@ -72,18 +72,11 @@ const productData = JSON.stringify({
     image: galleryImages[0]?.url || "",
 });
 
-// Related products from same artist
-const relatedProducts = product.artist
-    ? await getProductsByArtist(product.artist)
-    : [];
-const otherProducts = relatedProducts
-    .filter((p: any) => p._id !== product._id)
-    .slice(0, 4);
 ---
 
 <Layout title={`${product.title} — Tienda — Efímera`}>
     <div class="product-detail">
-        <a href="/tienda" class="product-back-link">← Volver a la tienda</a>
+        <a href={product.artist?.slug ? `/tienda/artista/${product.artist.slug.current}` : "/tienda"} class="product-back-link">← Volver a la tienda</a>
 
         <div class="product-detail-layout">
             <div class="product-detail-images">
@@ -94,7 +87,6 @@ const otherProducts = relatedProducts
             </div>
 
             <div class="product-detail-info">
-                <span class="product-detail-category">{product.category}</span>
                 <h1 class="product-detail-title">{product.title}</h1>
                 <p class="product-detail-price">{formattedPrice}</p>
 
@@ -121,34 +113,6 @@ const otherProducts = relatedProducts
                 )}
             </div>
         </div>
-
-        {otherProducts.length > 0 && (
-            <section class="product-related">
-                <h2>Más de {product.artist}</h2>
-                <div class="product-related-grid">
-                    {otherProducts.map((p: any) => (
-                        <a href={`/tienda/${p.slug.current}`} class="product-related-card">
-                            {p.mainImage && (
-                                <div class="product-related-image">
-                                    <img
-                                        src={urlFor(p.mainImage).width(400).height(400).url()}
-                                        alt={p.mainImage.alt || p.title}
-                                        loading="lazy"
-                                    />
-                                </div>
-                            )}
-                            <h3>{p.title}</h3>
-                            <p class="product-card-price">
-                                {new Intl.NumberFormat("es-ES", {
-                                    style: "currency",
-                                    currency: "EUR",
-                                }).format(p.price)}
-                            </p>
-                        </a>
-                    ))}
-                </div>
-            </section>
-        )}
     </div>
 </Layout>
 

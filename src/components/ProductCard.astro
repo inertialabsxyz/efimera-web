@@ -4,12 +4,11 @@ interface Props {
     slug: string;
     image?: string;
     price: number;
-    category: string;
     available?: boolean;
     description?: string;
 }
 
-const { title, slug, image, price, category, available = true, description } = Astro.props;
+const { title, slug, image, price, available = true, description } = Astro.props;
 
 const imageUrl = image || `https://picsum.photos/seed/${slug}/800/800`;
 const formattedPrice = new Intl.NumberFormat("es-ES", {
@@ -31,7 +30,6 @@ const formattedPrice = new Intl.NumberFormat("es-ES", {
         />
     </div>
     <div class="product-card-content">
-        <span class="product-card-category">{category}</span>
         <h2 class="product-card-title">{title}</h2>
         {description && <p class="product-card-description">{description}</p>}
         <p class="product-card-price">{formattedPrice}</p>

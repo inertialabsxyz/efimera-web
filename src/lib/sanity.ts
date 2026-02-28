@@ -184,6 +184,39 @@ export async function getPrensa() {
   `);
 }
 
+// Artist queries
+export async function getArtists() {
+  return client.fetch(`
+    *[_type == "artist"] | order(name asc) {
+      _id,
+      name,
+      slug,
+      image
+    }
+  `);
+}
+
+export async function getArtist(slug: string) {
+  return client.fetch(
+    `
+    *[_type == "artist" && slug.current == $slug][0] {
+      _id,
+      name,
+      slug,
+      image,
+      "relatedArticles": relatedArticles[]->{
+        _id,
+        title,
+        slug,
+        mainImage,
+        category
+      }
+    }
+  `,
+    { slug },
+  );
+}
+
 // Product queries
 export async function getProducts() {
   return client.fetch(`
@@ -192,32 +225,12 @@ export async function getProducts() {
       title,
       slug,
       mainImage,
-      category,
-      artist,
+      "artist": artist->{_id, name, slug},
       price,
       available,
       description
     }
   `);
-}
-
-export async function getProductsByCategory(category: string) {
-  return client.fetch(
-    `
-    *[_type == "product" && category == $category] | order(publishedAt desc) {
-      _id,
-      title,
-      slug,
-      mainImage,
-      category,
-      artist,
-      price,
-      available,
-      description
-    }
-  `,
-    { category },
-  );
 }
 
 export async function getProduct(slug: string) {
@@ -229,8 +242,7 @@ export async function getProduct(slug: string) {
       slug,
       mainImage,
       gallery,
-      category,
-      artist,
+      "artist": artist->{_id, name, slug},
       price,
       available,
       description,
@@ -242,23 +254,43 @@ export async function getProduct(slug: string) {
   );
 }
 
-export async function getProductsByArtist(artist: string) {
-  return client.fetch(
-    `
-    *[_type == "product" && artist == $artist] | order(publishedAt desc) {
-      _id,
-      title,
-      slug,
-      mainImage,
-      category,
-      artist,
-      price,
-      available,
-      description
-    }
-  `,
-    { artist },
-  );
+export async function getProductsByArtistPaginated(
+  artistId: string,
+  page: number = 1,
+  pageSize: number = 8,
+) {
+  const start = (page - 1) * pageSize;
+  const end = start + pageSize;
+
+  const [products, total] = await Promise.all([
+    client.fetch(
+      `
+      *[_type == "product" && artist._ref == $artistId] | order(publishedAt desc) [$start...$end] {
+        _id,
+        title,
+        slug,
+        mainImage,
+        "artist": artist->{_id, name, slug},
+        price,
+        available,
+        description
+      }
+    `,
+      { artistId, start, end },
+    ),
+    client.fetch(
+      `count(*[_type == "product" && artist._ref == $artistId])`,
+      { artistId },
+    ),
+  ]);
+
+  return {
+    products,
+    total,
+    page,
+    pageSize,
+    totalPages: Math.ceil(total / pageSize),
+  };
 }
 
 export async function getFeaturedGallery() {

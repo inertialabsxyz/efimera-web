@@ -58,22 +58,10 @@ export default {
         "Additional images shown in a carousel on the product detail page.",
     },
     {
-      name: "category",
-      title: "Category",
-      type: "string",
-      options: {
-        list: [
-          { title: "Obra original", value: "Obra original" },
-          { title: "Fotografías seriadas", value: "Fotografías seriadas" },
-          { title: "Revista", value: "Revista" },
-        ],
-      },
-      validation: (Rule) => Rule.required(),
-    },
-    {
       name: "artist",
       title: "Artist",
-      type: "string",
+      type: "reference",
+      to: [{ type: "artist" }],
       description: "The artist associated with this product.",
     },
     {
@@ -160,16 +148,15 @@ export default {
   preview: {
     select: {
       title: "title",
-      category: "category",
       price: "price",
       media: "mainImage",
       available: "available",
     },
-    prepare({ title, category, price, media, available }) {
+    prepare({ title, price, media, available }) {
       const status = available === false ? " · Agotado" : "";
       return {
         title,
-        subtitle: `${category || "Sin categoría"} · ${price ? price + " €" : "Sin precio"}${status}`,
+        subtitle: `${price ? price + " €" : "Sin precio"}${status}`,
         media,
       };
     },

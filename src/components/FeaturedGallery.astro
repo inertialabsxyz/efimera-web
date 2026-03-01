@@ -8,6 +8,7 @@ interface Slide {
     excerpt?: string;
     displayWidth?: number;
     displayHeight?: number;
+    url?: string;
     article?: {
         _id: string;
         title: string;
@@ -61,10 +62,12 @@ const preparedSlides = slides.map((slide) => {
             "Featured image",
         title: slide.title || slide.article?.title,
         excerpt: slide.excerpt || slide.article?.excerpt,
-        href: slide.article?.slug?.current
-            ? `/article/${slide.article.slug.current}`
-            : null,
-        isExternal: false,
+        href: slide.url
+            ? slide.url
+            : slide.article?.slug?.current
+                ? `/article/${slide.article.slug.current}`
+                : null,
+        isExternal: !!slide.url,
         displayWidth: slide.displayWidth,
         displayHeight: slide.displayHeight,
     };

@@ -301,6 +301,7 @@ export async function getFeaturedGallery() {
         image,
         title,
         excerpt,
+        url,
         displayWidth,
         displayHeight,
         "article": article->{

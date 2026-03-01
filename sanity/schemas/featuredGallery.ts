@@ -38,6 +38,17 @@ export default {
               type: "reference",
               to: [{ type: "article" }],
               description: "Optional: Link this slide to an article",
+              hidden: ({ parent }) => !!parent?.url,
+            },
+            {
+              name: "url",
+              title: "External URL",
+              type: "url",
+              description:
+                "Optional: Link this slide to an external URL (use instead of Linked Article)",
+              validation: (Rule) =>
+                Rule.uri({ scheme: ["http", "https"] }),
+              hidden: ({ parent }) => !!parent?.article,
             },
             {
               name: "title",
@@ -70,11 +81,12 @@ export default {
               media: "image",
               title: "title",
               articleTitle: "article.title",
+              url: "url",
             },
-            prepare({ media, title, articleTitle }) {
+            prepare({ media, title, articleTitle, url }) {
               return {
-                title: title || articleTitle || "Image Slide",
-                subtitle: "Image",
+                title: title || articleTitle || url || "Image Slide",
+                subtitle: url ? "External Link" : "Image",
                 media,
               };
             },

@@ -220,7 +220,7 @@ export async function getArtist(slug: string) {
 // Product queries
 export async function getProducts() {
   return client.fetch(`
-    *[_type == "product"] | order(publishedAt desc) {
+    *[_type == "product"] | order(orderRank asc) {
       _id,
       title,
       slug,
@@ -265,7 +265,7 @@ export async function getProductsByArtistPaginated(
   const [products, total] = await Promise.all([
     client.fetch(
       `
-      *[_type == "product" && artist._ref == $artistId] | order(publishedAt desc) [$start...$end] {
+      *[_type == "product" && artist._ref == $artistId] | order(orderRank asc) [$start...$end] {
         _id,
         title,
         slug,

@@ -29,8 +29,7 @@ const categories = [
     "Artistas",
     "Entrevistas",
     "Letras",
-    "Música",
-    "Revista",
+    "Efímera projects",
     "Tienda",
 ];
 const currentPath = Astro.url.pathname;
@@ -70,19 +69,19 @@ const currentPath = Astro.url.pathname;
                     {
                         categories.map((category) => {
                             const isAll = category === "Efímera";
-                            const isRevista = category === "Revista";
+                            const isProjects = category === "Efímera projects";
                             const isTienda = category === "Tienda";
                             const href = isAll
                                 ? "/"
-                                : isRevista
-                                  ? "/revista"
+                                : isProjects
+                                  ? "/efimera-projects"
                                   : isTienda
                                     ? "/tienda"
                                     : `/category/${category.toLowerCase()}`;
                             const isActive = isAll
                                 ? currentPath === "/"
-                                : isRevista
-                                  ? currentPath === "/revista"
+                                : isProjects
+                                  ? currentPath.startsWith("/efimera-projects")
                                   : isTienda
                                     ? currentPath.startsWith("/tienda")
                                     : currentPath.includes(
@@ -166,6 +165,28 @@ const currentPath = Astro.url.pathname;
                                 ></path>
                                 <rect x="2" y="9" width="4" height="12"></rect>
                                 <circle cx="4" cy="4" r="2"></circle>
+                            </svg>
+                        </a>
+                        <a
+                            href="https://open.spotify.com/playlist/3dkn2zpSR9MD5Y7aoJ8sUf?si=mJHbx5DMSf6vUxVl0bnxfw&pi=vlqQ7uFcQNS3s"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label="Spotify"
+                        >
+                            <svg
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <path d="M8 14.5c2.5-1 5.5-1 8 0"></path>
+                                <path d="M7 11.5c3.5-1.5 7.5-1.5 11 0"></path>
+                                <path d="M6 8.5c4.5-2 9.5-2 13 0"></path>
                             </svg>
                         </a>
                     </div>
@@ -260,71 +281,31 @@ const currentPath = Astro.url.pathname;
                         </svg>
                     </button>
                     <a href="mailto:info@efimera.xyz" aria-label="Email">
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <rect x="2" y="4" width="20" height="16" rx="2"
-                            ></rect>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="4" width="20" height="16" rx="2"></rect>
                             <path d="M22 6L12 13L2 6"></path>
                         </svg>
                     </a>
-                    <a
-                        href="https://www.instagram.com/_efimera_espacio_de_arte/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="Instagram"
-                    >
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <rect
-                                x="2"
-                                y="2"
-                                width="20"
-                                height="20"
-                                rx="5"
-                                ry="5"></rect>
-                            <path
-                                d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"
-                            ></path>
+                    <a href="https://www.instagram.com/_efimera_espacio_de_arte/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
                             <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
                         </svg>
                     </a>
-                    <a
-                        href="https://www.linkedin.com/company/ef%C3%ADmera/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        aria-label="LinkedIn"
-                    >
-                        <svg
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1.5"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                        >
-                            <path
-                                d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"
-                            ></path>
+                    <a href="https://www.linkedin.com/company/ef%C3%ADmera/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                             <rect x="2" y="9" width="4" height="12"></rect>
                             <circle cx="4" cy="4" r="2"></circle>
+                        </svg>
+                    </a>
+                    <a href="https://open.spotify.com/playlist/3dkn2zpSR9MD5Y7aoJ8sUf?si=mJHbx5DMSf6vUxVl0bnxfw&pi=vlqQ7uFcQNS3s" target="_blank" rel="noopener noreferrer" aria-label="Spotify">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M8 14.5c2.5-1 5.5-1 8 0"></path>
+                            <path d="M7 11.5c3.5-1.5 7.5-1.5 11 0"></path>
+                            <path d="M6 8.5c4.5-2 9.5-2 13 0"></path>
                         </svg>
                     </a>
                 </div>

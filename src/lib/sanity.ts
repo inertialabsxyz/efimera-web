@@ -293,6 +293,18 @@ export async function getProductsByArtistPaginated(
   };
 }
 
+export async function getEfimeraProjectsPage() {
+  return client.fetch(`
+    *[_type == "efimeraProjectsPage"][0] {
+      introTitle,
+      introText,
+      inSituImage,
+      offSiteImage,
+      onlineImage
+    }
+  `);
+}
+
 export async function getFeaturedGallery() {
   return client.fetch(`
     *[_type == "featuredGallery"][0] {

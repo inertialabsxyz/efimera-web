@@ -1,0 +1,104 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import ArticleCard from "../../components/ArticleCard.astro";
+import Pagination from "../../components/Pagination.astro";
+import { getArticlesByCategoryPaginated, urlFor } from "../../lib/sanity";
+
+const { subcategory } = Astro.params;
+
+const subcategoryMap: Record<string, string> = {
+    "in-situ": "In situ",
+    "off-site": "Off-site",
+    "online": "Online",
+};
+
+const categoryName = subcategoryMap[subcategory || ""];
+
+if (!categoryName) {
+    return Astro.redirect("/efimera-projects");
+}
+
+const pageParam = Astro.url.searchParams.get("page");
+const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
+
+const { articles, totalPages } = await getArticlesByCategoryPaginated(
+    categoryName,
+    currentPage,
+    10,
+);
+---
+
+<Layout title={`${categoryName} — Efímera Projects`}>
+    <div class="subcategory-header">
+        <a href="/efimera-projects" class="back-link">&larr; Efímera Projects</a>
+        <h1>{categoryName}</h1>
+    </div>
+    {
+        articles.length > 0 ? (
+            <>
+                <div class="article-grid">
+                    {articles.map((article) => (
+                        <ArticleCard
+                            title={article.title}
+                            slug={article.slug.current}
+                            category={article.category}
+                            image={
+                                article.mainImage
+                                    ? urlFor(article.mainImage)
+                                          .width(800)
+                                          .height(600)
+                                          .url()
+                                    : undefined
+                            }
+                            excerpt={article.excerpt}
+                        />
+                    ))}
+                </div>
+                <Pagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    baseUrl={`/efimera-projects/${subcategory}`}
+                />
+            </>
+        ) : (
+            <div class="empty-state">
+                <p>Aún no hay artículos en esta categoría.</p>
+            </div>
+        )
+    }
+</Layout>
+
+<style>
+    .subcategory-header {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: var(--space-md) var(--space-md) 0;
+    }
+
+    .back-link {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        display: inline-block;
+        margin-bottom: var(--space-xs);
+    }
+
+    .back-link:hover {
+        color: var(--color-text);
+    }
+
+    .subcategory-header h1 {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 8rem 2rem;
+        color: var(--color-text-muted);
+    }
+</style>

@@ -1,0 +1,137 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import { getEfimeraProjectsPage, urlFor } from "../../lib/sanity";
+
+const page = await getEfimeraProjectsPage();
+
+const subcategories = [
+    {
+        name: "In situ",
+        slug: "in-situ",
+        image: page?.inSituImage,
+    },
+    {
+        name: "Off-site",
+        slug: "off-site",
+        image: page?.offSiteImage,
+    },
+    {
+        name: "Online",
+        slug: "online",
+        image: page?.onlineImage,
+    },
+];
+---
+
+<Layout title="Efímera Projects">
+    <div class="projects-page">
+        <section class="projects-intro">
+            {page?.introTitle && <h1 class="intro-title">{page.introTitle}</h1>}
+            {page?.introText && <p class="intro-text">{page.introText}</p>}
+        </section>
+
+        <section class="subcategories-grid">
+            {
+                subcategories.map((sub) => (
+                    <a
+                        href={`/efimera-projects/${sub.slug}`}
+                        class="subcategory-card"
+                    >
+                        <div class="subcategory-image">
+                            {sub.image ? (
+                                <img
+                                    src={urlFor(sub.image)
+                                        .width(800)
+                                        .height(600)
+                                        .url()}
+                                    alt={sub.image.alt || sub.name}
+                                    loading="lazy"
+                                />
+                            ) : (
+                                <div class="placeholder" />
+                            )}
+                        </div>
+                        <h2 class="subcategory-name">{sub.name}</h2>
+                    </a>
+                ))
+            }
+        </section>
+    </div>
+</Layout>
+
+<style>
+    .projects-page {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: var(--space-sm) var(--space-md) var(--space-md);
+    }
+
+    .projects-intro {
+        margin-bottom: var(--space-lg);
+    }
+
+    .intro-title {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: var(--space-sm);
+    }
+
+    .intro-text {
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+        max-width: 720px;
+    }
+
+    .subcategories-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-sm);
+    }
+
+    .subcategory-card {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .subcategory-image {
+        aspect-ratio: 4 / 3;
+        overflow: hidden;
+        margin-bottom: var(--space-xs);
+    }
+
+    .subcategory-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s ease;
+    }
+
+    .subcategory-card:hover .subcategory-image img {
+        transform: scale(1.03);
+    }
+
+    .subcategory-image .placeholder {
+        width: 100%;
+        height: 100%;
+        background: var(--color-card-bg-alt, #f0f0f0);
+    }
+
+    .subcategory-name {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 768px) {
+        .subcategories-grid {
+            grid-template-columns: 1fr;
+            gap: var(--space-md);
+        }
+    }
+</style>

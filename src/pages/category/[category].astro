@@ -7,6 +7,7 @@ import Pagination from "../../components/Pagination.astro";
 import {
     getArticlesByCategoryPaginated,
     getArticlesPaginated,
+    getRevistas,
     urlFor,
 } from "../../lib/sanity";
 
@@ -17,13 +18,44 @@ const categoryTitle = category
 
 // "Todos" means "All" in Spanish - show all articles
 const isAll = category?.toLowerCase() === "todos";
+const isLetras = category?.toLowerCase() === "letras";
 
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 
-const { articles, totalPages } = isAll
-    ? await getArticlesPaginated(currentPage, 10)
-    : await getArticlesByCategoryPaginated(categoryTitle, currentPage, 10);
+// For Letras, merge articles and revistas sorted by publishedAt
+let articles: any[] = [];
+let totalPages = 1;
+
+if (isLetras) {
+    const [letrasResult, revistas] = await Promise.all([
+        getArticlesByCategoryPaginated("Letras", 1, 1000),
+        getRevistas(),
+    ]);
+    const allItems = [
+        ...letrasResult.articles.map((a: any) => ({ ...a, _itemType: "article" })),
+        ...(revistas || []).map((r: any) => ({
+            ...r,
+            _itemType: "revista",
+            mainImage: r.coverImage,
+            category: "Revista",
+            slug: { current: r.slug?.current },
+        })),
+    ].sort((a, b) => new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime());
+
+    const pageSize = 10;
+    const start = (currentPage - 1) * pageSize;
+    articles = allItems.slice(start, start + pageSize);
+    totalPages = Math.ceil(allItems.length / pageSize);
+} else if (isAll) {
+    const result = await getArticlesPaginated(currentPage, 10);
+    articles = result.articles;
+    totalPages = result.totalPages;
+} else {
+    const result = await getArticlesByCategoryPaginated(categoryTitle, currentPage, 10);
+    articles = result.articles;
+    totalPages = result.totalPages;
+}
 
 // Demo articles filtered by category
 // const allArticles = [
@@ -80,8 +112,6 @@ const categories = [
     "Artistas",
     "Exposiciones",
     "Letras",
-    "Música",
-    "Revista",
 ];
 ---
 
@@ -90,22 +120,53 @@ const categories = [
         articles.length > 0 ? (
             <>
                 <div class="article-grid">
-                    {articles.map((article, index) => (
-                        <ArticleCard
-                            title={article.title}
-                            slug={article.slug.current}
-                            category={article.category}
-                            image={
-                                article.mainImage
-                                    ? urlFor(article.mainImage)
-                                          .width(800)
-                                          .height(600)
-                                          .url()
-                                    : undefined
-                            }
-                            excerpt={article.excerpt}
-                        />
-                    ))}
+                    {articles.map((article) =>
+                        article._itemType === "revista" ? (
+                            <a
+                                href={article.pdfUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="article-card"
+                            >
+                                <span class="article-card-category">Revista</span>
+                                <div class="article-card-image">
+                                    {article.mainImage && (
+                                        <img
+                                            src={urlFor(article.mainImage)
+                                                .width(800)
+                                                .height(600)
+                                                .url()}
+                                            alt={article.mainImage?.alt || article.title}
+                                            width="800"
+                                            height="600"
+                                            loading="lazy"
+                                        />
+                                    )}
+                                </div>
+                                <div class="article-card-content">
+                                    <h2 class="article-card-title">{article.title}</h2>
+                                    {article.excerpt && (
+                                        <p class="article-card-excerpt">{article.excerpt}</p>
+                                    )}
+                                </div>
+                            </a>
+                        ) : (
+                            <ArticleCard
+                                title={article.title}
+                                slug={article.slug.current}
+                                category={article.category}
+                                image={
+                                    article.mainImage
+                                        ? urlFor(article.mainImage)
+                                              .width(800)
+                                              .height(600)
+                                              .url()
+                                        : undefined
+                                }
+                                excerpt={article.excerpt}
+                            />
+                        )
+                    )}
                 </div>
                 <Pagination
                     currentPage={currentPage}

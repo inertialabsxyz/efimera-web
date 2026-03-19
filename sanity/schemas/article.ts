@@ -169,6 +169,35 @@ export default {
             },
           ],
         },
+        {
+          name: "video",
+          type: "object",
+          title: "Video",
+          fields: [
+            {
+              name: "file",
+              title: "Video File",
+              type: "file",
+              options: {
+                accept: "video/*",
+              },
+              validation: (Rule) => Rule.required(),
+            },
+            {
+              name: "caption",
+              title: "Caption",
+              type: "string",
+            },
+          ],
+          preview: {
+            select: { caption: "caption" },
+            prepare({ caption }) {
+              return {
+                title: caption || "Video",
+              };
+            },
+          },
+        },
       ],
     },
     {
@@ -183,6 +212,19 @@ export default {
       ],
       description: "Select articles to display as related content.",
     },
+    {
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "Español", value: "es" },
+          { title: "English", value: "en" },
+        ],
+      },
+      initialValue: "es",
+      validation: (Rule) => Rule.required(),
+    },
   ],
   preview: {
     select: {
@@ -190,10 +232,12 @@ export default {
       author: "author.name",
       media: "mainImage",
       category: "category",
+      language: "language",
     },
-    prepare({ title, author, media, category }) {
+    prepare({ title, author, media, category, language }) {
+      const lang = language === "en" ? " [EN]" : "";
       return {
-        title,
+        title: `${title}${lang}`,
         subtitle: `${category || "Uncategorized"} · ${author || "No author"}`,
         media,
       };

@@ -5,11 +5,12 @@ import Layout from "../../layouts/Layout.astro";
 import ImageCarousel from "../../components/ImageCarousel.astro";
 import { getArticle, urlFor } from "../../lib/sanity";
 import { toHTML } from "@portabletext/to-html";
+import { getLang, t, getLocalePath, type Locale } from "../../lib/i18n";
 
+const lang = getLang(Astro);
 const { slug } = Astro.params;
 
-// For production, use:
-const article = await getArticle(slug);
+const article = await getArticle(slug, lang);
 
 // Demo article for preview
 // const article = {
@@ -48,7 +49,7 @@ if (!article) {
 }
 
 const formattedDate = new Date(article.publishedAt).toLocaleDateString(
-    "en-US",
+    lang === "es" ? "es-ES" : "en-US",
     {
         month: "long",
         day: "numeric",
@@ -77,6 +78,20 @@ const galleryImages = hasGallery
                 alt: article.title,
             },
         ];
+
+function renderVideo({ value }: { value: any }) {
+    if (!value?.file?.asset?._ref) return "";
+    // Convert Sanity file asset ref to URL
+    // Format: file-<id>-<ext>
+    const ref = value.file.asset._ref;
+    const [, id, ext] = ref.match(/^file-(.+)-(\w+)$/) || [];
+    if (!id || !ext) return "";
+    const projectId = import.meta.env.SANITY_PROJECT_ID || "msziqj4u";
+    const dataset = import.meta.env.SANITY_DATASET || "efimera-data";
+    const videoUrl = `https://cdn.sanity.io/files/${projectId}/${dataset}/${id}.${ext}`;
+    const caption = value.caption ? `<figcaption>${value.caption}</figcaption>` : "";
+    return `<figure class="video-embed"><video controls playsinline preload="metadata"><source src="${videoUrl}" type="video/${ext === "mov" ? "quicktime" : ext}" /></video>${caption}</figure>`;
+}
 
 // Convert Portable Text to HTML
 function renderImage({ value }: { value: any }) {
@@ -113,6 +128,7 @@ const bodyHtml = article.body
           components: {
               types: {
                   image: renderImage,
+                  video: renderVideo,
               },
           },
       })
@@ -143,11 +159,11 @@ const bodyHtml = article.body
         {
             article.relatedArticles && article.relatedArticles.length > 0 && (
                 <section class="related-articles">
-                    <h2>Artículos relacionados</h2>
+                    <h2>{t("article.related", lang)}</h2>
                     <div class="related-articles-grid">
                         {article.relatedArticles.map((related: any) => (
                             <a
-                                href={`/article/${related.slug.current}`}
+                                href={getLocalePath(`/article/${related.slug.current}`, lang)}
                                 class="related-article-card"
                             >
                                 {related.mainImage && (
@@ -256,5 +272,23 @@ const bodyHtml = article.body
         .related-articles-grid {
             grid-template-columns: 1fr;
         }
+    }
+</style>
+
+<style is:global>
+    .video-embed {
+        margin: var(--space-md) 0;
+    }
+
+    .video-embed video {
+        width: 100%;
+        height: auto;
+    }
+
+    .video-embed figcaption {
+        font-size: 0.85rem;
+        color: var(--color-text-muted);
+        margin-top: var(--space-xs);
+        text-align: center;
     }
 </style>

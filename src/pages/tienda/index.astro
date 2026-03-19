@@ -1,20 +1,22 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getArtists, urlFor } from "../../lib/sanity";
+import { getLang, t, getLocalePath, type Locale } from "../../lib/i18n";
 
+const lang = getLang(Astro);
 const artists = await getArtists();
 ---
 
-<Layout title="Tienda — Efímera">
+<Layout title={`${t("tienda.title", lang)} — Efímera`}>
     <div class="store-header">
-        <h1 class="store-title">Tienda</h1>
+        <h1 class="store-title">{t("tienda.title", lang)}</h1>
     </div>
 
     {artists && artists.length > 0 ? (
         <div class="artist-grid">
             {artists.map((artist, index) => (
                 <div class="artist-grid-item" style={`animation-delay: ${index * 0.05}s`}>
-                    <a href={`/tienda/artista/${artist.slug.current}`} class="artist-card">
+                    <a href={getLocalePath(`/tienda/artista/${artist.slug.current}`, lang)} class="artist-card">
                         <div class="artist-card-image">
                             {artist.image ? (
                                 <img
@@ -35,7 +37,7 @@ const artists = await getArtists();
         </div>
     ) : (
         <div class="empty-state">
-            <p>Aún no hay artistas disponibles.</p>
+            <p>{t("empty.artists", lang)}</p>
         </div>
     )}
 </Layout>

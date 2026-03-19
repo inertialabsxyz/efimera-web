@@ -9,4 +9,12 @@ export default defineConfig({
   image: {
     domains: ["cdn.sanity.io"],
   },
+  i18n: {
+    defaultLocale: "es",
+    locales: ["es", "en"],
+    routing: {
+      prefixDefaultLocale: false,
+      redirectToDefaultLocale: false,
+    },
+  },
 });

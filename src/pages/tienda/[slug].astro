@@ -5,9 +5,11 @@ import Layout from "../../layouts/Layout.astro";
 import ImageCarousel from "../../components/ImageCarousel.astro";
 import { getProduct, urlFor } from "../../lib/sanity";
 import { toHTML } from "@portabletext/to-html";
+import { getLang, t, getLocalePath, type Locale } from "../../lib/i18n";
 
+const lang = getLang(Astro);
 const { slug } = Astro.params;
-const product = await getProduct(slug);
+const product = await getProduct(slug, lang);
 
 if (!product) {
     return Astro.redirect("/404");
@@ -74,9 +76,9 @@ const productData = JSON.stringify({
 
 ---
 
-<Layout title={`${product.title} — Tienda — Efímera`}>
+<Layout title={`${product.title} — ${t("tienda.title", lang)} — Efímera`}>
     <div class="product-detail">
-        <a href={product.artist?.slug ? `/tienda/artista/${product.artist.slug.current}` : "/tienda"} class="product-back-link">← Volver a la tienda</a>
+        <a href={product.artist?.slug ? getLocalePath(`/tienda/artista/${product.artist.slug.current}`, lang) : getLocalePath("/tienda", lang)} class="product-back-link">&larr; {t("tienda.backToStore", lang)}</a>
 
         <div class="product-detail-layout">
             <div class="product-detail-images">
@@ -91,7 +93,7 @@ const productData = JSON.stringify({
                 <p class="product-detail-price">{formattedPrice}</p>
 
                 {product.available === false && (
-                    <p class="product-detail-unavailable">Agotado</p>
+                    <p class="product-detail-unavailable">{t("tienda.soldOut", lang)}</p>
                 )}
 
                 {product.description && (
@@ -103,8 +105,12 @@ const productData = JSON.stringify({
                         class="product-inquiry-btn"
                         id="add-to-seleccion"
                         data-product={productData}
+                        data-label-add={t("tienda.addToSelection", lang)}
+                        data-label-added={`${t("tienda.added", lang)} ✓`}
+                        data-label-in-selection={t("tienda.inSelection", lang)}
+                        data-seleccion-url={getLocalePath("/tienda/seleccion", lang)}
                     >
-                        Añadir a mi selección
+                        {t("tienda.addToSelection", lang)}
                     </button>
                 )}
 
@@ -120,10 +126,14 @@ const productData = JSON.stringify({
     const btn = document.getElementById("add-to-seleccion");
     if (btn) {
         const product = JSON.parse(btn.dataset.product || "{}");
+        const labelAdd = btn.dataset.labelAdd || "Add to my selection";
+        const labelAdded = btn.dataset.labelAdded || "Added";
+        const labelInSelection = btn.dataset.labelInSelection || "Already in your selection";
+        const seleccionUrl = btn.dataset.seleccionUrl || "/tienda/seleccion";
 
         function updateButtonState() {
             if (window.seleccionHas && window.seleccionHas(product.id)) {
-                btn.textContent = "Ya en tu selección";
+                btn.textContent = labelInSelection;
                 btn.classList.add("added");
             }
         }
@@ -132,15 +142,15 @@ const productData = JSON.stringify({
 
         btn.addEventListener("click", () => {
             if (window.seleccionHas && window.seleccionHas(product.id)) {
-                window.location.href = "/tienda/seleccion";
+                window.location.href = seleccionUrl;
                 return;
             }
             if (window.seleccionAdd) {
                 window.seleccionAdd(product);
-                btn.textContent = "Añadido ✓";
+                btn.textContent = labelAdded;
                 btn.classList.add("added");
                 setTimeout(() => {
-                    btn.textContent = "Ya en tu selección";
+                    btn.textContent = labelInSelection;
                 }, 1500);
             }
         });

@@ -1,5 +1,6 @@
 ---
 import { Image } from "astro:assets";
+import { getLocalePath, t, type Locale } from "../lib/i18n";
 
 interface Props {
     title: string;
@@ -8,16 +9,17 @@ interface Props {
     image?: string;
     excerpt?: string;
     featured?: boolean;
+    lang?: Locale;
 }
 
-const { title, slug, category, image, excerpt, featured = false } = Astro.props;
+const { title, slug, category, image, excerpt, featured = false, lang = "es" } = Astro.props;
 
 // Placeholder image if none provided
 const imageUrl = image || `https://picsum.photos/seed/${slug}/800/600`;
 ---
 
-<a href={`/article/${slug}`} class:list={["article-card", { featured }]}>
-    <span class="article-card-category">{category}</span>
+<a href={getLocalePath(`/article/${slug}`, lang)} class:list={["article-card", { featured }]}>
+    <span class="article-card-category">{t(`cat.${category}`, lang) !== `cat.${category}` ? t(`cat.${category}`, lang) : category}</span>
     <div class="article-card-image">
         <Image
             src={imageUrl}

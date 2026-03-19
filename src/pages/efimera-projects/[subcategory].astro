@@ -5,7 +5,9 @@ import Layout from "../../layouts/Layout.astro";
 import ArticleCard from "../../components/ArticleCard.astro";
 import Pagination from "../../components/Pagination.astro";
 import { getArticlesByCategoryPaginated, urlFor } from "../../lib/sanity";
+import { getLang, t, getLocalePath, type Locale } from "../../lib/i18n";
 
+const lang = getLang(Astro);
 const { subcategory } = Astro.params;
 
 const subcategoryMap: Record<string, string> = {
@@ -27,12 +29,13 @@ const { articles, totalPages } = await getArticlesByCategoryPaginated(
     categoryName,
     currentPage,
     10,
+    lang,
 );
 ---
 
 <Layout title={`${categoryName} — Efímera Projects`}>
     <div class="subcategory-header">
-        <a href="/efimera-projects" class="back-link">&larr; Efímera Projects</a>
+        <a href={getLocalePath("/efimera-projects", lang)} class="back-link">&larr; Efímera Projects</a>
         <h1>{categoryName}</h1>
     </div>
     {
@@ -53,18 +56,20 @@ const { articles, totalPages } = await getArticlesByCategoryPaginated(
                                     : undefined
                             }
                             excerpt={article.excerpt}
+                            lang={lang}
                         />
                     ))}
                 </div>
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    baseUrl={`/efimera-projects/${subcategory}`}
+                    baseUrl={getLocalePath(`/efimera-projects/${subcategory}`, lang)}
+                    lang={lang}
                 />
             </>
         ) : (
             <div class="empty-state">
-                <p>Aún no hay artículos en esta categoría.</p>
+                <p>{t("empty.category", lang)}</p>
             </div>
         )
     }

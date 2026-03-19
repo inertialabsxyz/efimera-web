@@ -1,4 +1,6 @@
 ---
+import { t, getLocalePath, type Locale } from "../lib/i18n";
+
 interface Article {
     _id: string;
     title: string;
@@ -10,9 +12,16 @@ interface Article {
 
 interface Props {
     articles: Article[];
+    lang?: Locale;
 }
 
-const { articles } = Astro.props;
+const { articles, lang = "es" } = Astro.props;
+const searchPlaceholder = t("search.placeholder", lang);
+const searchTypeToSearch = t("search.typeToSearch", lang);
+const searchNoResults = t("search.noResults", lang);
+const searchResult = t("search.result", lang);
+const searchResults = t("search.results", lang);
+const articlePathPrefix = getLocalePath("/article/", lang);
 ---
 
 <div id="search-modal" class="search-modal" aria-hidden="true">
@@ -37,7 +46,7 @@ const { articles } = Astro.props;
                 <input
                     type="text"
                     id="search-input"
-                    placeholder="Buscar artículos..."
+                    placeholder={searchPlaceholder}
                     autocomplete="off"
                 />
                 <kbd class="search-shortcut">ESC</kbd>
@@ -45,13 +54,13 @@ const { articles } = Astro.props;
         </div>
         <div class="search-modal-body" id="search-results">
             <div class="search-empty-state">
-                <p>Escribe para buscar artículos</p>
+                <p>{searchTypeToSearch}</p>
             </div>
         </div>
     </div>
 </div>
 
-<script define:vars={{ articles }}>
+<script define:vars={{ articles, searchTypeToSearch, searchNoResults, searchResult, searchResults, articlePathPrefix }}>
     const modal = document.getElementById("search-modal");
     const searchInput = document.getElementById("search-input");
     const resultsContainer = document.getElementById("search-results");
@@ -82,7 +91,7 @@ const { articles } = Astro.props;
         if (searchInput.value.trim() === "") {
             resultsContainer.innerHTML = `
                 <div class="search-empty-state">
-                    <p>Escribe para buscar artículos</p>
+                    <p>${searchTypeToSearch}</p>
                 </div>
             `;
             return;
@@ -91,7 +100,7 @@ const { articles } = Astro.props;
         if (results.length === 0) {
             resultsContainer.innerHTML = `
                 <div class="search-empty-state">
-                    <p>No se encontraron artículos</p>
+                    <p>${searchNoResults}</p>
                 </div>
             `;
             return;
@@ -99,13 +108,13 @@ const { articles } = Astro.props;
 
         resultsContainer.innerHTML = `
             <div class="search-results-header">
-                <span class="search-results-count">${results.length} ${results.length === 1 ? "resultado" : "resultados"}</span>
+                <span class="search-results-count">${results.length} ${results.length === 1 ? searchResult : searchResults}</span>
             </div>
             <div class="search-results-list">
                 ${results
                     .map(
                         (article, index) => `
-                    <a href="/article/${article.slug.current}" class="search-result-card" data-index="${index}">
+                    <a href="${articlePathPrefix}${article.slug.current}" class="search-result-card" data-index="${index}">
                         <div class="search-result-image">
                             ${
                                 article.imageUrl

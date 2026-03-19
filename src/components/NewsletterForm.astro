@@ -1,34 +1,39 @@
 ---
+import { t, type Locale } from "../lib/i18n";
+
 interface Props {
     variant?: 'footer' | 'homepage';
+    lang?: Locale;
 }
 
-const { variant = 'footer' } = Astro.props;
+const { variant = 'footer', lang = 'es' } = Astro.props;
+const successMsg = t("newsletter.success", lang);
+const errorMsg = t("newsletter.error", lang);
 ---
 
 <div class:list={['newsletter-form', `newsletter-form--${variant}`]}>
     {variant === 'homepage' && (
-        <h2 class="newsletter-title">Newsletter</h2>
+        <h2 class="newsletter-title">{t("newsletter.title", lang)}</h2>
     )}
     <p class="newsletter-description">
         {variant === 'homepage'
-            ? 'Suscríbete para recibir las últimas novedades de Efímera'
-            : 'Suscríbete a nuestro newsletter'
+            ? t("newsletter.descriptionHomepage", lang)
+            : t("newsletter.descriptionFooter", lang)
         }
     </p>
-    <form class="newsletter-form-element" data-newsletter-form>
+    <form class="newsletter-form-element" data-newsletter-form data-success={successMsg} data-error={errorMsg}>
         <div class="newsletter-input-group">
             <label for={`email-${variant}`} class="sr-only">Email</label>
             <input
                 type="email"
                 id={`email-${variant}`}
                 name="email"
-                placeholder="tu@email.com"
+                placeholder={t("newsletter.placeholder", lang)}
                 required
                 class="newsletter-input"
             />
             <button type="submit" class="newsletter-button">
-                <span class="newsletter-button-text">Suscribir</span>
+                <span class="newsletter-button-text">{t("newsletter.submit", lang)}</span>
                 <span class="newsletter-button-loading" aria-hidden="true">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <circle cx="12" cy="12" r="10" stroke-dasharray="32" stroke-dashoffset="32">
@@ -204,16 +209,20 @@ const { variant = 'footer' } = Astro.props;
 
                 const data = await response.json();
 
+                const successText = formEl.dataset.success || 'Thank you!';
+                const errorText = formEl.dataset.error || 'Error. Please try again.';
+
                 if (response.ok) {
-                    message.textContent = '¡Gracias por suscribirte!';
+                    message.textContent = successText;
                     message.classList.add('success');
                     emailInput.value = '';
                 } else {
-                    message.textContent = data.error || 'Error al suscribirse. Inténtalo de nuevo.';
+                    message.textContent = data.error || errorText;
                     message.classList.add('error');
                 }
             } catch (error) {
-                message.textContent = 'Error de conexión. Inténtalo de nuevo.';
+                const errorText = formEl.dataset.error || 'Error. Please try again.';
+                message.textContent = errorText;
                 message.classList.add('error');
             } finally {
                 button.disabled = false;

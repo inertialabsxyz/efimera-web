@@ -134,15 +134,30 @@ export default {
       ],
       validation: (Rule) => Rule.min(1).error("Add at least one slide"),
     },
+    {
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "Español", value: "es" },
+          { title: "English", value: "en" },
+        ],
+      },
+      initialValue: "es",
+      validation: (Rule) => Rule.required(),
+    },
   ],
   preview: {
     select: {
       slides: "slides",
+      language: "language",
     },
-    prepare({ slides }) {
+    prepare({ slides, language }) {
       const count = slides?.length || 0;
+      const lang = language === "en" ? " [EN]" : "";
       return {
-        title: "Featured Gallery",
+        title: `Featured Gallery${lang}`,
         subtitle: `${count} slide${count !== 1 ? "s" : ""}`,
       };
     },

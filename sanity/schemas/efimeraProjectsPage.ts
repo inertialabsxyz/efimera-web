@@ -64,11 +64,28 @@ export default {
       ],
       description: "Image for the 'Online' subcategory card",
     },
+    {
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "Español", value: "es" },
+          { title: "English", value: "en" },
+        ],
+      },
+      initialValue: "es",
+      validation: (Rule) => Rule.required(),
+    },
   ],
   preview: {
-    prepare() {
+    select: {
+      language: "language",
+    },
+    prepare({ language }) {
+      const lang = language === "en" ? " [EN]" : "";
       return {
-        title: "Efímera Projects Page",
+        title: `Efímera Projects Page${lang}`,
         subtitle: "Landing page configuration",
       };
     },

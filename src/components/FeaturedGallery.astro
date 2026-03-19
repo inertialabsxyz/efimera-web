@@ -1,5 +1,6 @@
 ---
 import { urlFor } from "../lib/sanity";
+import { getLocalePath, type Locale } from "../lib/i18n";
 
 interface Slide {
     _type: string;
@@ -26,9 +27,10 @@ interface Slide {
 
 interface Props {
     slides: Slide[];
+    lang?: Locale;
 }
 
-const { slides } = Astro.props;
+const { slides, lang = "es" } = Astro.props;
 
 if (!slides || slides.length === 0) {
     return null;
@@ -65,7 +67,7 @@ const preparedSlides = slides.map((slide) => {
         href: slide.url
             ? slide.url
             : slide.article?.slug?.current
-                ? `/article/${slide.article.slug.current}`
+                ? getLocalePath(`/article/${slide.article.slug.current}`, lang)
                 : null,
         isExternal: !!slide.url,
         displayWidth: slide.displayWidth,

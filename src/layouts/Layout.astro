@@ -4,17 +4,19 @@ import Analytics from "@vercel/analytics/astro";
 import SearchModal from "../components/SearchModal.astro";
 import NewsletterForm from "../components/NewsletterForm.astro";
 import { getArticles, urlFor } from "../lib/sanity";
+import { getLang, t, getLocalePath, getNavItems, type Locale } from "../lib/i18n";
 
 interface Props {
     title?: string;
     description?: string;
 }
 
-const { title = "Efímera", description = "Espacio de arte contemporáneo " } =
+const lang = getLang(Astro);
+const { title = "Efímera", description = t("meta.description", lang) } =
     Astro.props;
 
 const isStaging = import.meta.env.PUBLIC_STAGING === "true";
-const rawArticles = await getArticles();
+const rawArticles = await getArticles(lang);
 const articles = rawArticles.map((article: any) => ({
     ...article,
     imageUrl: article.mainImage
@@ -22,27 +24,23 @@ const articles = rawArticles.map((article: any) => ({
         : null,
 }));
 
-const categories = [
-    "Efímera",
-    "Exposiciones",
-    "Actividades",
-    "Artistas",
-    "Entrevistas",
-    "Letras",
-    "Tienda",
-    "Efímera projects",
-];
+const navItems = getNavItems(lang);
 const currentPath = Astro.url.pathname;
+const alternateLang = lang === "es" ? "en" : "es";
+const cleanPath = currentPath.replace(/^\/en(\/|$)/, "/");
+const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content={description} />
         <title>{title}</title>
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+        <link rel="alternate" hreflang="es" href={getLocalePath(cleanPath, "es")} />
+        <link rel="alternate" hreflang="en" href={getLocalePath(cleanPath, "en")} />
         <script is:inline>
             const theme =
                 localStorage.getItem("theme") ||
@@ -55,7 +53,7 @@ const currentPath = Astro.url.pathname;
     <body>
         {isStaging && <div class="staging-banner">STAGING</div>}
         <header class="site-header">
-            <a href="/" class="site-logo">
+            <a href={getLocalePath("/", lang)} class="site-logo">
                 <img src="/efimera-logo.svg" alt="Efímera" class="logo-light" />
                 <img
                     src="/efimera-logo-white.svg"
@@ -67,32 +65,17 @@ const currentPath = Astro.url.pathname;
             <div class="header-right">
                 <nav class="site-nav">
                     {
-                        categories.map((category) => {
-                            const isAll = category === "Efímera";
-                            const isProjects = category === "Efímera projects";
-                            const isTienda = category === "Tienda";
-                            const href = isAll
-                                ? "/"
-                                : isProjects
-                                  ? "/efimera-projects"
-                                  : isTienda
-                                    ? "/tienda"
-                                    : `/category/${category.toLowerCase()}`;
-                            const isActive = isAll
-                                ? currentPath === "/"
-                                : isProjects
-                                  ? currentPath.startsWith("/efimera-projects")
-                                  : isTienda
-                                    ? currentPath.startsWith("/tienda")
-                                    : currentPath.includes(
-                                          category.toLowerCase(),
-                                      );
+                        navItems.map((item) => {
+                            const isHome = item.href === getLocalePath("/", lang);
+                            const isActive = isHome
+                                ? currentPath === item.href
+                                : currentPath.startsWith(item.href);
                             return (
                                 <a
-                                    href={href}
+                                    href={item.href}
                                     class:list={[{ active: isActive }]}
                                 >
-                                    {category}
+                                    {item.label}
                                 </a>
                             );
                         })
@@ -194,10 +177,17 @@ const currentPath = Astro.url.pathname;
 
                 <div class="header-actions">
                     <a
-                        href="/tienda/seleccion"
+                        href={alternatePath}
+                        class="lang-switcher"
+                        aria-label={t("lang.switchLabel", lang)}
+                    >
+                        {t("lang.switch", lang)}
+                    </a>
+                    <a
+                        href={getLocalePath("/tienda/seleccion", lang)}
                         class="seleccion-link"
                         id="seleccion-link"
-                        aria-label="Mi selección"
+                        aria-label={t("tienda.selection", lang)}
                     >
                         <svg
                             width="18"
@@ -264,7 +254,7 @@ const currentPath = Astro.url.pathname;
                     <button
                         id="search-button"
                         class="search-button"
-                        aria-label="Buscar"
+                        aria-label={t("search.label", lang)}
                     >
                         <svg
                             width="18"
@@ -338,19 +328,19 @@ const currentPath = Astro.url.pathname;
         <footer class="site-footer">
             <div class="footer-left">
                 <div class="footer-links">
-                    <a href="/about">Acerca de</a>
-                    <a href="/contact">Contacto</a>
-                    <a href="/privacy">Privacidad</a>
-                    <a href="/prensa">Prensa</a>
+                    <a href={getLocalePath("/about", lang)}>{t("footer.about", lang)}</a>
+                    <a href={getLocalePath("/contact", lang)}>{t("footer.contact", lang)}</a>
+                    <a href={getLocalePath("/privacy", lang)}>{t("footer.privacy", lang)}</a>
+                    <a href={getLocalePath("/prensa", lang)}>{t("footer.prensa", lang)}</a>
                 </div>
                 <p class="footer-copyright">
                     © {new Date().getFullYear()} Efímera
                 </p>
             </div>
-            <NewsletterForm variant="footer" />
+            <NewsletterForm variant="footer" lang={lang} />
         </footer>
 
-        <SearchModal articles={articles} />
+        <SearchModal articles={articles} lang={lang} />
 
         <script>
             // Mobile menu toggle
@@ -434,6 +424,23 @@ const currentPath = Astro.url.pathname;
 </html>
 
 <style>
+    .lang-switcher {
+        font-family: var(--font-body);
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.08em;
+        text-decoration: none;
+        color: var(--color-text);
+        padding: 2px 6px;
+        border: 1px solid var(--color-border);
+        transition: color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .lang-switcher:hover {
+        color: var(--color-text-muted);
+        border-color: var(--color-text-muted);
+    }
+
     .search-button,
     .theme-toggle,
     .seleccion-link {

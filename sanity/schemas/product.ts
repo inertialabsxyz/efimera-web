@@ -147,6 +147,19 @@ export default {
       type: "datetime",
       initialValue: () => new Date().toISOString(),
     },
+    {
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "Español", value: "es" },
+          { title: "English", value: "en" },
+        ],
+      },
+      initialValue: "es",
+      validation: (Rule) => Rule.required(),
+    },
   ],
   preview: {
     select: {
@@ -154,11 +167,13 @@ export default {
       price: "price",
       media: "mainImage",
       available: "available",
+      language: "language",
     },
-    prepare({ title, price, media, available }) {
+    prepare({ title, price, media, available, language }) {
       const status = available === false ? " · Agotado" : "";
+      const lang = language === "en" ? " [EN]" : "";
       return {
-        title,
+        title: `${title}${lang}`,
         subtitle: `${price ? price + " €" : "Sin precio"}${status}`,
         media,
       };

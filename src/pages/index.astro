@@ -9,27 +9,21 @@ import {
     getFeaturedGallery,
     urlFor,
 } from "../lib/sanity";
+import { getLang, getLocalePath, type Locale } from "../lib/i18n";
 
+const lang = getLang(Astro);
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 
-const { articles, totalPages } = await getArticlesPaginated(currentPage, 10);
-const featuredGallery = await getFeaturedGallery();
-
-const categories = [
-    "Todos",
-    "Actividades",
-    "Artistas",
-    "Exposiciones",
-    "Letras",
-];
+const { articles, totalPages } = await getArticlesPaginated(currentPage, 10, lang);
+const featuredGallery = await getFeaturedGallery(lang);
 ---
 
 <Layout title="Efímera">
     {
         featuredGallery?.slides && featuredGallery.slides.length > 0 && (
             <>
-                <FeaturedGallery slides={featuredGallery.slides} />
+                <FeaturedGallery slides={featuredGallery.slides} lang={lang} />
                 <hr class="gallery-divider" />
             </>
         )
@@ -51,12 +45,13 @@ const categories = [
                             : undefined
                     }
                     excerpt={article.excerpt}
+                    lang={lang}
                 />
             ))
         }
     </div>
 
-    <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl="/" />
+    <Pagination currentPage={currentPage} totalPages={totalPages} baseUrl={getLocalePath("/", lang)} lang={lang} />
 
-    <NewsletterForm variant="homepage" />
+    <NewsletterForm variant="homepage" lang={lang} />
 </Layout>

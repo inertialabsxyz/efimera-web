@@ -1,5 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { getLang, t, getLocalePath, type Locale } from "../lib/i18n";
+
+const lang = getLang(Astro);
 ---
 
 <Layout title="Contacto | Efímera" description="Contacto con Efímera">

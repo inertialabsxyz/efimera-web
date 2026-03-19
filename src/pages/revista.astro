@@ -3,8 +3,10 @@ export const prerender = false;
 
 import Layout from "../layouts/Layout.astro";
 import { getRevistas, urlFor } from "../lib/sanity";
+import { getLang, t, getLocalePath, type Locale } from "../lib/i18n";
 
-const revistas = await getRevistas();
+const lang = getLang(Astro);
+const revistas = await getRevistas(lang);
 ---
 
 <Layout title="Revista — Efímera">
@@ -42,7 +44,7 @@ const revistas = await getRevistas();
             </div>
         ) : (
             <div class="empty-state">
-                <p>Aún no hay revistas disponibles.</p>
+                <p>{t("empty.revista", lang)}</p>
             </div>
         )
     }

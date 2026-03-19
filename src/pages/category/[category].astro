@@ -10,7 +10,9 @@ import {
     getRevistas,
     urlFor,
 } from "../../lib/sanity";
+import { getLang, t, getLocalePath, type Locale } from "../../lib/i18n";
 
+const lang = getLang(Astro);
 const { category } = Astro.params;
 const categoryTitle = category
     ? category.charAt(0).toUpperCase() + category.slice(1)
@@ -29,8 +31,8 @@ let totalPages = 1;
 
 if (isLetras) {
     const [letrasResult, revistas] = await Promise.all([
-        getArticlesByCategoryPaginated("Letras", 1, 1000),
-        getRevistas(),
+        getArticlesByCategoryPaginated("Letras", 1, 1000, lang),
+        getRevistas(lang),
     ]);
     const allItems = [
         ...letrasResult.articles.map((a: any) => ({ ...a, _itemType: "article" })),
@@ -48,11 +50,11 @@ if (isLetras) {
     articles = allItems.slice(start, start + pageSize);
     totalPages = Math.ceil(allItems.length / pageSize);
 } else if (isAll) {
-    const result = await getArticlesPaginated(currentPage, 10);
+    const result = await getArticlesPaginated(currentPage, 10, lang);
     articles = result.articles;
     totalPages = result.totalPages;
 } else {
-    const result = await getArticlesByCategoryPaginated(categoryTitle, currentPage, 10);
+    const result = await getArticlesByCategoryPaginated(categoryTitle, currentPage, 10, lang);
     articles = result.articles;
     totalPages = result.totalPages;
 }
@@ -106,16 +108,10 @@ if (isLetras) {
 // const articles = allArticles.filter(
 //     (a) => a.category.toLowerCase() === category,
 // );
-const categories = [
-    "Todos",
-    "Actividades",
-    "Artistas",
-    "Exposiciones",
-    "Letras",
-];
+const displayTitle = t(`cat.${categoryTitle}`, lang) !== `cat.${categoryTitle}` ? t(`cat.${categoryTitle}`, lang) : categoryTitle;
 ---
 
-<Layout title={`${categoryTitle} — Revista`}>
+<Layout title={`${displayTitle} — Efímera`}>
     {
         articles.length > 0 ? (
             <>
@@ -164,6 +160,7 @@ const categories = [
                                         : undefined
                                 }
                                 excerpt={article.excerpt}
+                                lang={lang}
                             />
                         )
                     )}
@@ -171,12 +168,13 @@ const categories = [
                 <Pagination
                     currentPage={currentPage}
                     totalPages={totalPages}
-                    baseUrl={`/category/${category}`}
+                    baseUrl={getLocalePath(`/category/${category}`, lang)}
+                    lang={lang}
                 />
             </>
         ) : (
             <div class="empty-state">
-                <p>Aún no hay artículos en esta categoría.</p>
+                <p>{t("empty.category", lang)}</p>
             </div>
         )
     }

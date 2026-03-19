@@ -60,15 +60,30 @@ export default {
       type: "datetime",
       initialValue: () => new Date().toISOString(),
     },
+    {
+      name: "language",
+      title: "Language",
+      type: "string",
+      options: {
+        list: [
+          { title: "Español", value: "es" },
+          { title: "English", value: "en" },
+        ],
+      },
+      initialValue: "es",
+      validation: (Rule) => Rule.required(),
+    },
   ],
   preview: {
     select: {
       title: "title",
       media: "coverImage",
+      language: "language",
     },
-    prepare({ title, media }) {
+    prepare({ title, media, language }) {
+      const lang = language === "en" ? " [EN]" : "";
       return {
-        title,
+        title: `${title}${lang}`,
         media,
       };
     },

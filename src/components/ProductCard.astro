@@ -1,4 +1,6 @@
 ---
+import { getLocalePath, type Locale } from "../lib/i18n";
+
 interface Props {
     title: string;
     slug: string;
@@ -6,19 +8,20 @@ interface Props {
     price: number;
     available?: boolean;
     description?: string;
+    lang?: Locale;
 }
 
-const { title, slug, image, price, available = true, description } = Astro.props;
+const { title, slug, image, price, available = true, description, lang = "es" } = Astro.props;
 
 const imageUrl = image || `https://picsum.photos/seed/${slug}/800/800`;
-const formattedPrice = new Intl.NumberFormat("es-ES", {
+const formattedPrice = new Intl.NumberFormat(lang === "es" ? "es-ES" : "en-GB", {
     style: "currency",
     currency: "EUR",
 }).format(price);
 ---
 
-<a href={`/tienda/${slug}`} class:list={["product-card", { unavailable: !available }]}>
-    {!available && <span class="product-card-badge">Agotado</span>}
+<a href={getLocalePath(`/tienda/${slug}`, lang)} class:list={["product-card", { unavailable: !available }]}>
+    {!available && <span class="product-card-badge">{lang === "en" ? "Sold out" : "Agotado"}</span>}
     <div class="product-card-image">
         <img
             src={imageUrl}

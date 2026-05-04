@@ -186,6 +186,23 @@ export async function getPrensa(lang: Locale = "es") {
   `);
 }
 
+export async function getPrensaItem(slug: string, lang: Locale = "es") {
+  return client.fetch(
+    `
+    *[_type == "prensa" && slug.current == $slug && ${langFilter(lang)}][0] {
+      _id,
+      title,
+      slug,
+      coverImage,
+      excerpt,
+      publishedAt,
+      "zipUrl": zipFile.asset->url
+    }
+  `,
+    { slug },
+  );
+}
+
 // Artist queries (no translation — proper nouns)
 export async function getArtists() {
   return client.fetch(`

@@ -15,11 +15,8 @@ const prensaItems = await getPrensa(lang);
             <div class="prensa-grid">
                 {prensaItems.map((prensa) => (
                     <a
-                        href={prensa.zipUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
+                        href={getLocalePath(`/prensa/${prensa.slug.current}`, lang)}
                         class="prensa-card"
-                        download
                     >
                         <div class="prensa-card-image">
                             <img

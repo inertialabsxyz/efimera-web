@@ -1,0 +1,115 @@
+---
+export const prerender = false;
+
+import Layout from "../../layouts/Layout.astro";
+import { getPrensaItem, urlFor } from "../../lib/sanity";
+import { getLang, t, getLocalePath } from "../../lib/i18n";
+
+const lang = getLang(Astro);
+const { slug } = Astro.params;
+
+const prensa = await getPrensaItem(slug!, lang);
+
+if (!prensa) {
+    return Astro.redirect("/404");
+}
+
+const formattedDate = prensa.publishedAt
+    ? new Date(prensa.publishedAt).toLocaleDateString(
+          lang === "es" ? "es-ES" : "en-US",
+          { month: "long", day: "numeric", year: "numeric" },
+      )
+    : null;
+---
+
+<Layout title={`${prensa.title} — Prensa`}>
+    <article>
+        <header class="article-header">
+            <h1 class="article-title">{prensa.title}</h1>
+            {prensa.excerpt && (
+                <p class="article-excerpt">{prensa.excerpt}</p>
+            )}
+            {formattedDate && (
+                <p class="article-meta">{formattedDate}</p>
+            )}
+        </header>
+
+        {prensa.coverImage && (
+            <div class="article-hero">
+                <img
+                    src={urlFor(prensa.coverImage).url()}
+                    alt={prensa.coverImage?.alt || prensa.title}
+                />
+            </div>
+        )}
+
+        <div class="prensa-actions">
+            {prensa.zipUrl && (
+                <a
+                    href={prensa.zipUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="prensa-download"
+                    download
+                >
+                    {t("prensa.download", lang)}
+                </a>
+            )}
+            <a
+                href={getLocalePath("/prensa", lang)}
+                class="prensa-back"
+            >
+                {t("prensa.back", lang)}
+            </a>
+        </div>
+    </article>
+</Layout>
+
+<style>
+    article {
+        animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .prensa-actions {
+        max-width: 800px;
+        margin: var(--space-lg) auto;
+        padding: 0 var(--space-md);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-sm);
+    }
+
+    .prensa-download {
+        display: inline-block;
+        padding: 0.875rem 2rem;
+        background: var(--color-text);
+        color: var(--color-bg);
+        text-decoration: none;
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        transition: opacity 0.2s ease;
+    }
+
+    .prensa-download:hover {
+        opacity: 0.85;
+    }
+
+    .prensa-back {
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--color-text-muted);
+        text-decoration: none;
+    }
+
+    .prensa-back:hover {
+        color: var(--color-text);
+    }
+</style>

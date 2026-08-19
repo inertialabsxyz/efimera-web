@@ -171,7 +171,8 @@ p {
     gap: var(--space-md);
 }
 
-.site-nav a {
+.site-nav a,
+.site-nav .submenu-toggle {
     font-size: 0.875rem;
     letter-spacing: 0.05em;
     opacity: 0.7;
@@ -180,13 +181,39 @@ p {
     border-bottom: 1px solid transparent;
 }
 
-.site-nav a:hover {
+.site-nav .submenu-toggle {
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    cursor: pointer;
+    color: var(--color-text);
+    font-family: inherit;
+    padding-top: 0;
+    padding-left: 0;
+    padding-right: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+
+.site-nav a:hover,
+.site-nav .submenu-toggle:hover {
     opacity: 1;
 }
 
-.site-nav a.active {
+.site-nav a.active,
+.site-nav .submenu-toggle.active {
     opacity: 1;
     border-bottom-color: var(--color-text);
+}
+
+.submenu-chevron {
+    transition: transform 0.2s ease;
+}
+
+.nav-item.has-submenu.open > .submenu-toggle .submenu-chevron {
+    transform: rotate(180deg);
 }
 
 .header-social {
@@ -218,6 +245,31 @@ p {
 
     .site-nav {
         margin-left: var(--space-md);
+        align-items: center;
+    }
+
+    .nav-item.has-submenu {
+        position: relative;
+    }
+
+    .submenu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        flex-direction: column;
+        gap: var(--space-xs);
+        background: var(--color-bg);
+        border: 1px solid var(--color-border);
+        padding: var(--space-sm);
+        min-width: max-content;
+        z-index: 101;
+    }
+
+    .nav-item.has-submenu:hover > .submenu,
+    .nav-item.has-submenu:focus-within > .submenu,
+    .nav-item.has-submenu.open > .submenu {
+        display: flex;
     }
 
     .header-right {
@@ -294,6 +346,28 @@ p {
     }
 
     .site-nav.open {
+        display: flex;
+        gap: var(--space-sm);
+    }
+
+    .nav-item.has-submenu {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .site-nav .submenu-toggle {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .submenu {
+        display: none;
+        flex-direction: column;
+        gap: var(--space-sm);
+        padding: var(--space-sm) 0 var(--space-xs) var(--space-md);
+    }
+
+    .nav-item.has-submenu.open > .submenu {
         display: flex;
     }
 

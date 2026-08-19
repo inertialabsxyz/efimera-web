@@ -1,0 +1,208 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getLang, t } from "../lib/i18n";
+
+const lang = getLang(Astro);
+
+const content = {
+    es: {
+        intro: "Forma parte de Constelación Efímera, una comunidad de personas que creen en la cultura independiente y quieren contribuir a hacerla posible. Tu aportación anual nos ayuda a impulsar exposiciones, publicaciones, la revista y nuevas actividades. Cada nueva estrella hace crecer esta constelación.",
+        tiers: [
+            {
+                name: "Colaborador",
+                price: "Desde 50 € / año",
+                benefits: [
+                    "Acceso prioritario a actividades con aforo limitado.",
+                    "Invitaciones a encuentros y sesiones especiales.",
+                ],
+            },
+            {
+                name: "Socio",
+                price: "Desde 100 € / año",
+                benefits: [
+                    "Todas las ventajas anteriores.",
+                    "Visitas y encuentros con artistas.",
+                    "20 % de descuento en actividades de Efímera.",
+                    "Acceso preferente a eventos especiales.",
+                ],
+            },
+            {
+                name: "Mecenas",
+                price: "Desde 300 € / año",
+                benefits: [
+                    "Todas las ventajas anteriores.",
+                    "50 % de descuento en actividades de Efímera.",
+                    "Invitaciones a visitas privadas y encuentros exclusivos.",
+                    "Condiciones especiales para alquilar el espacio.",
+                    "Posibilidad de explorar colaboraciones con Efímera.",
+                ],
+            },
+            {
+                name: "Gran Mecenas",
+                price: "Desde 500 € / año",
+                benefits: [
+                    "Todas las ventajas anteriores.",
+                    "Una jornada o dos medias jornadas de uso gratuito de Efímera al año.",
+                    "Condiciones preferentes para usos adicionales del espacio.",
+                    "Participación en proyectos, encuentros y propuestas especiales.",
+                ],
+            },
+        ],
+        note: "El uso del espacio estará sujeto a disponibilidad y compatibilidad con la programación y la exposición en curso.",
+    },
+    en: {
+        intro: "Become part of Constelación Efímera, a community of people who believe in independent culture and want to help make it possible. Your annual contribution helps us drive exhibitions, publications, the magazine and new activities. Every new star makes this constellation grow.",
+        tiers: [
+            {
+                name: "Colaborador",
+                price: "From €50 / year",
+                benefits: [
+                    "Priority access to limited-capacity activities.",
+                    "Invitations to gatherings and special sessions.",
+                ],
+            },
+            {
+                name: "Socio",
+                price: "From €100 / year",
+                benefits: [
+                    "All the benefits above.",
+                    "Visits and meetings with artists.",
+                    "20% discount on Efímera activities.",
+                    "Preferential access to special events.",
+                ],
+            },
+            {
+                name: "Mecenas",
+                price: "From €300 / year",
+                benefits: [
+                    "All the benefits above.",
+                    "50% discount on Efímera activities.",
+                    "Invitations to private visits and exclusive gatherings.",
+                    "Special conditions for renting the space.",
+                    "The possibility of exploring collaborations with Efímera.",
+                ],
+            },
+            {
+                name: "Gran Mecenas",
+                price: "From €500 / year",
+                benefits: [
+                    "All the benefits above.",
+                    "One full day or two half days of free use of Efímera per year.",
+                    "Preferential conditions for additional use of the space.",
+                    "Participation in special projects, gatherings and proposals.",
+                ],
+            },
+        ],
+        note: "Use of the space is subject to availability and compatibility with the programme and the current exhibition.",
+    },
+}[lang];
+---
+
+<Layout
+    title={`${t("constelacion.title", lang)} | Efímera`}
+    description={t("constelacion.title", lang)}
+>
+    <div class="page-content">
+        <h1>{t("constelacion.title", lang)}</h1>
+        <p class="lead">{content.intro}</p>
+
+        {
+            content.tiers.map((tier) => (
+                <div class="tier">
+                    <h2>{tier.name}</h2>
+                    <p class="price">{tier.price}</p>
+                    <ul>
+                        {tier.benefits.map((benefit) => (
+                            <li>{benefit}</li>
+                        ))}
+                    </ul>
+                </div>
+            ))
+        }
+
+        <p class="availability">{content.note}</p>
+    </div>
+</Layout>
+
+<style>
+    .page-content {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: var(--space-md) var(--space-md) var(--space-lg);
+    }
+
+    h1 {
+        font-family: var(--font-display);
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 400;
+        margin-bottom: var(--space-sm);
+    }
+
+    .lead {
+        font-family: var(--font-display);
+        font-size: clamp(1.35rem, 3vw, 1.6rem);
+        line-height: 1.4;
+        margin-bottom: var(--space-md);
+    }
+
+    .tier {
+        border: 1px solid var(--color-border);
+        background: var(--color-card-bg);
+        padding: var(--space-sm) var(--space-md);
+        margin-bottom: var(--space-sm);
+    }
+
+    h2 {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 400;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--color-text-muted);
+        margin-bottom: var(--space-xs);
+    }
+
+    .price {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        line-height: 1.3;
+        margin-bottom: var(--space-sm);
+    }
+
+    ul {
+        list-style: none;
+    }
+
+    li {
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        line-height: 1.5;
+        padding-left: 1.25rem;
+        position: relative;
+        margin-bottom: var(--space-xs);
+    }
+
+    li::before {
+        content: "✳";
+        position: absolute;
+        left: 0;
+        color: var(--color-text-muted);
+        font-size: 0.8em;
+        top: 0.25em;
+    }
+
+    li:last-child {
+        margin-bottom: 0;
+    }
+
+    .availability {
+        font-family: var(--font-display);
+        font-size: 0.9rem;
+        font-style: italic;
+        color: var(--color-text-muted);
+        border-top: 1px solid var(--color-border);
+        margin-top: var(--space-md);
+        padding-top: var(--space-sm);
+        margin-bottom: 0;
+    }
+</style>

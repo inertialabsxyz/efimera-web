@@ -15,13 +15,21 @@ const translations: Record<Locale, Record<string, string>> = {
   es: {
     // Navigation
     "nav.home": "Efímera",
+    "nav.programacion": "Programación",
     "nav.exposiciones": "Exposiciones",
     "nav.actividades": "Actividades",
+    "nav.derivasSonoras": "Derivas sonoras",
+    "nav.ruidoDeFondo": "Ruido de fondo",
+    "nav.eventos": "Eventos",
+    "nav.podcast": "Podcast",
     "nav.artistas": "Artistas",
-    "nav.entrevistas": "Entrevistas",
     "nav.letras": "Letras",
+    "nav.entrevistas": "Entrevistas",
+    "nav.articulos": "Artículos",
+    "nav.revistaXyz": "Revista XYZ",
     "nav.tienda": "Tienda",
-    "nav.projects": "Efímera projects",
+    "nav.projects": "Projects",
+    "nav.reserva": "Reserva",
 
     // Footer
     "footer.about": "Acerca de",
@@ -50,6 +58,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "cat.Off-site": "Off-site",
     "cat.Online": "Online",
     "cat.Letras": "Letras",
+    "cat.Ruido de fondo": "Ruido de fondo",
+    "cat.Eventos": "Eventos",
+    "cat.Podcast": "Podcast",
 
     // Empty states
     "empty.category": "Aún no hay artículos en esta categoría.",
@@ -109,6 +120,29 @@ const translations: Record<Locale, Record<string, string>> = {
     // Contact
     "contact.title": "Contacto",
 
+    // Home
+    "home.constelacion": "Constelación Efímera",
+    "home.revista": "Revista XYZ",
+
+    // Constelación
+    "constelacion.title": "Constelación Efímera",
+
+    // Reserva
+    "reserva.title": "Reserva",
+    "reserva.headline": "Reserva Efímera",
+    "reserva.intro":
+      "¿Tienes una idea, una actividad o un proyecto y necesitas un espacio donde hacerlo?",
+    "reserva.description":
+      "Efímera abre su espacio en el centro de Murcia para eventos, reuniones, talleres, presentaciones, sesiones de yoga o danza, shootings, catas y otras propuestas de pequeño formato.",
+    "reserva.rental":
+      "Disponible en alquiler por jornadas o medias jornadas, en un entorno singular rodeado de arte contemporáneo.",
+    "reserva.extrasTitle": "¿Necesitas algo más?",
+    "reserva.extras":
+      "Consúltanos para necesidades especiales de montaje, equipamiento, horarios u otros servicios. La limpieza se facturará aparte.",
+    "reserva.cta": "Escríbenos",
+    "reserva.availability":
+      "Todas las reservas están sujetas a disponibilidad y compatibilidad con la exposición en curso.",
+
     // Privacy
     "privacy.title": "Privacidad",
 
@@ -122,13 +156,21 @@ const translations: Record<Locale, Record<string, string>> = {
   en: {
     // Navigation
     "nav.home": "Efímera",
+    "nav.programacion": "Programme",
     "nav.exposiciones": "Exhibitions",
     "nav.actividades": "Activities",
+    "nav.derivasSonoras": "Derivas sonoras",
+    "nav.ruidoDeFondo": "Ruido de fondo",
+    "nav.eventos": "Events",
+    "nav.podcast": "Podcast",
     "nav.artistas": "Artists",
-    "nav.entrevistas": "Interviews",
     "nav.letras": "Writing",
+    "nav.entrevistas": "Interviews",
+    "nav.articulos": "Articles",
+    "nav.revistaXyz": "Revista XYZ",
     "nav.tienda": "Shop",
-    "nav.projects": "Efímera projects",
+    "nav.projects": "Projects",
+    "nav.reserva": "Booking",
 
     // Footer
     "footer.about": "About",
@@ -157,6 +199,9 @@ const translations: Record<Locale, Record<string, string>> = {
     "cat.Off-site": "Off-site",
     "cat.Online": "Online",
     "cat.Letras": "Writing",
+    "cat.Ruido de fondo": "Ruido de fondo",
+    "cat.Eventos": "Events",
+    "cat.Podcast": "Podcast",
 
     // Empty states
     "empty.category": "No articles in this category yet.",
@@ -216,6 +261,29 @@ const translations: Record<Locale, Record<string, string>> = {
     // Contact
     "contact.title": "Contact",
 
+    // Home
+    "home.constelacion": "Constelación Efímera",
+    "home.revista": "Revista XYZ",
+
+    // Constelación
+    "constelacion.title": "Constelación Efímera",
+
+    // Reserva
+    "reserva.title": "Booking",
+    "reserva.headline": "Book Efímera",
+    "reserva.intro":
+      "Do you have an idea, an activity or a project and need a space to make it happen?",
+    "reserva.description":
+      "Efímera opens its space in the centre of Murcia for events, meetings, workshops, presentations, yoga or dance sessions, photo shoots, tastings and other small-format proposals.",
+    "reserva.rental":
+      "Available to rent by full or half days, in a unique setting surrounded by contemporary art.",
+    "reserva.extrasTitle": "Need anything else?",
+    "reserva.extras":
+      "Ask us about special set-up, equipment or scheduling needs, or any other services. Cleaning is invoiced separately.",
+    "reserva.cta": "Write to us",
+    "reserva.availability":
+      "All bookings are subject to availability and compatibility with the current exhibition.",
+
     // Privacy
     "privacy.title": "Privacy",
 
@@ -245,34 +313,75 @@ export function getLangFromUrl(url: URL): Locale {
     : "es";
 }
 
+export interface NavItem {
+  label: string;
+  href?: string;
+  children?: { label: string; href: string }[];
+}
+
 /** Navigation items with their translated labels and paths */
-export function getNavItems(lang: Locale) {
+export function getNavItems(lang: Locale): NavItem[] {
   return [
     { label: t("nav.home", lang), href: getLocalePath("/", lang) },
     {
-      label: t("nav.exposiciones", lang),
-      href: getLocalePath("/category/exposiciones", lang),
+      label: t("nav.programacion", lang),
+      children: [
+        {
+          label: t("nav.exposiciones", lang),
+          href: getLocalePath("/category/exposiciones", lang),
+        },
+        {
+          label: t("nav.actividades", lang),
+          href: getLocalePath("/category/actividades", lang),
+        },
+      ],
     },
     {
-      label: t("nav.actividades", lang),
-      href: getLocalePath("/category/actividades", lang),
+      label: t("nav.derivasSonoras", lang),
+      children: [
+        {
+          label: t("nav.ruidoDeFondo", lang),
+          href: getLocalePath("/category/ruido-de-fondo", lang),
+        },
+        {
+          label: t("nav.eventos", lang),
+          href: getLocalePath("/category/eventos", lang),
+        },
+        {
+          label: t("nav.podcast", lang),
+          href: getLocalePath("/category/podcast", lang),
+        },
+      ],
     },
     {
       label: t("nav.artistas", lang),
       href: getLocalePath("/category/artistas", lang),
     },
     {
-      label: t("nav.entrevistas", lang),
-      href: getLocalePath("/category/entrevistas", lang),
-    },
-    {
       label: t("nav.letras", lang),
-      href: getLocalePath("/category/letras", lang),
+      children: [
+        {
+          label: t("nav.entrevistas", lang),
+          href: getLocalePath("/category/entrevistas", lang),
+        },
+        {
+          label: t("nav.articulos", lang),
+          href: getLocalePath("/category/articulos", lang),
+        },
+        {
+          label: t("nav.revistaXyz", lang),
+          href: getLocalePath("/revista", lang),
+        },
+      ],
     },
-    { label: t("nav.tienda", lang), href: getLocalePath("/tienda", lang) },
     {
       label: t("nav.projects", lang),
       href: getLocalePath("/efimera-projects", lang),
     },
+    {
+      label: t("nav.reserva", lang),
+      href: getLocalePath("/reserva", lang),
+    },
+    { label: t("nav.tienda", lang), href: getLocalePath("/tienda", lang) },
   ];
 }

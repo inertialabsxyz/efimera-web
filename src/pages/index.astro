@@ -9,7 +9,7 @@ import {
     getFeaturedGallery,
     urlFor,
 } from "../lib/sanity";
-import { getLang, getLocalePath, type Locale } from "../lib/i18n";
+import { getLang, getLocalePath, t, type Locale } from "../lib/i18n";
 
 const lang = getLang(Astro);
 const pageParam = Astro.url.searchParams.get("page");
@@ -28,6 +28,15 @@ const featuredGallery = await getFeaturedGallery(lang);
             </>
         )
     }
+
+    <div class="home-cta-row">
+        <a class="home-cta" href={getLocalePath("/constelacion-efimera", lang)}>
+            {t("home.constelacion", lang)}
+        </a>
+        <a class="home-cta" href={getLocalePath("/revista", lang)}>
+            {t("home.revista", lang)}
+        </a>
+    </div>
 
     <div class="article-grid">
         {
@@ -55,3 +64,33 @@ const featuredGallery = await getFeaturedGallery(lang);
 
     <NewsletterForm variant="homepage" lang={lang} />
 </Layout>
+
+<style>
+    .home-cta-row {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: var(--space-sm);
+        max-width: 1080px;
+        margin: 0 auto var(--space-md);
+        padding: 0 var(--space-md);
+    }
+
+    .home-cta {
+        display: inline-block;
+        font-family: var(--font-display);
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+        text-align: center;
+        border: 1px solid var(--color-text);
+        padding: 0.75rem 1.5rem;
+        transition:
+            background 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .home-cta:hover {
+        background: var(--color-text);
+        color: var(--color-bg);
+    }
+</style>

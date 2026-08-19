@@ -66,10 +66,64 @@ const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
                 <nav class="site-nav">
                     {
                         navItems.map((item) => {
+                            if (item.children) {
+                                const isActive = item.children.some((child) =>
+                                    currentPath.startsWith(child.href),
+                                );
+                                return (
+                                    <div
+                                        class:list={[
+                                            "nav-item",
+                                            "has-submenu",
+                                            { active: isActive },
+                                        ]}
+                                    >
+                                        <button
+                                            class:list={[
+                                                "submenu-toggle",
+                                                { active: isActive },
+                                            ]}
+                                            aria-expanded="false"
+                                            aria-haspopup="true"
+                                        >
+                                            {item.label}
+                                            <svg
+                                                class="submenu-chevron"
+                                                width="12"
+                                                height="12"
+                                                viewBox="0 0 24 24"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                stroke-width="1.5"
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                            >
+                                                <path d="M6 9l6 6 6-6" />
+                                            </svg>
+                                        </button>
+                                        <div class="submenu">
+                                            {item.children.map((child) => (
+                                                <a
+                                                    href={child.href}
+                                                    class:list={[
+                                                        {
+                                                            active: currentPath.startsWith(
+                                                                child.href,
+                                                            ),
+                                                        },
+                                                    ]}
+                                                >
+                                                    {child.label}
+                                                </a>
+                                            ))}
+                                        </div>
+                                    </div>
+                                );
+                            }
                             const isHome = item.href === getLocalePath("/", lang);
                             const isActive = isHome
                                 ? currentPath === item.href
-                                : currentPath.startsWith(item.href);
+                                : currentPath.startsWith(item.href!);
                             return (
                                 <a
                                     href={item.href}
@@ -350,6 +404,36 @@ const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
             menuToggle?.addEventListener("click", () => {
                 const isOpen = nav?.classList.toggle("open");
                 menuToggle.setAttribute("aria-expanded", String(isOpen));
+            });
+
+            // Submenu toggles (click on mobile, hover handled in CSS on desktop)
+            function closeSubmenus(except) {
+                document
+                    .querySelectorAll(".nav-item.has-submenu.open")
+                    .forEach((item) => {
+                        if (item === except) return;
+                        item.classList.remove("open");
+                        item.querySelector(".submenu-toggle")?.setAttribute(
+                            "aria-expanded",
+                            "false",
+                        );
+                    });
+            }
+
+            document.querySelectorAll(".submenu-toggle").forEach((toggle) => {
+                toggle.addEventListener("click", () => {
+                    const item = toggle.closest(".nav-item");
+                    if (!item) return;
+                    const isOpen = item.classList.toggle("open");
+                    toggle.setAttribute("aria-expanded", String(isOpen));
+                    closeSubmenus(item);
+                });
+            });
+
+            document.addEventListener("click", (event) => {
+                if (!(event.target instanceof Element)) return;
+                if (event.target.closest(".nav-item.has-submenu")) return;
+                closeSubmenus(null);
             });
 
             // Search button

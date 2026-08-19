@@ -14,8 +14,20 @@ import { getLang, t, getLocalePath, type Locale } from "../../lib/i18n";
 
 const lang = getLang(Astro);
 const { category } = Astro.params;
+
+// Slugs whose Sanity category name can't be derived by capitalizing the slug.
+// "articulos" reuses the existing "Letras" category (Revista lives at /revista).
+const categoryAliases: Record<string, string> = {
+    "ruido-de-fondo": "Ruido de fondo",
+    "in-situ": "In situ",
+    "off-site": "Off-site",
+    articulos: "Letras",
+};
+
+const categorySlug = category?.toLowerCase() ?? "";
 const categoryTitle = category
-    ? category.charAt(0).toUpperCase() + category.slice(1)
+    ? (categoryAliases[categorySlug] ??
+      category.charAt(0).toUpperCase() + category.slice(1))
     : "";
 
 // "Todos" means "All" in Spanish - show all articles
@@ -108,7 +120,12 @@ if (isLetras) {
 // const articles = allArticles.filter(
 //     (a) => a.category.toLowerCase() === category,
 // );
-const displayTitle = t(`cat.${categoryTitle}`, lang) !== `cat.${categoryTitle}` ? t(`cat.${categoryTitle}`, lang) : categoryTitle;
+const displayTitle =
+    categorySlug === "articulos"
+        ? t("nav.articulos", lang)
+        : t(`cat.${categoryTitle}`, lang) !== `cat.${categoryTitle}`
+          ? t(`cat.${categoryTitle}`, lang)
+          : categoryTitle;
 ---
 
 <Layout title={`${displayTitle} — Efímera`}>

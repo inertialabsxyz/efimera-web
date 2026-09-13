@@ -56,6 +56,30 @@ const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
         </script>
     </head>
     <body class:list={{ "has-transparent-header": transparentHeader }}>
+        {
+            transparentHeader && (
+                <script is:inline>
+                    // Toggle the header background once the full-bleed hero has
+                    // scrolled past, so content never sits under bare nav text.
+                    document.addEventListener("DOMContentLoaded", function () {
+                        var body = document.body;
+                        var hero = document.querySelector("main > *");
+                        function pin() {
+                            var fallback = 60;
+                            var h = hero ? hero.offsetHeight : 0;
+                            var limit = Math.max(0, h - fallback);
+                            body.classList.toggle(
+                                "header-pinned",
+                                window.scrollY > limit,
+                            );
+                        }
+                        pin();
+                        window.addEventListener("scroll", pin, { passive: true });
+                        window.addEventListener("resize", pin, { passive: true });
+                    });
+                </script>
+            )
+        }
         {isStaging && <div class="staging-banner">STAGING</div>}
         <header class="site-header">
             <a href={getLocalePath("/", lang)} class="site-logo">

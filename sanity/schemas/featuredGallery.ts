@@ -93,28 +93,6 @@ export default {
                 ),
             },
             {
-              name: "discipline",
-              title: "Discipline",
-              type: "string",
-              description:
-                'Top of the right-hand rail, e.g. "Escultura expandida"',
-            },
-            {
-              name: "themes",
-              title: "Theme Keywords",
-              type: "array",
-              of: [{ type: "string" }],
-              options: { layout: "tags" },
-              description:
-                "Curatorial keywords listed in the rail, e.g. Materia, Territorio",
-            },
-            {
-              name: "location",
-              title: "Location",
-              type: "string",
-              description: 'Bottom of the rail, e.g. "Murcia"',
-            },
-            {
               name: "ctaLabel",
               title: "CTA Label",
               type: "string",

@@ -1,0 +1,75 @@
+---
+import { getLocalePath, t, type Locale } from "../lib/i18n";
+
+interface Props {
+    title: string;
+    href: string | null;
+    image?: string | null;
+    kicker?: string | null;
+    excerpt?: string | null;
+    /** Larger type + image for the lead card in a row */
+    featured?: boolean;
+    lang?: Locale;
+    loading?: "lazy" | "eager";
+}
+
+const {
+    title,
+    href,
+    image,
+    kicker,
+    excerpt,
+    featured = false,
+    lang = "es",
+    loading = "lazy",
+} = Astro.props;
+
+const kickerLabel = kicker
+    ? t(`cat.${kicker}`, lang) !== `cat.${kicker}`
+        ? t(`cat.${kicker}`, lang)
+        : kicker
+    : null;
+const Tag = href ? "a" : "div";
+---
+
+<Tag
+    class:list={["editorial-card", { featured }]}
+    {...href ? { href } : {}}
+>
+    {
+        image && (
+            <div class="editorial-card-media">
+                <img
+                    src={image}
+                    alt=""
+                    width="800"
+                    height="600"
+                    loading={loading}
+                    decoding="async"
+                />
+            </div>
+        )
+    }
+    {kickerLabel && <p class="editorial-card-kicker">{kickerLabel}</p>}
+    <h3 class="editorial-card-title">{title}</h3>
+    {excerpt && <p class="editorial-card-excerpt">{excerpt}</p>}
+    {
+        href && (
+            <span class="editorial-card-more">
+                <span class="sr-only">{title}</span>
+                <svg
+                    width="28"
+                    height="10"
+                    viewBox="0 0 28 10"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1"
+                    aria-hidden="true"
+                    focusable="false"
+                >
+                    <path d="M0 5h26M22 1l4 4-4 4" />
+                </svg>
+            </span>
+        )
+    }
+</Tag>

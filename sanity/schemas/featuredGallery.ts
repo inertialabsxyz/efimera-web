@@ -51,17 +51,52 @@ export default {
               hidden: ({ parent }) => !!parent?.article,
             },
             {
-              name: "title",
-              title: "Custom Title",
+              name: "eyebrow",
+              title: "Eyebrow",
               type: "string",
-              description: "Optional: Override the linked article title",
+              description:
+                'Small label above the title, e.g. "Exposición". Falls back to the linked article\'s category.',
+            },
+            {
+              name: "title",
+              title: "Title",
+              type: "string",
+              description:
+                "Headline shown on the slide. Falls back to the linked article title.",
             },
             {
               name: "excerpt",
-              title: "Custom Excerpt",
+              title: "Description",
               type: "text",
               rows: 2,
-              description: "Optional: Override the linked article excerpt",
+              description:
+                "Shown under the title. Falls back to the linked article excerpt.",
+            },
+            {
+              name: "startDate",
+              title: "Start Date",
+              type: "date",
+              options: { dateFormat: "YYYY-MM-DD" },
+              description:
+                "Falls back to the linked article's publish date.",
+            },
+            {
+              name: "endDate",
+              title: "End Date",
+              type: "date",
+              options: { dateFormat: "YYYY-MM-DD" },
+              description:
+                "Optional: leave empty for a single-date event. Shown as a range with the start date.",
+              validation: (Rule) =>
+                Rule.min(Rule.valueOfField("startDate")).warning(
+                  "End date should not be before the start date",
+                ),
+            },
+            {
+              name: "ctaLabel",
+              title: "CTA Label",
+              type: "string",
+              description: 'Defaults to "Ver más" / "Read more" when empty',
             },
             {
               name: "displayWidth",
@@ -82,11 +117,12 @@ export default {
               title: "title",
               articleTitle: "article.title",
               url: "url",
+              startDate: "startDate",
             },
-            prepare({ media, title, articleTitle, url }) {
+            prepare({ media, title, articleTitle, url, startDate }) {
               return {
                 title: title || articleTitle || url || "Image Slide",
-                subtitle: url ? "External Link" : "Image",
+                subtitle: startDate || (url ? "External Link" : "Image"),
                 media,
               };
             },

@@ -18,18 +18,18 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.programacion": "Programación",
     "nav.exposiciones": "Exposiciones",
     "nav.actividades": "Actividades",
-    "nav.derivasSonoras": "Derivas sonoras",
     "nav.ruidoDeFondo": "Ruido de fondo",
     "nav.eventos": "Eventos",
     "nav.podcast": "Podcast",
     "nav.artistas": "Artistas",
     "nav.letras": "Letras",
     "nav.entrevistas": "Entrevistas",
-    "nav.articulos": "Artículos",
+    "nav.articulos": "Otros",
     "nav.revistaXyz": "Revista XYZ",
     "nav.tienda": "Tienda",
-    "nav.projects": "Projects",
+    "nav.projects": "Proyectos",
     "nav.reserva": "Reserva",
+    "nav.constelacion": "Constelación",
 
     // Footer
     "footer.about": "Acerca de",
@@ -123,6 +123,15 @@ const translations: Record<Locale, Record<string, string>> = {
     // Home
     "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
+    "home.heroCta": "Ver más",
+    "home.heroNav": "Navegación de portada",
+    "home.heroImageAlt": "Imagen destacada",
+    "home.tagline":
+      "Un espacio para pensar el presente a través del arte, la imagen, el sonido y otras formas de habitar.",
+    "home.about": "Sobre Efímera",
+    "home.newsletter": "Newsletter",
+    "home.contacto": "Contacto",
+    "home.latest": "Lo último",
 
     // Constelación
     "constelacion.title": "Constelación Efímera",
@@ -159,18 +168,18 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.programacion": "Programme",
     "nav.exposiciones": "Exhibitions",
     "nav.actividades": "Activities",
-    "nav.derivasSonoras": "Derivas sonoras",
     "nav.ruidoDeFondo": "Ruido de fondo",
     "nav.eventos": "Events",
     "nav.podcast": "Podcast",
     "nav.artistas": "Artists",
     "nav.letras": "Writing",
     "nav.entrevistas": "Interviews",
-    "nav.articulos": "Articles",
+    "nav.articulos": "Other",
     "nav.revistaXyz": "Revista XYZ",
     "nav.tienda": "Shop",
     "nav.projects": "Projects",
     "nav.reserva": "Booking",
+    "nav.constelacion": "Constelación",
 
     // Footer
     "footer.about": "About",
@@ -264,6 +273,15 @@ const translations: Record<Locale, Record<string, string>> = {
     // Home
     "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
+    "home.heroCta": "Read more",
+    "home.heroNav": "Featured navigation",
+    "home.heroImageAlt": "Featured image",
+    "home.tagline":
+      "A space for thinking the present through art, image, sound and other ways of inhabiting.",
+    "home.about": "About Efímera",
+    "home.newsletter": "Newsletter",
+    "home.contacto": "Contact",
+    "home.latest": "Latest",
 
     // Constelación
     "constelacion.title": "Constelación Efímera",
@@ -334,22 +352,9 @@ export function getNavItems(lang: Locale): NavItem[] {
           label: t("nav.actividades", lang),
           href: getLocalePath("/category/actividades", lang),
         },
-      ],
-    },
-    {
-      label: t("nav.derivasSonoras", lang),
-      children: [
         {
           label: t("nav.ruidoDeFondo", lang),
           href: getLocalePath("/category/ruido-de-fondo", lang),
-        },
-        {
-          label: t("nav.eventos", lang),
-          href: getLocalePath("/category/eventos", lang),
-        },
-        {
-          label: t("nav.podcast", lang),
-          href: getLocalePath("/category/podcast", lang),
         },
       ],
     },
@@ -381,6 +386,10 @@ export function getNavItems(lang: Locale): NavItem[] {
     {
       label: t("nav.reserva", lang),
       href: getLocalePath("/reserva", lang),
+    },
+    {
+      label: t("nav.constelacion", lang),
+      href: getLocalePath("/constelacion-efimera", lang),
     },
     { label: t("nav.tienda", lang), href: getLocalePath("/tienda", lang) },
   ];

@@ -1,0 +1,91 @@
+---
+import { urlFor } from "../lib/sanity";
+import { getLocalePath, t, type Locale } from "../lib/i18n";
+import EditorialCard from "./EditorialCard.astro";
+
+interface Props {
+    items: any[];
+    lang?: Locale;
+}
+
+const { items, lang = "es" } = Astro.props;
+
+const cards = (items || []).slice(0, 3).map((item) => {
+    const slug = item.slug?.current;
+    return {
+        kicker: item.category,
+        title: item.title,
+        excerpt: item.excerpt,
+        href: slug ? getLocalePath(`/article/${slug}`, lang) : null,
+        image: item.mainImage
+            ? urlFor(item.mainImage).width(800).height(600).fit("crop").url()
+            : null,
+    };
+});
+---
+
+{
+    cards.length > 0 && (
+        <section class="home-feature">
+            <h2 class="sr-only">{t("home.latest", lang)}</h2>
+            <div class="home-feature-inner">
+                <ul class="home-feature-cards">
+                    {cards.map((card) => (
+                        <li class="home-feature-card">
+                            <EditorialCard
+                                title={card.title}
+                                href={card.href}
+                                image={card.image}
+                                kicker={card.kicker}
+                                excerpt={card.excerpt}
+                                lang={lang}
+                            />
+                        </li>
+                    ))}
+                </ul>
+
+            </div>
+        </section>
+    )
+}
+
+<style>
+    .home-feature {
+        padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+    }
+
+    .home-feature-inner {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 var(--space-md);
+        display: grid;
+        gap: clamp(2rem, 5vw, 3.5rem);
+        grid-template-columns: 1fr;
+    }
+
+    .home-feature-cards {
+        list-style: none;
+        display: grid;
+        gap: clamp(1.5rem, 3vw, 2.5rem);
+        grid-template-columns: 1fr;
+    }
+
+    /* Steps down in step with .editorial-grid below, so the two rows never
+       disagree about how many columns the page has. */
+    @media (min-width: 900px) {
+        .home-feature-cards {
+            /* Equal columns so every card image is the same size. The
+               vertical stagger is dropped for the same reason. */
+            grid-template-columns: repeat(3, 1fr);
+            align-items: start;
+        }
+    }
+
+    @media (min-width: 600px) and (max-width: 899px) {
+        .home-feature-cards {
+            grid-template-columns: repeat(2, 1fr);
+            align-items: start;
+        }
+    }
+
+</style>

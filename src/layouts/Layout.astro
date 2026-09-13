@@ -9,11 +9,16 @@ import { getLang, t, getLocalePath, getNavItems, type Locale } from "../lib/i18n
 interface Props {
     title?: string;
     description?: string;
+    /** Let page content run under the header (e.g. a full-bleed hero) */
+    transparentHeader?: boolean;
 }
 
 const lang = getLang(Astro);
-const { title = "Efímera", description = t("meta.description", lang) } =
-    Astro.props;
+const {
+    title = "Efímera",
+    description = t("meta.description", lang),
+    transparentHeader = false,
+} = Astro.props;
 
 const isStaging = import.meta.env.PUBLIC_STAGING === "true";
 const rawArticles = await getArticles(lang);
@@ -50,7 +55,35 @@ const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
             document.documentElement.setAttribute("data-theme", theme);
         </script>
     </head>
-    <body>
+    <body class:list={{ "has-transparent-header": transparentHeader }}>
+        {
+            transparentHeader && (
+                <script is:inline>
+                    // Toggle the header background once the full-bleed hero has
+                    // scrolled past, so content never sits under bare nav text.
+                    document.addEventListener("DOMContentLoaded", function () {
+                        var body = document.body;
+                        // Target the hero itself: "main > *" would match any
+                        // zero-height helper element placed before it.
+                        var hero = document.querySelector(".home-hero");
+                        function pin() {
+                            var fallback = 60;
+                            var h = hero ? hero.offsetHeight : 0;
+                            var limit = Math.max(0, h - fallback);
+                            // >= not >: an in-page anchor can land exactly on
+                            // the boundary, which left the header transparent.
+                            body.classList.toggle(
+                                "header-pinned",
+                                window.scrollY >= limit,
+                            );
+                        }
+                        pin();
+                        window.addEventListener("scroll", pin, { passive: true });
+                        window.addEventListener("resize", pin, { passive: true });
+                    });
+                </script>
+            )
+        }
         {isStaging && <div class="staging-banner">STAGING</div>}
         <header class="site-header">
             <a href={getLocalePath("/", lang)} class="site-logo">
@@ -508,21 +541,24 @@ const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
 </html>
 
 <style>
+    /* Matches the nav items: same weight and opacity, inherits colour so
+       it follows the header's dark-over-blue treatment. */
     .lang-switcher {
         font-family: var(--font-body);
         font-size: 0.7rem;
         font-weight: 500;
         letter-spacing: 0.08em;
         text-decoration: none;
-        color: var(--color-text);
+        color: inherit;
+        opacity: 0.9;
         padding: 2px 6px;
-        border: 1px solid var(--color-border);
-        transition: color 0.2s ease, border-color 0.2s ease;
+        border: 1px solid currentColor;
+        transition: opacity 0.2s ease;
     }
 
-    .lang-switcher:hover {
-        color: var(--color-text-muted);
-        border-color: var(--color-text-muted);
+    .lang-switcher:hover,
+    .lang-switcher:focus-visible {
+        opacity: 1;
     }
 
     .search-button,

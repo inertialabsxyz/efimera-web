@@ -62,11 +62,11 @@ if (isLetras) {
     articles = allItems.slice(start, start + pageSize);
     totalPages = Math.ceil(allItems.length / pageSize);
 } else if (isAll) {
-    const result = await getArticlesPaginated(currentPage, 10, lang);
+    const result = await getArticlesPaginated(currentPage, 9, lang);
     articles = result.articles;
     totalPages = result.totalPages;
 } else {
-    const result = await getArticlesByCategoryPaginated(categoryTitle, currentPage, 10, lang);
+    const result = await getArticlesByCategoryPaginated(categoryTitle, currentPage, 9, lang);
     articles = result.articles;
     totalPages = result.totalPages;
 }

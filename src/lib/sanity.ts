@@ -65,7 +65,7 @@ export async function getArticles(lang: Locale = "es") {
 
 export async function getArticlesPaginated(
   page: number = 1,
-  pageSize: number = 10,
+  pageSize: number = 9,
   lang: Locale = "es",
 ) {
   const start = (page - 1) * pageSize;
@@ -122,7 +122,7 @@ export async function getArticlesByCategory(
 export async function getArticlesByCategoryPaginated(
   category: string,
   page: number = 1,
-  pageSize: number = 10,
+  pageSize: number = 9,
   lang: Locale = "es",
 ) {
   const start = (page - 1) * pageSize;
@@ -325,6 +325,39 @@ export async function getEfimeraProjectsPage(lang: Locale = "es") {
       onlineImage
     }
   `);
+}
+
+// Homepage hero slides, sourced from the featured gallery. Slides carry the
+// imagery; text falls back to a linked article, or to the caller's default.
+export async function getHeroSlides(lang: Locale = "es") {
+  const slides = await client.fetch(
+    `
+    *[_type == "featuredGallery" && ${langFilter(lang)}][0].slides[] {
+      _type,
+      image,
+      eyebrow,
+      title,
+      excerpt,
+      startDate,
+      endDate,
+      ctaLabel,
+      url,
+      "article": article->{
+        title,
+        slug,
+        category,
+        publishedAt,
+        excerpt
+      },
+      "revista": revista->{
+        title,
+        coverImage,
+        "pdfUrl": pdf.asset->url
+      }
+    }
+  `,
+  );
+  return Array.isArray(slides) ? slides : [];
 }
 
 export async function getFeaturedGallery(lang: Locale = "es") {

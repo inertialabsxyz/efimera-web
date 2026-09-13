@@ -1,0 +1,516 @@
+---
+import { urlFor } from "../lib/sanity";
+import { getLocalePath, t, type Locale } from "../lib/i18n";
+
+interface Props {
+    /** Featured gallery slides; each carries its own image, text and dates */
+    slides: any[];
+    lang?: Locale;
+}
+
+const { slides = [], lang = "es" } = Astro.props;
+
+const locale = lang === "en" ? "en-GB" : "es-ES";
+
+// "16 octubre" / "16 octubre 2026" — year only when asked for
+function formatDate(value?: string, withYear = true) {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    const formatted = new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        month: "long",
+        ...(withYear ? { year: "numeric" } : {}),
+        timeZone: "UTC",
+    }).format(date);
+    // Spanish renders "16 de octubre de 2026"; the design wants "16 octubre 2026"
+    return lang === "es" ? formatted.replace(/ de /g, " ") : formatted;
+}
+
+// Build the date range label, dropping the repeated year when both dates
+// fall in the same one.
+function dateRangeFor(startValue?: string, endValue?: string) {
+    if (!startValue && !endValue) return null;
+    const s = startValue ? new Date(startValue) : null;
+    const e = endValue ? new Date(endValue) : null;
+    const sameYear =
+        s &&
+        e &&
+        !Number.isNaN(s.getTime()) &&
+        !Number.isNaN(e.getTime()) &&
+        s.getUTCFullYear() === e.getUTCFullYear();
+    return (
+        [formatDate(startValue, !sameYear), formatDate(endValue)]
+            .filter(Boolean)
+            .join(" — ") || null
+    );
+}
+
+function hrefFor(url?: string, slug?: string) {
+    if (url) return url;
+    return slug ? getLocalePath(`/article/${slug}`, lang) : null;
+}
+
+// Each gallery slide carries its own text; anything the editor leaves blank
+// falls back to the linked article, then to the hero defaults.
+const gallerySlides = slides
+    .map((slide: any) => {
+        const isRevista = slide?._type === "revistaSlide";
+        const source = isRevista ? slide?.revista?.coverImage : slide?.image;
+        if (!source) return null;
+
+        const article = slide?.article;
+        // Title is optional: an image-only slide still renders its image.
+        const title = slide?.title || article?.title || slide?.revista?.title || null;
+
+        return {
+            src: urlFor(source).width(1400).height(1000).fit("crop").url(),
+            alt: source?.alt || title || t("home.heroImageAlt", lang),
+            eyebrow: slide?.eyebrow || article?.category || null,
+            title,
+            excerpt: slide?.excerpt || article?.excerpt || null,
+            dateRange: dateRangeFor(
+                slide?.startDate || article?.publishedAt,
+                slide?.endDate,
+            ),
+            href: hrefFor(
+                slide?.url || (isRevista ? slide?.revista?.pdfUrl : undefined),
+                article?.slug?.current,
+            ),
+            isExternal: Boolean(
+                slide?.url || (isRevista && slide?.revista?.pdfUrl),
+            ),
+            ctaLabel: slide?.ctaLabel || t("home.heroCta", lang),
+        };
+    })
+    .filter(Boolean) as any[];
+
+const heroSlides = gallerySlides;
+
+const hasMultiple = heroSlides.length > 1;
+---
+
+<section class="home-hero">
+    <div
+        class:list={[
+            "home-hero-inner",
+            { "is-image-only": heroSlides.every((s) => !s.title) },
+        ]}
+    >
+        <div class="home-hero-text">
+            {
+                heroSlides.map((slide, i) => (
+                    <div
+                        class:list={["home-hero-copy", { active: i === 0 }]}
+                        data-hero-copy
+                    >
+                        {slide.eyebrow && (
+                            <p class="home-hero-eyebrow">{slide.eyebrow}</p>
+                        )}
+                        {slide.title && (
+                            <h1 class="home-hero-title">{slide.title}</h1>
+                        )}
+                        {slide.excerpt && (
+                            <p class="home-hero-subtitle">{slide.excerpt}</p>
+                        )}
+                        {slide.dateRange && (
+                            <p class="home-hero-dates">{slide.dateRange}</p>
+                        )}
+                        {slide.href && (
+                            <a
+                                class="home-hero-cta"
+                                href={slide.href}
+                                tabindex={i === 0 ? undefined : -1}
+                                {...(slide.isExternal
+                                    ? {
+                                          target: "_blank",
+                                          rel: "noopener noreferrer",
+                                      }
+                                    : {})}
+                            >
+                                <span>{slide.ctaLabel}</span>
+                                <svg
+                                    class="home-hero-arrow"
+                                    width="28"
+                                    height="10"
+                                    viewBox="0 0 28 10"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <path d="M0 5h26M22 1l4 4-4 4" />
+                                </svg>
+                            </a>
+                        )}
+                    </div>
+                ))
+            }
+
+            {
+                hasMultiple && (
+                    <nav
+                        class="home-hero-index"
+                        data-hero-index
+                        aria-label={t("home.heroNav", lang)}
+                    >
+                        {heroSlides.map((_, i) => (
+                            <button
+                                type="button"
+                                class:list={[
+                                    "home-hero-num",
+                                    { active: i === 0 },
+                                ]}
+                                data-index={i}
+                                aria-current={i === 0 ? "true" : undefined}
+                            >
+                                {String(i + 1).padStart(2, "0")}
+                            </button>
+                        ))}
+                    </nav>
+                )
+            }
+        </div>
+
+        {
+            heroSlides.length > 0 && (
+                <div
+                    class="home-hero-media"
+                    data-hero-gallery={hasMultiple ? "" : null}
+                >
+                    <div class="home-hero-track" data-hero-track>
+                        {heroSlides.map((slide, i) => (
+                            <img
+                                class:list={[
+                                    "home-hero-slide",
+                                    { active: i === 0 },
+                                ]}
+                                src={slide.src}
+                                alt={i === 0 ? slide.alt : ""}
+                                width="1400"
+                                height="1000"
+                                fetchpriority={i === 0 ? "high" : undefined}
+                                loading={i === 0 ? undefined : "lazy"}
+                                decoding="async"
+                            />
+                        ))}
+                    </div>
+
+                </div>
+            )
+        }
+
+    </div>
+</section>
+
+<style>
+    .home-hero {
+        background: var(--color-feature);
+        color: var(--color-feature-text);
+        /* Breathing room under the header; the layout adds header height
+           on top of this via --hero-gap. */
+        --hero-gap: clamp(1.25rem, 3vw, 2.25rem);
+        padding: var(--hero-gap) 0 0;
+    }
+
+    /* Fill more of the fold on desktop, as in the design */
+    @media (min-width: 900px) {
+        .home-hero {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        .home-hero-inner {
+            width: 100%;
+        }
+    }
+
+    .home-hero-inner {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 var(--space-md);
+        display: grid;
+        gap: clamp(1.5rem, 4vw, 3rem);
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+
+    /* Text bleeds left, image sits offset right */
+    @media (min-width: 900px) {
+        /* Image-only slides keep the hero's proportions rather than
+           filling the viewport: same offset-right placement, empty left. */
+        .home-hero-inner.is-image-only {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        }
+
+        .home-hero-inner {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+            column-gap: clamp(2rem, 5vw, 4rem);
+            padding-bottom: 0;
+        }
+    }
+
+    .home-hero-text {
+        padding-bottom: clamp(2rem, 5vw, 4rem);
+        display: grid;
+        grid-template-rows: auto auto;
+        align-content: start;
+    }
+
+    /* No text on any slide — keep the column so the image stays in place,
+       but don't let an empty block add height. */
+    .home-hero-inner.is-image-only .home-hero-text {
+        padding-bottom: 0;
+    }
+
+    /* Copy blocks stack and crossfade in step with the image */
+    .home-hero-copy {
+        grid-row: 1;
+        grid-column: 1;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+            opacity 0.25s ease,
+            visibility 0s linear 0.25s;
+    }
+
+    .home-hero-copy.active {
+        opacity: 1;
+        visibility: visible;
+        transition:
+            opacity 0.35s ease 0.15s,
+            visibility 0s;
+    }
+
+    /* The image runs to the bottom edge of the blue; the text keeps its
+       breathing room above it. */
+    @media (min-width: 900px) {
+        .home-hero-media {
+            align-self: end;
+            margin-bottom: 0;
+        }
+
+        .home-hero-media .home-hero-slide {
+            display: block;
+        }
+    }
+
+    .home-hero-eyebrow {
+        font-size: 0.7rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
+    }
+
+    .home-hero-title {
+        font-family: var(--font-display);
+        /* Sized so the longest word fits its column without breaking */
+        font-size: clamp(2.25rem, 4.4vw, 3.9rem);
+        line-height: 0.95;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        text-wrap: balance;
+        margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
+    }
+
+    .home-hero-subtitle {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+        line-height: 1.25;
+        max-width: 22ch;
+        margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
+    }
+
+    .home-hero-dates {
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: clamp(1.5rem, 3.5vw, 2.5rem);
+    }
+
+    /* Text link rather than an outlined box — nothing else on the page is boxed */
+    .home-hero-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.85rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid currentColor;
+    }
+
+    .home-hero-arrow {
+        transition: transform 0.25s ease;
+    }
+
+    .home-hero-cta:hover .home-hero-arrow,
+    .home-hero-cta:focus-visible .home-hero-arrow {
+        transform: translateX(4px);
+    }
+
+    /* Image sits flush to the bottom of the blue block */
+    .home-hero-media {
+        align-self: end;
+    }
+
+    .home-hero-media img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
+    /* Slides stack and crossfade; the first one sets the box height */
+    .home-hero-track {
+        display: grid;
+    }
+
+    .home-hero-slide {
+        grid-area: 1 / 1;
+        opacity: 0;
+        transition: opacity 0.7s ease;
+    }
+
+    .home-hero-slide.active {
+        opacity: 1;
+    }
+
+    /* Numbered slide index, sitting under the copy in the text column */
+    .home-hero-index {
+        grid-row: 2;
+        grid-column: 1;
+        display: flex;
+        align-items: center;
+        gap: clamp(0.75rem, 2vw, 1.25rem);
+        margin-top: clamp(1.75rem, 4vw, 2.75rem);
+        width: fit-content;
+    }
+
+    .home-hero-num {
+        appearance: none;
+        border: 0;
+        background: none;
+        color: inherit;
+        font-family: inherit;
+        font-size: 0.72rem;
+        letter-spacing: 0.16em;
+        cursor: pointer;
+        padding: 0.35rem 0;
+        opacity: 0.4;
+        transition: opacity 0.2s ease;
+    }
+
+    .home-hero-num.active,
+    .home-hero-num:hover,
+    .home-hero-num:focus-visible {
+        opacity: 1;
+    }
+
+    .home-hero-num.active {
+        text-decoration: underline;
+        text-underline-offset: 4px;
+    }
+
+    .home-hero-num:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 2px;
+    }
+
+    /* Keep the stacked image from dominating the fold on tablets */
+    @media (max-width: 899px) {
+        .home-hero-media img {
+            aspect-ratio: 16 / 10;
+            max-height: 50vh;
+        }
+    }
+
+
+
+
+    @media (min-width: 900px) {
+
+    }
+
+
+
+
+
+    @media (prefers-reduced-motion: reduce) {
+        .home-hero-arrow,
+        .home-hero-slide,
+        .home-hero-copy,
+    }
+</style>
+
+<script>
+    // Crossfade the hero gallery. Pauses on hover/focus and respects
+    // reduced-motion by not auto-advancing.
+    document.querySelectorAll("[data-hero-gallery]").forEach((root) => {
+        const slides = Array.from(
+            root.querySelectorAll<HTMLElement>(".home-hero-slide"),
+        );
+        // The copy lives outside the media element, so look it up on the hero
+        const hero = root.closest(".home-hero");
+        const copies = Array.from(
+            hero?.querySelectorAll<HTMLElement>("[data-hero-copy]") ?? [],
+        );
+        const nums = Array.from(
+            hero?.querySelectorAll<HTMLButtonElement>(".home-hero-num") ?? [],
+        );
+        if (slides.length < 2) return;
+
+        let index = 0;
+        let timer: number | null = null;
+        const reduced = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        function show(next: number) {
+            index = (next + slides.length) % slides.length;
+            slides.forEach((s, i) => s.classList.toggle("active", i === index));
+            nums.forEach((n, i) => {
+                const on = i === index;
+                n.classList.toggle("active", on);
+                if (on) n.setAttribute("aria-current", "true");
+                else n.removeAttribute("aria-current");
+            });
+            copies.forEach((c, i) => {
+                const on = i === index;
+                c.classList.toggle("active", on);
+                // Keep hidden copy out of the tab order
+                c.querySelectorAll("a").forEach((a) =>
+                    on ? a.removeAttribute("tabindex") : (a.tabIndex = -1),
+                );
+            });
+        }
+
+        function start() {
+            if (reduced || timer !== null) return;
+            timer = window.setInterval(() => show(index + 1), 7000);
+        }
+
+        function stop() {
+            if (timer !== null) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        nums.forEach((num) =>
+            num.addEventListener("click", () => {
+                show(Number(num.dataset.index) || 0);
+                stop();
+                start();
+            }),
+        );
+
+        root.addEventListener("mouseenter", stop);
+        root.addEventListener("mouseleave", start);
+        root.addEventListener("focusin", stop);
+        root.addEventListener("focusout", start);
+
+        start();
+    });
+</script>

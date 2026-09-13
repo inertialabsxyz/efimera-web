@@ -272,7 +272,14 @@ const hasMultiple = heroSlides.length > 1;
         .home-hero-head {
             grid-column: 1;
             grid-row: 1;
-            align-content: start;
+            /* The row reserves the tallest title so the hero doesn't resize
+               between slides; bottom-align so a shorter title still sits
+               directly above the description instead of floating. */
+            align-content: end;
+        }
+
+        .home-hero-head .home-hero-copy {
+            align-self: end;
         }
 
         .home-hero-text {
@@ -318,11 +325,13 @@ const hasMultiple = heroSlides.length > 1;
             visibility 0s linear 0.25s;
     }
 
-    /* The heading stack sizes to the active slide, not the tallest one, so a
-       short title doesn't leave a gap above the description. */
-    .home-hero-head .home-hero-copy:not(.active) {
-        height: 0;
-        overflow: hidden;
+    /* Mobile: the heading sizes to the active slide, so a short title doesn't
+       leave a gap above the description. */
+    @media (max-width: 899px) {
+        .home-hero-head .home-hero-copy:not(.active) {
+            height: 0;
+            overflow: hidden;
+        }
     }
 
     .home-hero-copy.active {

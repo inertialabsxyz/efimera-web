@@ -193,13 +193,15 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
     .home-hero {
         background: var(--color-feature);
         color: var(--color-feature-text);
-        padding: clamp(2rem, 6vw, 4.5rem) 0 0;
+        /* Breathing room under the header; the layout adds header height
+           on top of this via --hero-gap. */
+        --hero-gap: clamp(1.25rem, 3vw, 2.25rem);
+        padding: var(--hero-gap) 0 0;
     }
 
     /* Fill more of the fold on desktop, as in the design */
     @media (min-width: 900px) {
         .home-hero {
-            min-height: calc(88vh - var(--header-height));
             display: flex;
             align-items: flex-end;
         }

@@ -182,7 +182,9 @@ p {
 
 /* The hero reclaims the space the header would have occupied */
 .has-transparent-header main > :first-child {
-    padding-top: var(--header-height);
+    /* Clear the fixed header without overriding the section's own top
+       padding — the two need to add up, not replace each other. */
+    padding-top: calc(var(--header-height) + var(--hero-gap, 0px));
 }
 
 /* The hero keeps its light-on-blue palette in both themes, so the header

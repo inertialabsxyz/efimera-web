@@ -426,21 +426,12 @@ const hasMultiple = heroSlides.length > 1;
         }
     }
 
-
-
-
-    @media (min-width: 900px) {
-
-    }
-
-
-
-
-
     @media (prefers-reduced-motion: reduce) {
         .home-hero-arrow,
         .home-hero-slide,
-        .home-hero-copy,
+        .home-hero-copy {
+            transition: none;
+        }
     }
 </style>
 

@@ -63,14 +63,18 @@ const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
                     // scrolled past, so content never sits under bare nav text.
                     document.addEventListener("DOMContentLoaded", function () {
                         var body = document.body;
-                        var hero = document.querySelector("main > *");
+                        // Target the hero itself: "main > *" would match any
+                        // zero-height helper element placed before it.
+                        var hero = document.querySelector(".home-hero");
                         function pin() {
                             var fallback = 60;
                             var h = hero ? hero.offsetHeight : 0;
                             var limit = Math.max(0, h - fallback);
+                            // >= not >: an in-page anchor can land exactly on
+                            // the boundary, which left the header transparent.
                             body.classList.toggle(
                                 "header-pinned",
-                                window.scrollY > limit,
+                                window.scrollY >= limit,
                             );
                         }
                         pin();

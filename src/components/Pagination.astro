@@ -6,9 +6,19 @@ interface Props {
     totalPages: number;
     baseUrl: string;
     lang?: Locale;
+    /** Element id to jump to, so paging lands at the list rather than the top */
+    anchor?: string;
 }
 
-const { currentPage, totalPages, baseUrl, lang = "es" } = Astro.props;
+const {
+    currentPage,
+    totalPages,
+    baseUrl,
+    lang = "es",
+    anchor,
+} = Astro.props;
+
+const hash = anchor ? `#${anchor}` : "";
 
 // Don't render pagination if only one page
 if (totalPages <= 1) {
@@ -22,10 +32,10 @@ const hasNext = currentPage < totalPages;
 function getPageUrl(page: number): string {
     if (page === 1) {
         // First page doesn't need page param
-        return baseUrl;
+        return `${baseUrl}${hash}`;
     }
     const separator = baseUrl.includes('?') ? '&' : '?';
-    return `${baseUrl}${separator}page=${page}`;
+    return `${baseUrl}${separator}page=${page}${hash}`;
 }
 ---
 

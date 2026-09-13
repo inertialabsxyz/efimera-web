@@ -1901,3 +1901,9 @@ main {
         grid-template-columns: 1fr;
     }
 }
+
+/* Paging jumps here rather than the top of the page. Offset so the fixed
+   header doesn't sit over the first row of cards. */
+.articles-anchor {
+    scroll-margin-top: var(--header-height);
+}

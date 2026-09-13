@@ -27,7 +27,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.articulos": "Otros",
     "nav.revistaXyz": "Revista XYZ",
     "nav.tienda": "Tienda",
-    "nav.projects": "Projects",
+    "nav.projects": "Proyectos",
     "nav.reserva": "Reserva",
 
     // Footer

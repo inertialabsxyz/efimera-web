@@ -93,6 +93,34 @@ export default {
                 ),
             },
             {
+              name: "discipline",
+              title: "Discipline",
+              type: "string",
+              description:
+                'Top of the right-hand rail, e.g. "Escultura expandida"',
+            },
+            {
+              name: "themes",
+              title: "Theme Keywords",
+              type: "array",
+              of: [{ type: "string" }],
+              options: { layout: "tags" },
+              description:
+                "Curatorial keywords listed in the rail, e.g. Materia, Territorio",
+            },
+            {
+              name: "location",
+              title: "Location",
+              type: "string",
+              description: 'Bottom of the rail, e.g. "Murcia"',
+            },
+            {
+              name: "ctaLabel",
+              title: "CTA Label",
+              type: "string",
+              description: 'Defaults to "Ver más" / "Read more" when empty',
+            },
+            {
               name: "displayWidth",
               title: "Display Width (px)",
               type: "number",
@@ -163,97 +191,6 @@ export default {
         },
       ],
       validation: (Rule) => Rule.min(1).error("Add at least one slide"),
-    },
-    {
-      name: "hero",
-      title: "Homepage Hero",
-      type: "object",
-      description:
-        "Optional: the large featured block at the top of the homepage. Leave empty to hide it.",
-      options: { collapsible: true, collapsed: true },
-      fields: [
-        {
-          name: "eyebrow",
-          title: "Eyebrow",
-          type: "string",
-          description: 'Small label above the title, e.g. "Exposición"',
-        },
-        {
-          name: "title",
-          title: "Title",
-          type: "string",
-          description: "Large display headline",
-        },
-        {
-          name: "subtitle",
-          title: "Subtitle",
-          type: "string",
-          description: "Artists or secondary line, shown in serif italic",
-        },
-        {
-          name: "startDate",
-          title: "Start Date",
-          type: "date",
-          options: { dateFormat: "YYYY-MM-DD" },
-        },
-        {
-          name: "endDate",
-          title: "End Date",
-          type: "date",
-          options: { dateFormat: "YYYY-MM-DD" },
-          description: "Optional: omit for a single-date event",
-        },
-        {
-          name: "image",
-          title: "Hero Image",
-          type: "image",
-          options: { hotspot: true },
-          fields: [{ name: "alt", title: "Alt Text", type: "string" }],
-        },
-        {
-          name: "themes",
-          title: "Theme Keywords",
-          type: "array",
-          of: [{ type: "string" }],
-          description:
-            "Curatorial keywords shown in the right-hand rail, e.g. Materia, Territorio",
-          options: { layout: "tags" },
-        },
-        {
-          name: "discipline",
-          title: "Discipline",
-          type: "string",
-          description: 'Top of the right rail, e.g. "Escultura expandida"',
-        },
-        {
-          name: "location",
-          title: "Location",
-          type: "string",
-          description: 'Bottom of the right rail, e.g. "Murcia"',
-        },
-        {
-          name: "ctaLabel",
-          title: "CTA Label",
-          type: "string",
-          description: 'Defaults to "Ver más" / "Read more" when empty',
-        },
-        {
-          name: "article",
-          title: "Linked Article",
-          type: "reference",
-          to: [{ type: "article" }],
-          description: "Where the CTA links to",
-          hidden: ({ parent }) => !!parent?.url,
-        },
-        {
-          name: "url",
-          title: "External URL",
-          type: "url",
-          description: "Use instead of Linked Article",
-          validation: (Rule) => Rule.uri({ scheme: ["http", "https"] }),
-          hidden: ({ parent }) => !!parent?.article,
-        },
-      ],
     },
     {
       name: "language",

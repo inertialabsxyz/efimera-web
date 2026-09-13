@@ -340,6 +340,10 @@ export async function getHeroSlides(lang: Locale = "es") {
       excerpt,
       startDate,
       endDate,
+      discipline,
+      themes,
+      location,
+      ctaLabel,
       url,
       "article": article->{
         title,
@@ -357,28 +361,6 @@ export async function getHeroSlides(lang: Locale = "es") {
   `,
   );
   return Array.isArray(slides) ? slides : [];
-}
-
-// Homepage hero: optional block on the featuredGallery singleton
-export async function getHomeHero(lang: Locale = "es") {
-  const hero = await client.fetch(`
-    *[_type == "featuredGallery" && ${langFilter(lang)}][0].hero {
-      eyebrow,
-      title,
-      subtitle,
-      startDate,
-      endDate,
-      image,
-      themes,
-      discipline,
-      location,
-      ctaLabel,
-      url,
-      "article": article->{ title, slug }
-    }
-  `);
-  // Treat a hero with no title as absent so the section stays hidden
-  return hero?.title ? hero : null;
 }
 
 export async function getFeaturedGallery(lang: Locale = "es") {

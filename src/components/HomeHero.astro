@@ -3,13 +3,12 @@ import { urlFor } from "../lib/sanity";
 import { getLocalePath, t, type Locale } from "../lib/i18n";
 
 interface Props {
-    hero: any;
-    /** Gallery slides supplying the hero imagery; first one shows initially */
-    slides?: any[];
+    /** Featured gallery slides; each carries its own text, dates and rail */
+    slides: any[];
     lang?: Locale;
 }
 
-const { hero, slides = [], lang = "es" } = Astro.props;
+const { slides = [], lang = "es" } = Astro.props;
 
 const locale = lang === "en" ? "en-GB" : "es-ES";
 
@@ -52,12 +51,6 @@ function hrefFor(url?: string, slug?: string) {
     return slug ? getLocalePath(`/article/${slug}`, lang) : null;
 }
 
-// hero.imageSrc lets placeholder/local images bypass the Sanity URL builder
-const heroImageUrl = hero.image
-    ? urlFor(hero.image).width(1400).height(1000).fit("crop").url()
-    : (hero.imageSrc ?? null);
-const imageAlt = hero.image?.alt || hero.title || t("home.heroImageAlt", lang);
-
 // Each gallery slide carries its own text; anything the editor leaves blank
 // falls back to the linked article, then to the hero defaults.
 const gallerySlides = slides
@@ -87,31 +80,17 @@ const gallerySlides = slides
             isExternal: Boolean(
                 slide?.url || (isRevista && slide?.revista?.pdfUrl),
             ),
+            discipline: slide?.discipline || null,
+            themes: Array.isArray(slide?.themes) ? slide.themes : [],
+            location: slide?.location || null,
+            ctaLabel: slide?.ctaLabel || t("home.heroCta", lang),
         };
     })
     .filter(Boolean) as any[];
 
-// Fall back to the hero's own content when the gallery has nothing usable
-const heroSlides = gallerySlides.length
-    ? gallerySlides
-    : heroImageUrl || hero.title
-      ? [
-            {
-                src: heroImageUrl,
-                alt: imageAlt,
-                eyebrow: hero.eyebrow ?? null,
-                title: hero.title,
-                excerpt: hero.subtitle ?? null,
-                dateRange: dateRangeFor(hero.startDate, hero.endDate),
-                href: hrefFor(hero.url, hero.article?.slug?.current),
-                isExternal: Boolean(hero.url),
-            },
-        ]
-      : [];
+const heroSlides = gallerySlides;
 
 const hasMultiple = heroSlides.length > 1;
-const ctaLabel = hero.ctaLabel || t("home.heroCta", lang);
-const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 ---
 
 <section class="home-hero">
@@ -145,7 +124,7 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
                                       }
                                     : {})}
                             >
-                                <span>{ctaLabel}</span>
+                                <span>{slide.ctaLabel}</span>
                                 <svg
                                     class="home-hero-arrow"
                                     width="28"
@@ -210,21 +189,34 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         }
 
         {
-            (hero.discipline || themes.length > 0 || hero.location) && (
+            heroSlides.some(
+                (s) => s.discipline || s.themes.length > 0 || s.location,
+            ) && (
                 <aside class="home-hero-rail">
-                    {hero.discipline && (
-                        <p class="home-hero-discipline">{hero.discipline}</p>
-                    )}
-                    {themes.length > 0 && (
-                        <ul class="home-hero-themes">
-                            {themes.map((theme) => (
-                                <li>{theme}</li>
-                            ))}
-                        </ul>
-                    )}
-                    {hero.location && (
-                        <p class="home-hero-location">{hero.location}</p>
-                    )}
+                    {heroSlides.map((slide, i) => (
+                        <div
+                            class:list={["home-hero-railset", { active: i === 0 }]}
+                            data-hero-rail
+                        >
+                            {slide.discipline && (
+                                <p class="home-hero-discipline">
+                                    {slide.discipline}
+                                </p>
+                            )}
+                            {slide.themes.length > 0 && (
+                                <ul class="home-hero-themes">
+                                    {slide.themes.map((theme: string) => (
+                                        <li>{theme}</li>
+                                    ))}
+                                </ul>
+                            )}
+                            {slide.location && (
+                                <p class="home-hero-location">
+                                    {slide.location}
+                                </p>
+                            )}
+                        </div>
+                    ))}
                 </aside>
             )
         }
@@ -283,15 +275,15 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         opacity: 0;
         visibility: hidden;
         transition:
-            opacity 0.7s ease,
-            visibility 0s linear 0.7s;
+            opacity 0.25s ease,
+            visibility 0s linear 0.25s;
     }
 
     .home-hero-copy.active {
         opacity: 1;
         visibility: visible;
         transition:
-            opacity 0.7s ease,
+            opacity 0.35s ease 0.15s,
             visibility 0s;
     }
 
@@ -425,6 +417,16 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
     }
 
     .home-hero-rail {
+        display: grid;
+    }
+
+    .home-hero-railset {
+        grid-area: 1 / 1;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+            opacity 0.25s ease,
+            visibility 0s linear 0.25s;
         display: flex;
         flex-direction: column;
         gap: clamp(1.5rem, 4vw, 3rem);
@@ -435,8 +437,17 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         padding-bottom: clamp(2rem, 5vw, 4rem);
     }
 
+    .home-hero-railset.active {
+        opacity: 1;
+        visibility: visible;
+        transition:
+            opacity 0.35s ease 0.15s,
+            visibility 0s;
+    }
+
     @media (min-width: 900px) {
-        .home-hero-rail {
+        .home-hero-rail,
+        .home-hero-railset {
             min-width: max-content;
         }
     }
@@ -459,7 +470,7 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 
     /* Rail reads as a horizontal strip on narrow screens */
     @media (max-width: 899px) {
-        .home-hero-rail {
+        .home-hero-railset {
             flex-direction: row;
             flex-wrap: wrap;
             gap: 1rem 2rem;
@@ -481,7 +492,8 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
     @media (prefers-reduced-motion: reduce) {
         .home-hero-arrow,
         .home-hero-slide,
-        .home-hero-copy {
+        .home-hero-copy,
+        .home-hero-railset {
             transition: none;
         }
     }
@@ -495,10 +507,12 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
             root.querySelectorAll<HTMLElement>(".home-hero-slide"),
         );
         // The copy lives outside the media element, so look it up on the hero
+        const hero = root.closest(".home-hero");
         const copies = Array.from(
-            root
-                .closest(".home-hero")
-                ?.querySelectorAll<HTMLElement>("[data-hero-copy]") ?? [],
+            hero?.querySelectorAll<HTMLElement>("[data-hero-copy]") ?? [],
+        );
+        const rails = Array.from(
+            hero?.querySelectorAll<HTMLElement>("[data-hero-rail]") ?? [],
         );
         const dots = Array.from(
             root.querySelectorAll<HTMLButtonElement>(".home-hero-dot"),
@@ -515,6 +529,7 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
             index = (next + slides.length) % slides.length;
             slides.forEach((s, i) => s.classList.toggle("active", i === index));
             dots.forEach((d, i) => d.classList.toggle("active", i === index));
+            rails.forEach((r, i) => r.classList.toggle("active", i === index));
             copies.forEach((c, i) => {
                 const on = i === index;
                 c.classList.toggle("active", on);

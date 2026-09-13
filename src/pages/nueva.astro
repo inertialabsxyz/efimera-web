@@ -24,9 +24,12 @@ const [{ articles, totalPages }, authoredHero, heroSlides] = await Promise.all([
     getHeroSlides(lang),
 ]);
 
-// The featured gallery supplies the hero imagery. Its slides carry no text, so
-// the headline falls back to the newest article, then to the design placeholder.
+// The featured gallery supplies the hero: each slide carries its own title,
+// description and dates. Slides that leave those blank fall back to their
+// linked article inside HomeHero. The derived hero below is only used when
+// the gallery is empty.
 const leadArticle = articles[0];
+
 // Short excerpts are usually just the date/time repeated, which the hero
 // already shows on its own line — only use longer ones as a subtitle.
 const heroSubtitle =
@@ -55,10 +58,17 @@ const hero = authoredHero ?? derivedHero ?? homeHeroPlaceholder;
 // below continues from where they stop so nothing is shown twice.
 const isFirstPage = currentPage === 1;
 
-// Don't repeat the hero's article in the cards below it
+// Don't repeat the hero's article in the cards below it. With a populated
+// gallery the hero links to its slides, so dedupe against those too.
+const slideSlugs = new Set(
+    (heroSlides ?? [])
+        .map((s: any) => s?.article?.slug?.current)
+        .filter(Boolean),
+);
 const heroSlug = hero?.article?.slug?.current ?? null;
+if (heroSlug && slideSlugs.size === 0) slideSlugs.add(heroSlug);
 const available = isFirstPage
-    ? articles.filter((a: any) => a.slug?.current !== heroSlug)
+    ? articles.filter((a: any) => !slideSlugs.has(a.slug?.current))
     : articles;
 
 const featureItems = isFirstPage ? available.slice(0, 3) : [];

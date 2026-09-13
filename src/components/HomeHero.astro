@@ -28,99 +28,141 @@ function formatDate(value?: string, withYear = true) {
     return lang === "es" ? formatted.replace(/ de /g, " ") : formatted;
 }
 
-// Drop the repeated year on the start date when both fall in the same year
-const start = new Date(hero.startDate);
-const end = hero.endDate ? new Date(hero.endDate) : null;
-const sameYear =
-    end && !Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime())
-        ? start.getUTCFullYear() === end.getUTCFullYear()
-        : false;
+// Build the date range label, dropping the repeated year when both dates
+// fall in the same one.
+function dateRangeFor(startValue?: string, endValue?: string) {
+    if (!startValue && !endValue) return null;
+    const s = startValue ? new Date(startValue) : null;
+    const e = endValue ? new Date(endValue) : null;
+    const sameYear =
+        s &&
+        e &&
+        !Number.isNaN(s.getTime()) &&
+        !Number.isNaN(e.getTime()) &&
+        s.getUTCFullYear() === e.getUTCFullYear();
+    return (
+        [formatDate(startValue, !sameYear), formatDate(endValue)]
+            .filter(Boolean)
+            .join(" — ") || null
+    );
+}
 
-const startLabel = formatDate(hero.startDate, !sameYear);
-const endLabel = formatDate(hero.endDate);
-const dateRange = [startLabel, endLabel].filter(Boolean).join(" — ");
+function hrefFor(url?: string, slug?: string) {
+    if (url) return url;
+    return slug ? getLocalePath(`/article/${slug}`, lang) : null;
+}
 
-const href = hero.url
-    ? hero.url
-    : hero.article?.slug?.current
-      ? getLocalePath(`/article/${hero.article.slug.current}`, lang)
-      : null;
-const isExternal = Boolean(hero.url);
-
-const ctaLabel = hero.ctaLabel || t("home.heroCta", lang);
 // hero.imageSrc lets placeholder/local images bypass the Sanity URL builder
 const heroImageUrl = hero.image
     ? urlFor(hero.image).width(1400).height(1000).fit("crop").url()
     : (hero.imageSrc ?? null);
 const imageAlt = hero.image?.alt || hero.title || t("home.heroImageAlt", lang);
 
-// Gallery slides carry the imagery; fall back to the hero's own image
+// Each gallery slide carries its own text; anything the editor leaves blank
+// falls back to the linked article, then to the hero defaults.
 const gallerySlides = slides
     .map((slide: any) => {
-        const source =
-            slide?._type === "revistaSlide"
-                ? slide?.revista?.coverImage
-                : slide?.image;
+        const isRevista = slide?._type === "revistaSlide";
+        const source = isRevista ? slide?.revista?.coverImage : slide?.image;
         if (!source) return null;
+
+        const article = slide?.article;
+        const title = slide?.title || article?.title || slide?.revista?.title;
+        if (!title) return null;
+
         return {
             src: urlFor(source).width(1400).height(1000).fit("crop").url(),
-            alt:
-                source?.alt ||
-                slide?.title ||
-                slide?.article?.title ||
-                slide?.revista?.title ||
-                imageAlt,
+            alt: source?.alt || title,
+            eyebrow: slide?.eyebrow || article?.category || null,
+            title,
+            excerpt: slide?.excerpt || article?.excerpt || null,
+            dateRange: dateRangeFor(
+                slide?.startDate || article?.publishedAt,
+                slide?.endDate,
+            ),
+            href: hrefFor(
+                slide?.url || (isRevista ? slide?.revista?.pdfUrl : undefined),
+                article?.slug?.current,
+            ),
+            isExternal: Boolean(
+                slide?.url || (isRevista && slide?.revista?.pdfUrl),
+            ),
         };
     })
-    .filter(Boolean) as { src: string; alt: string }[];
+    .filter(Boolean) as any[];
 
+// Fall back to the hero's own content when the gallery has nothing usable
 const heroSlides = gallerySlides.length
     ? gallerySlides
-    : heroImageUrl
-      ? [{ src: heroImageUrl, alt: imageAlt }]
+    : heroImageUrl || hero.title
+      ? [
+            {
+                src: heroImageUrl,
+                alt: imageAlt,
+                eyebrow: hero.eyebrow ?? null,
+                title: hero.title,
+                excerpt: hero.subtitle ?? null,
+                dateRange: dateRangeFor(hero.startDate, hero.endDate),
+                href: hrefFor(hero.url, hero.article?.slug?.current),
+                isExternal: Boolean(hero.url),
+            },
+        ]
       : [];
+
 const hasMultiple = heroSlides.length > 1;
+const ctaLabel = hero.ctaLabel || t("home.heroCta", lang);
 const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 ---
 
 <section class="home-hero">
     <div class="home-hero-inner">
         <div class="home-hero-text">
-            {hero.eyebrow && <p class="home-hero-eyebrow">{hero.eyebrow}</p>}
-            <h1 class="home-hero-title">{hero.title}</h1>
-            {hero.subtitle && <p class="home-hero-subtitle">{hero.subtitle}</p>}
             {
-                dateRange && (
-                    <p class="home-hero-dates">
-                        <time datetime={hero.startDate}>{dateRange}</time>
-                    </p>
-                )
-            }
-            {
-                href && (
-                    <a
-                        class="home-hero-cta"
-                        href={href}
-                        {...(isExternal
-                            ? { target: "_blank", rel: "noopener noreferrer" }
-                            : {})}
+                heroSlides.map((slide, i) => (
+                    <div
+                        class:list={["home-hero-copy", { active: i === 0 }]}
+                        data-hero-copy
                     >
-                        <span>{ctaLabel}</span>
-                        <svg
-                            class="home-hero-arrow"
-                            width="28"
-                            height="10"
-                            viewBox="0 0 28 10"
-                            fill="none"
-                            stroke="currentColor"
-                            stroke-width="1"
-                            aria-hidden="true"
-                            focusable="false"
-                        >
-                            <path d="M0 5h26M22 1l4 4-4 4" />
-                        </svg>
-                    </a>
-                )
+                        {slide.eyebrow && (
+                            <p class="home-hero-eyebrow">{slide.eyebrow}</p>
+                        )}
+                        <h1 class="home-hero-title">{slide.title}</h1>
+                        {slide.excerpt && (
+                            <p class="home-hero-subtitle">{slide.excerpt}</p>
+                        )}
+                        {slide.dateRange && (
+                            <p class="home-hero-dates">{slide.dateRange}</p>
+                        )}
+                        {slide.href && (
+                            <a
+                                class="home-hero-cta"
+                                href={slide.href}
+                                tabindex={i === 0 ? undefined : -1}
+                                {...(slide.isExternal
+                                    ? {
+                                          target: "_blank",
+                                          rel: "noopener noreferrer",
+                                      }
+                                    : {})}
+                            >
+                                <span>{ctaLabel}</span>
+                                <svg
+                                    class="home-hero-arrow"
+                                    width="28"
+                                    height="10"
+                                    viewBox="0 0 28 10"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1"
+                                    aria-hidden="true"
+                                    focusable="false"
+                                >
+                                    <path d="M0 5h26M22 1l4 4-4 4" />
+                                </svg>
+                            </a>
+                        )}
+                    </div>
+                ))
             }
         </div>
 
@@ -232,6 +274,25 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 
     .home-hero-text {
         padding-bottom: clamp(2rem, 5vw, 4rem);
+        display: grid;
+    }
+
+    /* Copy blocks stack and crossfade in step with the image */
+    .home-hero-copy {
+        grid-area: 1 / 1;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+            opacity 0.7s ease,
+            visibility 0s linear 0.7s;
+    }
+
+    .home-hero-copy.active {
+        opacity: 1;
+        visibility: visible;
+        transition:
+            opacity 0.7s ease,
+            visibility 0s;
     }
 
     /* The image runs to the bottom edge of the blue; text and rail keep
@@ -419,7 +480,8 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 
     @media (prefers-reduced-motion: reduce) {
         .home-hero-arrow,
-        .home-hero-slide {
+        .home-hero-slide,
+        .home-hero-copy {
             transition: none;
         }
     }
@@ -431,6 +493,12 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
     document.querySelectorAll("[data-hero-gallery]").forEach((root) => {
         const slides = Array.from(
             root.querySelectorAll<HTMLElement>(".home-hero-slide"),
+        );
+        // The copy lives outside the media element, so look it up on the hero
+        const copies = Array.from(
+            root
+                .closest(".home-hero")
+                ?.querySelectorAll<HTMLElement>("[data-hero-copy]") ?? [],
         );
         const dots = Array.from(
             root.querySelectorAll<HTMLButtonElement>(".home-hero-dot"),
@@ -447,6 +515,14 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
             index = (next + slides.length) % slides.length;
             slides.forEach((s, i) => s.classList.toggle("active", i === index));
             dots.forEach((d, i) => d.classList.toggle("active", i === index));
+            copies.forEach((c, i) => {
+                const on = i === index;
+                c.classList.toggle("active", on);
+                // Keep hidden copy out of the tab order
+                c.querySelectorAll("a").forEach((a) =>
+                    on ? a.removeAttribute("tabindex") : (a.tabIndex = -1),
+                );
+            });
         }
 
         function start() {

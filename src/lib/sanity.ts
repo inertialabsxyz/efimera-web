@@ -335,8 +335,11 @@ export async function getHeroSlides(lang: Locale = "es") {
     *[_type == "featuredGallery" && ${langFilter(lang)}][0].slides[] {
       _type,
       image,
+      eyebrow,
       title,
       excerpt,
+      startDate,
+      endDate,
       url,
       "article": article->{
         title,

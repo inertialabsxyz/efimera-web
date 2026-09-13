@@ -19,18 +19,12 @@ const lang = getLang(Astro);
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 
-// Page 1 carries the feature row above the grid, so it needs three extra
-// articles; later pages are grid-only.
-const isFirstPage = currentPage === 1;
-const pageSize = isFirstPage ? FEATURE_COUNT + GRID_SIZE : GRID_SIZE;
-// Page 1 consumes FEATURE_COUNT + GRID_SIZE, so later pages start past it
-// rather than at (page - 1) * GRID_SIZE, which would repeat articles.
-const startAt = isFirstPage
-    ? 0
-    : FEATURE_COUNT + GRID_SIZE + (currentPage - 2) * GRID_SIZE;
+// Every page carries the hero and the feature row, so page sizes are
+// uniform: three feature cards plus a nine-card grid.
+const pageSize = FEATURE_COUNT + GRID_SIZE;
 
 const [{ articles, total }, heroSlides] = await Promise.all([
-    getArticlesPaginated(currentPage, pageSize, lang, startAt),
+    getArticlesPaginated(currentPage, pageSize, lang),
     getHeroSlides(lang),
 ]);
 
@@ -39,12 +33,7 @@ const [{ articles, total }, heroSlides] = await Promise.all([
 // gallery is empty.
 const hasHero = heroSlides.length > 0;
 
-// Page 1 holds FEATURE_COUNT + GRID_SIZE; every later page holds GRID_SIZE.
-const firstPageSize = FEATURE_COUNT + GRID_SIZE;
-const totalPages =
-    total <= firstPageSize
-        ? 1
-        : 1 + Math.ceil((total - firstPageSize) / GRID_SIZE);
+const totalPages = Math.max(1, Math.ceil(total / pageSize));
 
 // A page past the end would render an empty grid and a "9 / 8" label
 if (currentPage > totalPages) {
@@ -59,22 +48,23 @@ const slideSlugs = new Set(
         .map((s: any) => s?.article?.slug?.current)
         .filter(Boolean),
 );
-const available = isFirstPage
-    ? articles.filter((a: any) => !slideSlugs.has(a.slug?.current))
-    : articles;
+const available = articles.filter(
+    (a: any) => !slideSlugs.has(a.slug?.current),
+);
 
-const featureItems = isFirstPage ? available.slice(0, FEATURE_COUNT) : [];
-const gridArticles = isFirstPage
-    ? available.slice(FEATURE_COUNT)
-    : available;
+const featureItems = available.slice(0, FEATURE_COUNT);
+const gridArticles = available.slice(FEATURE_COUNT);
 ---
 
-<Layout title="Efímera" transparentHeader={hasHero && isFirstPage}>
-    {hasHero && isFirstPage && <HomeHero slides={heroSlides} lang={lang} />}
+<Layout title="Efímera" transparentHeader={hasHero}>
+    {hasHero && <HomeHero slides={heroSlides} lang={lang} />}
 
     {
         featureItems.length > 0 && (
-            <HomeFeatureRow items={featureItems} lang={lang} />
+            <>
+                <div id="articles" class="articles-anchor" />
+                <HomeFeatureRow items={featureItems} lang={lang} />
+            </>
         )
     }
 
@@ -109,6 +99,7 @@ const gridArticles = isFirstPage
         totalPages={totalPages}
         baseUrl={getLocalePath("/nueva", lang)}
         lang={lang}
+        anchor="articles"
     />
 
     <div id="newsletter">

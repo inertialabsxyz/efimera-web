@@ -9,11 +9,16 @@ import { getLang, t, getLocalePath, getNavItems, type Locale } from "../lib/i18n
 interface Props {
     title?: string;
     description?: string;
+    /** Let page content run under the header (e.g. a full-bleed hero) */
+    transparentHeader?: boolean;
 }
 
 const lang = getLang(Astro);
-const { title = "Efímera", description = t("meta.description", lang) } =
-    Astro.props;
+const {
+    title = "Efímera",
+    description = t("meta.description", lang),
+    transparentHeader = false,
+} = Astro.props;
 
 const isStaging = import.meta.env.PUBLIC_STAGING === "true";
 const rawArticles = await getArticles(lang);
@@ -50,7 +55,7 @@ const alternatePath = getLocalePath(cleanPath, alternateLang as Locale);
             document.documentElement.setAttribute("data-theme", theme);
         </script>
     </head>
-    <body>
+    <body class:list={{ "has-transparent-header": transparentHeader }}>
         {isStaging && <div class="staging-banner">STAGING</div>}
         <header class="site-header">
             <a href={getLocalePath("/", lang)} class="site-logo">

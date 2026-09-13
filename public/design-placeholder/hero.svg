@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1050" width="1400" height="1050" role="img" aria-label="Placeholder">
+  <defs>
+    <linearGradient id="wall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d9d7d2"/><stop offset="1" stop-color="#c3c1bb"/>
+    </linearGradient>
+    <linearGradient id="steel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8d9196"/><stop offset=".45" stop-color="#e6e8ea"/>
+      <stop offset=".55" stop-color="#9ba0a5"/><stop offset="1" stop-color="#6f7479"/>
+    </linearGradient>
+  </defs>
+  <rect width="1400" height="1050" fill="url(#wall)"/>
+  <rect y="760" width="1400" height="290" fill="#b4b2ac"/>
+  <rect x="980" y="120" width="26" height="640" fill="#b8b6b0"/>
+  <path d="M560 760 V300 q120 -60 190 40 q60 90 -40 150 q-90 55 -10 130 V760 Z" fill="url(#steel)"/>
+  <rect x="640" y="250" width="250" height="24" fill="#2a2a2a"/>
+  <rect x="600" y="640" width="150" height="120" fill="#1f1f1f"/>
+  <ellipse cx="330" cy="700" rx="130" ry="72" fill="#4a4a48"/>
+  <path d="M1080 560 h120 l16 200 h-152 Z" fill="#cfc9b8"/>
+  <path d="M1230 600 h96 l14 160 h-124 Z" fill="#c4bda9"/>
+  <ellipse cx="700" cy="790" rx="300" ry="26" fill="#00000018"/>
+  <text x="700" y="1005" font-family="Helvetica,Arial,sans-serif" font-size="22" letter-spacing="6"
+        text-anchor="middle" fill="#7a7873">IMAGEN DE MUESTRA</text>
+</svg>

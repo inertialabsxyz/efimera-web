@@ -160,6 +160,37 @@ p {
     padding: 0 var(--space-md);
 }
 
+/* Transparent header: content runs under it (full-bleed hero pages) */
+.has-transparent-header .site-header {
+    background: transparent;
+    border-bottom-color: transparent;
+}
+
+.has-transparent-header main {
+    padding-top: 0;
+}
+
+/* The hero reclaims the space the header would have occupied */
+.has-transparent-header main > :first-child {
+    padding-top: var(--header-height);
+}
+
+/* The hero keeps its light-on-blue palette in both themes, so the header
+   over it must stay dark — light nav text on the blue is only 3.3:1. */
+[data-theme="dark"] .has-transparent-header .site-header,
+[data-theme="dark"] .has-transparent-header .site-header a,
+[data-theme="dark"] .has-transparent-header .site-header button {
+    color: var(--color-feature-text);
+}
+
+[data-theme="dark"] .has-transparent-header .site-header .logo-dark {
+    display: none;
+}
+
+[data-theme="dark"] .has-transparent-header .site-header .logo-light {
+    display: block;
+}
+
 .site-logo {
     display: flex;
     align-items: center;

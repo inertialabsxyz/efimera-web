@@ -13,20 +13,29 @@ import {
 import { getLang, getLocalePath, t } from "../lib/i18n";
 
 const FEATURE_COUNT = 3;
-const GRID_SIZE = 9;
+const GRID_SIZE = 6;
 
 const lang = getLang(Astro);
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 
-// Every page carries the hero and the feature row, so page sizes are
-// uniform: three feature cards plus a nine-card grid.
+// Every page carries the hero and the feature row: three feature cards
+// plus a six-card grid, so nine per page and both rows divide by three.
 const pageSize = FEATURE_COUNT + GRID_SIZE;
 
-const [{ articles, total }, heroSlides] = await Promise.all([
-    getArticlesPaginated(currentPage, pageSize, lang),
-    getHeroSlides(lang),
-]);
+// Fetch the hero first so the articles it links to can be excluded in the
+// query. Filtering after the fact would leave pages short.
+const heroSlides = await getHeroSlides(lang);
+const slideSlugs = heroSlides
+    .map((s: any) => s?.article?.slug?.current)
+    .filter(Boolean);
+
+const { articles, total } = await getArticlesPaginated(
+    currentPage,
+    pageSize,
+    lang,
+    slideSlugs,
+);
 
 // The featured gallery IS the hero: each slide carries its own image, text,
 // dates and rail metadata, and they rotate together. Nothing renders when the
@@ -40,20 +49,10 @@ if (currentPage > totalPages) {
     return Astro.redirect(getLocalePath("/", lang));
 }
 
-// The three feature cards come off the top of the article list; the grid
-// below continues from where they stop so nothing is shown twice.
-// Don't repeat any article the hero already links to
-const slideSlugs = new Set(
-    heroSlides
-        .map((s: any) => s?.article?.slug?.current)
-        .filter(Boolean),
-);
-const available = articles.filter(
-    (a: any) => !slideSlugs.has(a.slug?.current),
-);
-
-const featureItems = available.slice(0, FEATURE_COUNT);
-const gridArticles = available.slice(FEATURE_COUNT);
+// The three feature cards come off the top of the list; the grid below
+// continues from where they stop.
+const featureItems = articles.slice(0, FEATURE_COUNT);
+const gridArticles = articles.slice(FEATURE_COUNT);
 ---
 
 <Layout title="Efímera" transparentHeader={hasHero}>

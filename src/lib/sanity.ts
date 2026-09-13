@@ -67,22 +67,26 @@ export async function getArticlesPaginated(
   page: number = 1,
   pageSize: number = 9,
   lang: Locale = "es",
+  // Slugs to leave out entirely — e.g. articles the hero already links to.
+  // Excluding them in the query (rather than filtering the result) keeps
+  // pages exactly pageSize long and the offsets correct.
+  excludeSlugs: string[] = [],
 ) {
   const start = (page - 1) * pageSize;
   const end = start + pageSize;
+  const filter = `_type == "article" && ${langFilter(lang)} && !(slug.current in $exclude)`;
+  const params = { start, end, exclude: excludeSlugs };
 
   const [articles, total] = await Promise.all([
     client.fetch(
       `
-      *[_type == "article" && ${langFilter(lang)}] | order(publishedAt desc) [$start...$end] {
+      *[${filter}] | order(publishedAt desc) [$start...$end] {
         ${articleListFields}
       }
     `,
-      { start, end },
+      params,
     ),
-    client.fetch(
-      `count(*[_type == "article" && ${langFilter(lang)}])`,
-    ),
+    client.fetch(`count(*[${filter}])`, params),
   ]);
 
   return {

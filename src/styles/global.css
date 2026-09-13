@@ -1860,9 +1860,22 @@ main {
     /* Rows size to content; the fixed image ratio keeps the tops aligned.
        Stretching rows to a uniform height stranded the arrows. */
     align-items: start;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    /* Three across on every row, matching the feature row above */
+    grid-template-columns: repeat(3, 1fr);
     gap: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
     max-width: var(--max-width);
     margin: 0 auto;
     padding: clamp(1rem, 3vw, 2rem) var(--space-md) clamp(2.5rem, 6vw, 4.5rem);
+}
+
+@media (max-width: 899px) {
+    .editorial-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 599px) {
+    .editorial-grid {
+        grid-template-columns: 1fr;
+    }
 }

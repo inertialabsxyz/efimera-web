@@ -1181,7 +1181,9 @@ main {
     justify-content: center;
     align-items: center;
     gap: var(--space-md);
-    padding: var(--space-lg) var(--space-md);
+    /* space-lg both sides stacked with the grid's bottom padding and the
+       newsletter's top margin — 264px of dead space in a row. */
+    padding: var(--space-md) var(--space-md);
     max-width: 1080px;
     margin: 0 auto;
 }
@@ -1887,7 +1889,7 @@ main {
     gap: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
     max-width: var(--max-width);
     margin: 0 auto;
-    padding: clamp(1rem, 3vw, 2rem) var(--space-md) clamp(2.5rem, 6vw, 4.5rem);
+    padding: clamp(1rem, 3vw, 2rem) var(--space-md) clamp(1.5rem, 3vw, 2.5rem);
 }
 
 @media (max-width: 899px) {

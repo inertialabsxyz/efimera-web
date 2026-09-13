@@ -1768,3 +1768,99 @@ main {
 .text-muted {
     color: var(--color-text-muted);
 }
+
+/* ===========================================================
+   Editorial card — the single card style used for the feature
+   row and the article grid below it.
+   =========================================================== */
+.editorial-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.editorial-card-media {
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.editorial-card-media img {
+    width: 100%;
+    /* height:auto lets the intrinsic attrs win over aspect-ratio, which left
+       cards with ragged image heights — pin the box instead. */
+    height: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+
+.editorial-card:hover .editorial-card-media img,
+.editorial-card:focus-visible .editorial-card-media img {
+    transform: scale(1.03);
+}
+
+.editorial-card-kicker {
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: 0.5rem;
+}
+
+.editorial-card-title {
+    font-family: var(--font-display);
+    font-size: clamp(1.05rem, 1.7vw, 1.35rem);
+    text-transform: uppercase;
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+}
+
+.editorial-card.featured .editorial-card-title {
+    font-size: clamp(1.2rem, 2.1vw, 1.6rem);
+}
+
+.editorial-card-excerpt {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    max-width: 34ch;
+    margin-bottom: clamp(0.85rem, 2vw, 1.25rem);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.editorial-card-more {
+    display: inline-block;
+}
+
+.editorial-card-more svg {
+    transition: transform 0.25s ease;
+}
+
+.editorial-card:hover .editorial-card-more svg,
+.editorial-card:focus-visible .editorial-card-more svg {
+    transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .editorial-card-media img,
+    .editorial-card-more svg {
+        transition: none;
+    }
+}
+
+/* Grid using the same card style as the feature row */
+.editorial-grid {
+    display: grid;
+    /* Rows size to content; the fixed image ratio keeps the tops aligned.
+       Stretching rows to a uniform height stranded the arrows. */
+    align-items: start;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: clamp(2rem, 4vw, 3.5rem) clamp(1.5rem, 3vw, 2.5rem);
+    max-width: var(--max-width);
+    margin: 0 auto;
+    padding: clamp(1rem, 3vw, 2rem) var(--space-md) clamp(2.5rem, 6vw, 4.5rem);
+}

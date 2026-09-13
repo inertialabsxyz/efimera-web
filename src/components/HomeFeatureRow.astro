@@ -1,6 +1,7 @@
 ---
 import { urlFor } from "../lib/sanity";
 import { getLocalePath, t, type Locale } from "../lib/i18n";
+import EditorialCard from "./EditorialCard.astro";
 
 interface Props {
     items: any[];
@@ -29,54 +30,17 @@ const cards = (items || []).slice(0, 3).map((item) => {
             <h2 class="sr-only">{t("home.latest", lang)}</h2>
             <div class="home-feature-inner">
                 <ul class="home-feature-cards">
-                    {cards.map((card) => (
+                    {cards.map((card, i) => (
                         <li class="home-feature-card">
-                            {card.href ? (
-                                <a href={card.href}>
-                                    {card.image && (
-                                        <div class="home-feature-media">
-                                            <img
-                                                src={card.image}
-                                                alt=""
-                                                width="800"
-                                                height="600"
-                                                loading="lazy"
-                                                decoding="async"
-                                            />
-                                        </div>
-                                    )}
-                                    {card.kicker && (
-                                        <p class="home-feature-kicker">
-                                            {card.kicker}
-                                        </p>
-                                    )}
-                                    <h3 class="home-feature-title">
-                                        {card.title}
-                                    </h3>
-                                    {card.excerpt && (
-                                        <p class="home-feature-excerpt">
-                                            {card.excerpt}
-                                        </p>
-                                    )}
-                                    <span class="home-feature-more">
-                                        <span class="sr-only">
-                                            {card.title}
-                                        </span>
-                                        <svg
-                                            width="28"
-                                            height="10"
-                                            viewBox="0 0 28 10"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            stroke-width="1"
-                                            aria-hidden="true"
-                                            focusable="false"
-                                        >
-                                            <path d="M0 5h26M22 1l4 4-4 4" />
-                                        </svg>
-                                    </span>
-                                </a>
-                            ) : null}
+                            <EditorialCard
+                                title={card.title}
+                                href={card.href}
+                                image={card.image}
+                                kicker={card.kicker}
+                                excerpt={card.excerpt}
+                                featured={i === 0}
+                                lang={lang}
+                            />
                         </li>
                     ))}
                 </ul>
@@ -146,60 +110,14 @@ const cards = (items || []).slice(0, 3).map((item) => {
         }
     }
 
-    .home-feature-media {
-        overflow: hidden;
-        margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
-    }
 
-    .home-feature-media img {
-        width: 100%;
-        height: auto;
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
-        transition: transform 0.45s ease;
-    }
 
-    .home-feature-card a:hover .home-feature-media img,
-    .home-feature-card a:focus-visible .home-feature-media img {
-        transform: scale(1.03);
-    }
 
-    .home-feature-kicker {
-        font-size: 0.68rem;
-        letter-spacing: 0.2em;
-        text-transform: uppercase;
-        color: var(--color-text-muted);
-        margin-bottom: 0.5rem;
-    }
 
-    .home-feature-title {
-        font-family: var(--font-display);
-        font-size: clamp(1.1rem, 1.9vw, 1.5rem);
-        text-transform: uppercase;
-        line-height: 1.15;
-        margin-bottom: 0.5rem;
-    }
 
-    .home-feature-excerpt {
-        font-size: 0.9rem;
-        line-height: 1.5;
-        color: var(--color-text-muted);
-        max-width: 30ch;
-        margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
-    }
 
-    .home-feature-more {
-        display: inline-block;
-    }
 
-    .home-feature-more svg {
-        transition: transform 0.25s ease;
-    }
 
-    .home-feature-card a:hover .home-feature-more svg,
-    .home-feature-card a:focus-visible .home-feature-more svg {
-        transform: translateX(4px);
-    }
 
     /* Sidebar — given room rather than squeezed into a gutter */
     .home-feature-aside {
@@ -250,10 +168,4 @@ const cards = (items || []).slice(0, 3).map((item) => {
         border-bottom-color: currentColor;
     }
 
-    @media (prefers-reduced-motion: reduce) {
-        .home-feature-media img,
-        .home-feature-more svg {
-            transition: none;
-        }
-    }
 </style>

@@ -4,10 +4,12 @@ import { getLocalePath, t, type Locale } from "../lib/i18n";
 
 interface Props {
     hero: any;
+    /** Gallery slides supplying the hero imagery; first one shows initially */
+    slides?: any[];
     lang?: Locale;
 }
 
-const { hero, lang = "es" } = Astro.props;
+const { hero, slides = [], lang = "es" } = Astro.props;
 
 const locale = lang === "en" ? "en-GB" : "es-ES";
 
@@ -47,10 +49,37 @@ const isExternal = Boolean(hero.url);
 
 const ctaLabel = hero.ctaLabel || t("home.heroCta", lang);
 // hero.imageSrc lets placeholder/local images bypass the Sanity URL builder
-const imageUrl = hero.image
+const heroImageUrl = hero.image
     ? urlFor(hero.image).width(1400).height(1000).fit("crop").url()
     : (hero.imageSrc ?? null);
 const imageAlt = hero.image?.alt || hero.title || t("home.heroImageAlt", lang);
+
+// Gallery slides carry the imagery; fall back to the hero's own image
+const gallerySlides = slides
+    .map((slide: any) => {
+        const source =
+            slide?._type === "revistaSlide"
+                ? slide?.revista?.coverImage
+                : slide?.image;
+        if (!source) return null;
+        return {
+            src: urlFor(source).width(1400).height(1000).fit("crop").url(),
+            alt:
+                source?.alt ||
+                slide?.title ||
+                slide?.article?.title ||
+                slide?.revista?.title ||
+                imageAlt,
+        };
+    })
+    .filter(Boolean) as { src: string; alt: string }[];
+
+const heroSlides = gallerySlides.length
+    ? gallerySlides
+    : heroImageUrl
+      ? [{ src: heroImageUrl, alt: imageAlt }]
+      : [];
+const hasMultiple = heroSlides.length > 1;
 const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 ---
 
@@ -96,16 +125,44 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         </div>
 
         {
-            imageUrl && (
-                <div class="home-hero-media">
-                    <img
-                        src={imageUrl}
-                        alt={imageAlt}
-                        width="1400"
-                        height="1000"
-                        fetchpriority="high"
-                        decoding="async"
-                    />
+            heroSlides.length > 0 && (
+                <div
+                    class="home-hero-media"
+                    data-hero-gallery={hasMultiple ? "" : null}
+                >
+                    <div class="home-hero-track" data-hero-track>
+                        {heroSlides.map((slide, i) => (
+                            <img
+                                class:list={[
+                                    "home-hero-slide",
+                                    { active: i === 0 },
+                                ]}
+                                src={slide.src}
+                                alt={i === 0 ? slide.alt : ""}
+                                width="1400"
+                                height="1000"
+                                fetchpriority={i === 0 ? "high" : undefined}
+                                loading={i === 0 ? undefined : "lazy"}
+                                decoding="async"
+                            />
+                        ))}
+                    </div>
+
+                    {hasMultiple && (
+                        <div class="home-hero-dots" data-hero-dots>
+                            {heroSlides.map((_, i) => (
+                                <button
+                                    type="button"
+                                    class:list={[
+                                        "home-hero-dot",
+                                        { active: i === 0 },
+                                    ]}
+                                    data-index={i}
+                                    aria-label={`${i + 1} / ${heroSlides.length}`}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
             )
         }
@@ -241,6 +298,48 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         object-fit: cover;
     }
 
+    /* Slides stack and crossfade; the first one sets the box height */
+    .home-hero-track {
+        display: grid;
+    }
+
+    .home-hero-slide {
+        grid-area: 1 / 1;
+        opacity: 0;
+        transition: opacity 0.7s ease;
+    }
+
+    .home-hero-slide.active {
+        opacity: 1;
+    }
+
+    .home-hero-dots {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.85rem;
+    }
+
+    .home-hero-dot {
+        width: 28px;
+        height: 2px;
+        padding: 0;
+        border: 0;
+        cursor: pointer;
+        background: currentColor;
+        opacity: 0.3;
+        transition: opacity 0.2s ease;
+    }
+
+    .home-hero-dot.active,
+    .home-hero-dot:hover {
+        opacity: 1;
+    }
+
+    .home-hero-dot:focus-visible {
+        outline: 2px solid currentColor;
+        outline-offset: 3px;
+    }
+
     /* Keep the stacked image from dominating the fold on tablets */
     @media (max-width: 899px) {
         .home-hero-media img {
@@ -304,8 +403,62 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .home-hero-arrow {
+        .home-hero-arrow,
+        .home-hero-slide {
             transition: none;
         }
     }
 </style>
+
+<script>
+    // Crossfade the hero gallery. Pauses on hover/focus and respects
+    // reduced-motion by not auto-advancing.
+    document.querySelectorAll("[data-hero-gallery]").forEach((root) => {
+        const slides = Array.from(
+            root.querySelectorAll<HTMLElement>(".home-hero-slide"),
+        );
+        const dots = Array.from(
+            root.querySelectorAll<HTMLButtonElement>(".home-hero-dot"),
+        );
+        if (slides.length < 2) return;
+
+        let index = 0;
+        let timer: number | null = null;
+        const reduced = window.matchMedia(
+            "(prefers-reduced-motion: reduce)",
+        ).matches;
+
+        function show(next: number) {
+            index = (next + slides.length) % slides.length;
+            slides.forEach((s, i) => s.classList.toggle("active", i === index));
+            dots.forEach((d, i) => d.classList.toggle("active", i === index));
+        }
+
+        function start() {
+            if (reduced || timer !== null) return;
+            timer = window.setInterval(() => show(index + 1), 7000);
+        }
+
+        function stop() {
+            if (timer !== null) {
+                clearInterval(timer);
+                timer = null;
+            }
+        }
+
+        dots.forEach((dot) =>
+            dot.addEventListener("click", () => {
+                show(Number(dot.dataset.index) || 0);
+                stop();
+                start();
+            }),
+        );
+
+        root.addEventListener("mouseenter", stop);
+        root.addEventListener("mouseleave", start);
+        root.addEventListener("focusin", stop);
+        root.addEventListener("focusout", start);
+
+        start();
+    });
+</script>

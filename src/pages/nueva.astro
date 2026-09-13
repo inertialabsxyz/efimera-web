@@ -1,11 +1,16 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import ArticleCard from "../components/ArticleCard.astro";
+import EditorialCard from "../components/EditorialCard.astro";
 import HomeHero from "../components/HomeHero.astro";
 import HomeFeatureRow from "../components/HomeFeatureRow.astro";
 import Pagination from "../components/Pagination.astro";
 import NewsletterForm from "../components/NewsletterForm.astro";
-import { getArticlesPaginated, getHomeHero, urlFor } from "../lib/sanity";
+import {
+    getArticlesPaginated,
+    getHeroSlides,
+    getHomeHero,
+    urlFor,
+} from "../lib/sanity";
 import { homeHeroPlaceholder } from "../data/homeHeroPlaceholder";
 import { getLang, getLocalePath, t } from "../lib/i18n";
 
@@ -13,14 +18,38 @@ const lang = getLang(Astro);
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 
-const [{ articles, totalPages }, authoredHero] = await Promise.all([
+const [{ articles, totalPages }, authoredHero, heroSlides] = await Promise.all([
     getArticlesPaginated(currentPage, 10, lang),
     getHomeHero(lang),
+    getHeroSlides(lang),
 ]);
 
-// Authored content wins; the placeholder keeps the layout visible while the
-// design is being worked on. Remove the fallback once Sanity is populated.
-const hero = authoredHero ?? homeHeroPlaceholder;
+// The featured gallery supplies the hero imagery. Its slides carry no text, so
+// the headline falls back to the newest article, then to the design placeholder.
+const leadArticle = articles[0];
+// Short excerpts are usually just the date/time repeated, which the hero
+// already shows on its own line — only use longer ones as a subtitle.
+const heroSubtitle =
+    leadArticle?.excerpt && leadArticle.excerpt.trim().length > 60
+        ? leadArticle.excerpt
+        : null;
+
+const derivedHero = leadArticle
+    ? {
+          eyebrow: leadArticle.category,
+          title: leadArticle.title,
+          subtitle: heroSubtitle,
+          startDate: leadArticle.publishedAt,
+          endDate: null,
+          image: null,
+          themes: [],
+          discipline: null,
+          location: null,
+          article: { slug: leadArticle.slug },
+      }
+    : null;
+
+const hero = authoredHero ?? derivedHero ?? homeHeroPlaceholder;
 
 // The three feature cards come off the top of the article list; the grid
 // below continues from where they stop so nothing is shown twice.
@@ -37,7 +66,11 @@ const gridArticles = isFirstPage ? available.slice(3) : available;
 ---
 
 <Layout title="Efímera" transparentHeader={Boolean(hero) && isFirstPage}>
-    {hero && isFirstPage && <HomeHero hero={hero} lang={lang} />}
+    {
+        hero && isFirstPage && (
+            <HomeHero hero={hero} slides={heroSlides} lang={lang} />
+        )
+    }
 
     {
         featureItems.length > 0 && (
@@ -45,21 +78,25 @@ const gridArticles = isFirstPage ? available.slice(3) : available;
         )
     }
 
-    <div class="article-grid">
+    <div class="editorial-grid">
         {
             gridArticles.map((article: any) => (
-                <ArticleCard
+                <EditorialCard
                     title={article.title}
-                    slug={article.slug.current}
-                    category={article.category}
+                    href={getLocalePath(
+                        `/article/${article.slug.current}`,
+                        lang,
+                    )}
                     image={
                         article.mainImage
                             ? urlFor(article.mainImage)
                                   .width(800)
                                   .height(600)
+                                  .fit("crop")
                                   .url()
-                            : undefined
+                            : null
                     }
+                    kicker={article.category}
                     excerpt={article.excerpt}
                     lang={lang}
                 />

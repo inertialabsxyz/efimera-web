@@ -327,6 +327,35 @@ export async function getEfimeraProjectsPage(lang: Locale = "es") {
   `);
 }
 
+// Homepage hero slides, sourced from the featured gallery. Slides carry the
+// imagery; text falls back to a linked article, or to the caller's default.
+export async function getHeroSlides(lang: Locale = "es") {
+  const slides = await client.fetch(
+    `
+    *[_type == "featuredGallery" && ${langFilter(lang)}][0].slides[] {
+      _type,
+      image,
+      title,
+      excerpt,
+      url,
+      "article": article->{
+        title,
+        slug,
+        category,
+        publishedAt,
+        excerpt
+      },
+      "revista": revista->{
+        title,
+        coverImage,
+        "pdfUrl": pdf.asset->url
+      }
+    }
+  `,
+  );
+  return Array.isArray(slides) ? slides : [];
+}
+
 // Homepage hero: optional block on the featuredGallery singleton
 export async function getHomeHero(lang: Locale = "es") {
   const hero = await client.fetch(`

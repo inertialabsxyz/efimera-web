@@ -124,6 +124,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
     "home.heroCta": "Ver más",
+    "home.heroNav": "Navegación de portada",
     "home.heroImageAlt": "Imagen destacada",
     "home.tagline":
       "Un espacio para pensar el presente a través del arte, la imagen, el sonido y otras formas de habitar.",
@@ -273,6 +274,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
     "home.heroCta": "Read more",
+    "home.heroNav": "Featured navigation",
     "home.heroImageAlt": "Featured image",
     "home.tagline":
       "A space for thinking the present through art, image, sound and other ways of inhabiting.",

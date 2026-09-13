@@ -29,6 +29,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.tienda": "Tienda",
     "nav.projects": "Proyectos",
     "nav.reserva": "Reserva",
+    "nav.constelacion": "Constelación",
 
     // Footer
     "footer.about": "Acerca de",
@@ -178,6 +179,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.tienda": "Shop",
     "nav.projects": "Projects",
     "nav.reserva": "Booking",
+    "nav.constelacion": "Constelación",
 
     // Footer
     "footer.about": "About",
@@ -384,6 +386,10 @@ export function getNavItems(lang: Locale): NavItem[] {
     {
       label: t("nav.reserva", lang),
       href: getLocalePath("/reserva", lang),
+    },
+    {
+      label: t("nav.constelacion", lang),
+      href: getLocalePath("/constelacion-efimera", lang),
     },
     { label: t("nav.tienda", lang), href: getLocalePath("/tienda", lang) },
   ];

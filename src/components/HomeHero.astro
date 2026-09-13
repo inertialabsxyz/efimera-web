@@ -1,0 +1,287 @@
+---
+import { urlFor } from "../lib/sanity";
+import { getLocalePath, t, type Locale } from "../lib/i18n";
+
+interface Props {
+    hero: any;
+    lang?: Locale;
+}
+
+const { hero, lang = "es" } = Astro.props;
+
+const locale = lang === "en" ? "en-GB" : "es-ES";
+
+// "16 octubre" / "16 octubre 2026" — year only when asked for
+function formatDate(value?: string, withYear = true) {
+    if (!value) return null;
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return null;
+    const formatted = new Intl.DateTimeFormat(locale, {
+        day: "numeric",
+        month: "long",
+        ...(withYear ? { year: "numeric" } : {}),
+        timeZone: "UTC",
+    }).format(date);
+    // Spanish renders "16 de octubre de 2026"; the design wants "16 octubre 2026"
+    return lang === "es" ? formatted.replace(/ de /g, " ") : formatted;
+}
+
+// Drop the repeated year on the start date when both fall in the same year
+const start = new Date(hero.startDate);
+const end = hero.endDate ? new Date(hero.endDate) : null;
+const sameYear =
+    end && !Number.isNaN(start.getTime()) && !Number.isNaN(end.getTime())
+        ? start.getUTCFullYear() === end.getUTCFullYear()
+        : false;
+
+const startLabel = formatDate(hero.startDate, !sameYear);
+const endLabel = formatDate(hero.endDate);
+const dateRange = [startLabel, endLabel].filter(Boolean).join(" — ");
+
+const href = hero.url
+    ? hero.url
+    : hero.article?.slug?.current
+      ? getLocalePath(`/article/${hero.article.slug.current}`, lang)
+      : null;
+const isExternal = Boolean(hero.url);
+
+const ctaLabel = hero.ctaLabel || t("home.heroCta", lang);
+const imageUrl = hero.image
+    ? urlFor(hero.image).width(1400).height(1000).fit("crop").url()
+    : null;
+const imageAlt = hero.image?.alt || hero.title || t("home.heroImageAlt", lang);
+const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
+---
+
+<section class="home-hero">
+    <div class="home-hero-inner">
+        <div class="home-hero-text">
+            {hero.eyebrow && <p class="home-hero-eyebrow">{hero.eyebrow}</p>}
+            <h1 class="home-hero-title">{hero.title}</h1>
+            {hero.subtitle && <p class="home-hero-subtitle">{hero.subtitle}</p>}
+            {
+                dateRange && (
+                    <p class="home-hero-dates">
+                        <time datetime={hero.startDate}>{dateRange}</time>
+                    </p>
+                )
+            }
+            {
+                href && (
+                    <a
+                        class="home-hero-cta"
+                        href={href}
+                        {...(isExternal
+                            ? { target: "_blank", rel: "noopener noreferrer" }
+                            : {})}
+                    >
+                        <span>{ctaLabel}</span>
+                        <svg
+                            class="home-hero-arrow"
+                            width="28"
+                            height="10"
+                            viewBox="0 0 28 10"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="1"
+                            aria-hidden="true"
+                            focusable="false"
+                        >
+                            <path d="M0 5h26M22 1l4 4-4 4" />
+                        </svg>
+                    </a>
+                )
+            }
+        </div>
+
+        {
+            imageUrl && (
+                <div class="home-hero-media">
+                    <img
+                        src={imageUrl}
+                        alt={imageAlt}
+                        width="1400"
+                        height="1000"
+                        fetchpriority="high"
+                        decoding="async"
+                    />
+                </div>
+            )
+        }
+
+        {
+            (hero.discipline || themes.length > 0 || hero.location) && (
+                <aside class="home-hero-rail">
+                    {hero.discipline && (
+                        <p class="home-hero-discipline">{hero.discipline}</p>
+                    )}
+                    {themes.length > 0 && (
+                        <ul class="home-hero-themes">
+                            {themes.map((theme) => (
+                                <li>{theme}</li>
+                            ))}
+                        </ul>
+                    )}
+                    {hero.location && (
+                        <p class="home-hero-location">{hero.location}</p>
+                    )}
+                </aside>
+            )
+        }
+    </div>
+</section>
+
+<style>
+    .home-hero {
+        background: var(--color-feature);
+        color: var(--color-feature-text);
+        padding: clamp(2rem, 6vw, 4.5rem) 0 0;
+    }
+
+    .home-hero-inner {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 var(--space-md);
+        display: grid;
+        gap: clamp(1.5rem, 4vw, 3rem);
+        grid-template-columns: 1fr;
+        align-items: start;
+    }
+
+    /* Text — bleeds left, image offset right, rail last */
+    @media (min-width: 900px) {
+        .home-hero-inner {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr) auto;
+            padding-bottom: 0;
+        }
+    }
+
+    .home-hero-text {
+        padding-bottom: clamp(2rem, 5vw, 4rem);
+    }
+
+    .home-hero-eyebrow {
+        font-size: 0.7rem;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        margin-bottom: clamp(0.75rem, 2vw, 1.25rem);
+    }
+
+    .home-hero-title {
+        font-family: var(--font-display);
+        font-size: clamp(2.5rem, 6.5vw, 5rem);
+        line-height: 0.95;
+        letter-spacing: -0.01em;
+        text-transform: uppercase;
+        text-wrap: balance;
+        margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
+    }
+
+    .home-hero-subtitle {
+        font-family: "Cormorant Garamond", Georgia, serif;
+        font-size: clamp(1.25rem, 2.2vw, 1.75rem);
+        line-height: 1.25;
+        max-width: 22ch;
+        margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
+    }
+
+    .home-hero-dates {
+        font-size: 0.75rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        margin-bottom: clamp(1.5rem, 3.5vw, 2.5rem);
+    }
+
+    /* Text link rather than an outlined box — nothing else on the page is boxed */
+    .home-hero-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.85rem;
+        font-size: 0.78rem;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        padding-bottom: 0.4rem;
+        border-bottom: 1px solid currentColor;
+    }
+
+    .home-hero-arrow {
+        transition: transform 0.25s ease;
+    }
+
+    .home-hero-cta:hover .home-hero-arrow,
+    .home-hero-cta:focus-visible .home-hero-arrow {
+        transform: translateX(4px);
+    }
+
+    /* Image sits flush to the bottom of the blue block */
+    .home-hero-media {
+        align-self: end;
+    }
+
+    .home-hero-media img {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
+    .home-hero-rail {
+        display: flex;
+        flex-direction: column;
+        gap: clamp(1.5rem, 4vw, 3rem);
+        font-size: 0.68rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        line-height: 1.7;
+        padding-bottom: clamp(2rem, 5vw, 4rem);
+    }
+
+    @media (min-width: 900px) {
+        .home-hero-rail {
+            max-width: 12ch;
+        }
+    }
+
+    .home-hero-discipline {
+        font-size: inherit;
+        max-width: none;
+        padding-bottom: clamp(1.5rem, 4vw, 3rem);
+        border-bottom: 1px solid currentColor;
+    }
+
+    .home-hero-themes {
+        list-style: none;
+    }
+
+    .home-hero-location {
+        font-size: inherit;
+        max-width: none;
+    }
+
+    /* Rail reads as a horizontal strip on narrow screens */
+    @media (max-width: 899px) {
+        .home-hero-rail {
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 1rem 2rem;
+            align-items: baseline;
+        }
+
+        .home-hero-discipline {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .home-hero-themes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0 1rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .home-hero-arrow {
+            transition: none;
+        }
+    }
+</style>

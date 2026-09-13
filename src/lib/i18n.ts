@@ -123,6 +123,14 @@ const translations: Record<Locale, Record<string, string>> = {
     // Home
     "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
+    "home.heroCta": "Ver más",
+    "home.heroImageAlt": "Imagen destacada",
+    "home.tagline":
+      "Un espacio para pensar el presente a través del arte, la imagen, el sonido y otras formas de habitar.",
+    "home.about": "Sobre Efímera",
+    "home.newsletter": "Newsletter",
+    "home.contacto": "Contacto",
+    "home.latest": "Lo último",
 
     // Constelación
     "constelacion.title": "Constelación Efímera",
@@ -264,6 +272,14 @@ const translations: Record<Locale, Record<string, string>> = {
     // Home
     "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
+    "home.heroCta": "Read more",
+    "home.heroImageAlt": "Featured image",
+    "home.tagline":
+      "A space for thinking the present through art, image, sound and other ways of inhabiting.",
+    "home.about": "About Efímera",
+    "home.newsletter": "Newsletter",
+    "home.contacto": "Contact",
+    "home.latest": "Latest",
 
     // Constelación
     "constelacion.title": "Constelación Efímera",

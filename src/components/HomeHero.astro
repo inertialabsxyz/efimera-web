@@ -201,7 +201,7 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         .home-hero {
             min-height: calc(88vh - var(--header-height));
             display: flex;
-            align-items: center;
+            align-items: flex-end;
         }
 
         .home-hero-inner {
@@ -230,6 +230,19 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 
     .home-hero-text {
         padding-bottom: clamp(2rem, 5vw, 4rem);
+    }
+
+    /* The image runs to the bottom edge of the blue; text and rail keep
+       their breathing room above it. */
+    @media (min-width: 900px) {
+        .home-hero-media {
+            align-self: end;
+            margin-bottom: 0;
+        }
+
+        .home-hero-media .home-hero-slide {
+            display: block;
+        }
     }
 
     .home-hero-eyebrow {

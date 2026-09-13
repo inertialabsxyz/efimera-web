@@ -30,7 +30,7 @@ const cards = (items || []).slice(0, 3).map((item) => {
             <h2 class="sr-only">{t("home.latest", lang)}</h2>
             <div class="home-feature-inner">
                 <ul class="home-feature-cards">
-                    {cards.map((card, i) => (
+                    {cards.map((card) => (
                         <li class="home-feature-card">
                             <EditorialCard
                                 title={card.title}
@@ -38,7 +38,6 @@ const cards = (items || []).slice(0, 3).map((item) => {
                                 image={card.image}
                                 kicker={card.kicker}
                                 excerpt={card.excerpt}
-                                featured={i === 0}
                                 lang={lang}
                             />
                         </li>
@@ -101,12 +100,10 @@ const cards = (items || []).slice(0, 3).map((item) => {
     /* First card carries more weight so the row has a reading order */
     @media (min-width: 700px) {
         .home-feature-cards {
-            grid-template-columns: 1.25fr 1fr 1fr;
+            /* Equal columns so every card image is the same size. The
+               vertical stagger is dropped for the same reason. */
+            grid-template-columns: repeat(3, 1fr);
             align-items: start;
-        }
-
-        .home-feature-card:not(:first-child) {
-            padding-top: clamp(1.5rem, 4vw, 3rem);
         }
     }
 

@@ -138,6 +138,19 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         padding: clamp(2rem, 6vw, 4.5rem) 0 0;
     }
 
+    /* Fill more of the fold on desktop, as in the design */
+    @media (min-width: 900px) {
+        .home-hero {
+            min-height: calc(88vh - var(--header-height));
+            display: flex;
+            align-items: center;
+        }
+
+        .home-hero-inner {
+            width: 100%;
+        }
+    }
+
     .home-hero-inner {
         max-width: var(--max-width);
         margin: 0 auto;
@@ -225,6 +238,14 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
         object-fit: cover;
     }
 
+    /* Keep the stacked image from dominating the fold on tablets */
+    @media (max-width: 899px) {
+        .home-hero-media img {
+            aspect-ratio: 16 / 10;
+            max-height: 50vh;
+        }
+    }
+
     .home-hero-rail {
         display: flex;
         flex-direction: column;
@@ -238,7 +259,7 @@ const themes: string[] = Array.isArray(hero.themes) ? hero.themes : [];
 
     @media (min-width: 900px) {
         .home-hero-rail {
-            max-width: 12ch;
+            min-width: max-content;
         }
     }
 

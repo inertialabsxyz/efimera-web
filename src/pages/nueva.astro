@@ -20,8 +20,15 @@ const [{ articles, totalPages }, hero] = await Promise.all([
 // The three feature cards come off the top of the article list; the grid
 // below continues from where they stop so nothing is shown twice.
 const isFirstPage = currentPage === 1;
-const featureItems = isFirstPage ? articles.slice(0, 3) : [];
-const gridArticles = isFirstPage ? articles.slice(3) : articles;
+
+// Don't repeat the hero's article in the cards below it
+const heroSlug = hero?.article?.slug?.current ?? null;
+const available = isFirstPage
+    ? articles.filter((a: any) => a.slug?.current !== heroSlug)
+    : articles;
+
+const featureItems = isFirstPage ? available.slice(0, 3) : [];
+const gridArticles = isFirstPage ? available.slice(3) : available;
 ---
 
 <Layout title="Efímera">

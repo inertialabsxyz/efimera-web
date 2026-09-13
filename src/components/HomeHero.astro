@@ -60,12 +60,12 @@ const gallerySlides = slides
         if (!source) return null;
 
         const article = slide?.article;
-        const title = slide?.title || article?.title || slide?.revista?.title;
-        if (!title) return null;
+        // Title is optional: an image-only slide still renders its image.
+        const title = slide?.title || article?.title || slide?.revista?.title || null;
 
         return {
             src: urlFor(source).width(1400).height(1000).fit("crop").url(),
-            alt: source?.alt || title,
+            alt: source?.alt || title || t("home.heroImageAlt", lang),
             eyebrow: slide?.eyebrow || article?.category || null,
             title,
             excerpt: slide?.excerpt || article?.excerpt || null,
@@ -94,7 +94,12 @@ const hasMultiple = heroSlides.length > 1;
 ---
 
 <section class="home-hero">
-    <div class="home-hero-inner">
+    <div
+        class:list={[
+            "home-hero-inner",
+            { "is-image-only": heroSlides.every((s) => !s.title) },
+        ]}
+    >
         <div class="home-hero-text">
             {
                 heroSlides.map((slide, i) => (
@@ -105,7 +110,9 @@ const hasMultiple = heroSlides.length > 1;
                         {slide.eyebrow && (
                             <p class="home-hero-eyebrow">{slide.eyebrow}</p>
                         )}
-                        <h1 class="home-hero-title">{slide.title}</h1>
+                        {slide.title && (
+                            <h1 class="home-hero-title">{slide.title}</h1>
+                        )}
                         {slide.excerpt && (
                             <p class="home-hero-subtitle">{slide.excerpt}</p>
                         )}
@@ -257,6 +264,12 @@ const hasMultiple = heroSlides.length > 1;
 
     /* Text — bleeds left, image offset right, rail last */
     @media (min-width: 900px) {
+        /* Image-only slides keep the hero's proportions rather than
+           filling the viewport: same offset-right placement, empty left. */
+        .home-hero-inner.is-image-only {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) auto;
+        }
+
         .home-hero-inner {
             grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr) auto;
             column-gap: clamp(2rem, 5vw, 4rem);
@@ -267,6 +280,12 @@ const hasMultiple = heroSlides.length > 1;
     .home-hero-text {
         padding-bottom: clamp(2rem, 5vw, 4rem);
         display: grid;
+    }
+
+    /* No text on any slide — keep the column so the image stays in place,
+       but don't let an empty block add height. */
+    .home-hero-inner.is-image-only .home-hero-text {
+        padding-bottom: 0;
     }
 
     /* Copy blocks stack and crossfade in step with the image */

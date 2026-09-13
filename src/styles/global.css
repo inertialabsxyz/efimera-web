@@ -348,6 +348,46 @@ p {
         border-bottom-color: var(--color-feature-text);
     }
 
+    /* Past the hero the header takes the page background, so the panel
+       hanging off it follows suit rather than staying blue. */
+    .has-transparent-header.header-pinned .submenu,
+    body:not(.has-transparent-header) .submenu {
+        background: var(--color-bg);
+        color: var(--color-text);
+        border: 1px solid var(--color-border);
+        box-shadow: 0 10px 24px rgb(0 0 0 / 0.08);
+    }
+
+    .has-transparent-header.header-pinned
+        .nav-item.has-submenu
+        > .submenu
+        a,
+    body:not(.has-transparent-header)
+        .nav-item.has-submenu
+        > .submenu
+        a {
+        color: var(--color-text);
+    }
+
+    .has-transparent-header.header-pinned
+        .nav-item.has-submenu
+        > .submenu
+        a:hover,
+    .has-transparent-header.header-pinned
+        .nav-item.has-submenu
+        > .submenu
+        a.active,
+    body:not(.has-transparent-header)
+        .nav-item.has-submenu
+        > .submenu
+        a:hover,
+    body:not(.has-transparent-header)
+        .nav-item.has-submenu
+        > .submenu
+        a.active {
+        border-bottom-color: var(--color-text);
+    }
+
     .nav-item.has-submenu:hover > .submenu,
     .nav-item.has-submenu:focus-within > .submenu,
     .nav-item.has-submenu.open > .submenu {

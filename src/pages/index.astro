@@ -15,7 +15,7 @@ const lang = getLang(Astro);
 const pageParam = Astro.url.searchParams.get("page");
 const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 
-const { articles, totalPages } = await getArticlesPaginated(currentPage, 10, lang);
+const { articles, totalPages } = await getArticlesPaginated(currentPage, 9, lang);
 const featuredGallery = await getFeaturedGallery(lang);
 ---
 

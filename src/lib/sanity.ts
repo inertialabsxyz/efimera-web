@@ -65,10 +65,14 @@ export async function getArticles(lang: Locale = "es") {
 
 export async function getArticlesPaginated(
   page: number = 1,
-  pageSize: number = 10,
+  pageSize: number = 9,
   lang: Locale = "es",
+  // Pages need not be uniform: the homepage's first page also feeds a
+  // feature row, so it consumes more than pageSize. Callers pass the real
+  // offset to stop later pages repeating what page 1 already showed.
+  startOverride?: number,
 ) {
-  const start = (page - 1) * pageSize;
+  const start = startOverride ?? (page - 1) * pageSize;
   const end = start + pageSize;
 
   const [articles, total] = await Promise.all([
@@ -90,6 +94,7 @@ export async function getArticlesPaginated(
     total,
     page,
     pageSize,
+    start,
     totalPages: Math.ceil(total / pageSize),
   };
 }
@@ -122,7 +127,7 @@ export async function getArticlesByCategory(
 export async function getArticlesByCategoryPaginated(
   category: string,
   page: number = 1,
-  pageSize: number = 10,
+  pageSize: number = 9,
   lang: Locale = "es",
 ) {
   const start = (page - 1) * pageSize;

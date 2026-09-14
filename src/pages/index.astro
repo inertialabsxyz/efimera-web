@@ -23,19 +23,13 @@ const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 // plus a six-card grid, so nine per page and both rows divide by three.
 const pageSize = FEATURE_COUNT + GRID_SIZE;
 
-// Fetch the hero first so the articles it links to can be excluded in the
-// query. Filtering after the fact would leave pages short.
-const heroSlides = await getHeroSlides(lang);
-const slideSlugs = heroSlides
-    .map((s: any) => s?.article?.slug?.current)
-    .filter(Boolean);
-
-const { articles, total } = await getArticlesPaginated(
-    currentPage,
-    pageSize,
-    lang,
-    slideSlugs,
-);
+// The listing shows every article in date order, including any the hero
+// links to — those appear both in the hero and as a card rather than being
+// dropped from the grid.
+const [heroSlides, { articles, total }] = await Promise.all([
+    getHeroSlides(lang),
+    getArticlesPaginated(currentPage, pageSize, lang),
+]);
 
 // The featured gallery IS the hero: each slide carries its own image, text,
 // dates and rail metadata, and they rotate together. Nothing renders when the

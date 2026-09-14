@@ -385,7 +385,9 @@ const hasMultiple = heroSlides.length > 1;
         line-height: 0.95;
         letter-spacing: -0.01em;
         text-transform: uppercase;
-        text-wrap: balance;
+        /* balance evens out line lengths, which left the title short of the
+           column; pretty fills each line and only tidies the last. */
+        text-wrap: pretty;
         margin-bottom: clamp(1rem, 2.5vw, 1.75rem);
     }
 
@@ -549,12 +551,22 @@ const hasMultiple = heroSlides.length > 1;
            otherwise a shorter slide is pushed down by a taller one. */
         .home-hero-track {
             align-items: start;
-            justify-items: stretch;
+            /* Desktop pins images to the right edge of the blue; on mobile
+               the image sits on white, so a scaled one centres instead. */
+            justify-items: center;
         }
 
         .home-hero-text {
             order: 3;
             margin-top: clamp(1.25rem, 4vw, 2rem);
+        }
+
+        /* The desktop 22ch cap left the description in a narrow ribbon;
+           give it the column and a little more air between lines. */
+        .home-hero-subtitle {
+            max-width: none;
+            font-size: clamp(1.2rem, 5vw, 1.5rem);
+            line-height: 1.35;
         }
     }
 

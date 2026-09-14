@@ -93,6 +93,15 @@ export default {
                 ),
             },
             {
+              name: "imageScale",
+              title: "Image Size (%)",
+              type: "number",
+              description:
+                "Optional: scale the hero image down, e.g. 70 for 70% width. Defaults to 100.",
+              initialValue: 100,
+              validation: (Rule) => Rule.min(20).max(100),
+            },
+            {
               name: "ctaLabel",
               title: "CTA Label",
               type: "string",

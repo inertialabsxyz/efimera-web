@@ -347,6 +347,7 @@ export async function getHeroSlides(lang: Locale = "es") {
       excerpt,
       startDate,
       endDate,
+      imageScale,
       ctaLabel,
       url,
       "article": article->{

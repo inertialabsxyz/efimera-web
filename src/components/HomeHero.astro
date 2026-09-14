@@ -83,6 +83,12 @@ const gallerySlides = slides
                 slide?.url || (isRevista && slide?.revista?.pdfUrl),
             ),
             ctaLabel: slide?.ctaLabel || t("home.heroCta", lang),
+            // Editors can scale a slide's image down; clamp to a sane range
+            // so a stray value can't break the layout.
+            scale: Math.min(
+                100,
+                Math.max(20, Number(slide?.imageScale) || 100),
+            ),
         };
     })
     .filter(Boolean) as any[];
@@ -200,6 +206,7 @@ const hasMultiple = heroSlides.length > 1;
                                     "home-hero-slide",
                                     { active: i === 0 },
                                 ]}
+                                style={`--slide-scale:${slide.scale}%`}
                                 src={slide.src}
                                 alt={i === 0 ? slide.alt : ""}
                                 width="1400"
@@ -422,7 +429,7 @@ const hasMultiple = heroSlides.length > 1;
     }
 
     .home-hero-media img {
-        width: 100%;
+        width: var(--slide-scale, 100%);
         height: auto;
         /* No forced ratio or cover crop: each image shows in full at its own
            shape, so tall or square images aren't cut top and bottom. */
@@ -435,6 +442,9 @@ const hasMultiple = heroSlides.length > 1;
     .home-hero-track {
         display: grid;
         align-items: end;
+        /* A scaled-down image stays flush to the hero's right edge rather
+           than centring and leaving blue on both sides. */
+        justify-items: end;
     }
 
     .home-hero-slide {

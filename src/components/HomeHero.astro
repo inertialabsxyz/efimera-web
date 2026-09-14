@@ -395,7 +395,9 @@ const hasMultiple = heroSlides.length > 1;
         font-family: "Cormorant Garamond", Georgia, serif;
         font-size: clamp(1.25rem, 2.2vw, 1.75rem);
         line-height: 1.25;
-        max-width: 22ch;
+        /* 22ch left half the column unused while the title spanned it all.
+           A wider measure still keeps lines readable. */
+        max-width: 40ch;
         margin-bottom: clamp(1rem, 2.5vw, 1.5rem);
     }
 

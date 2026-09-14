@@ -187,6 +187,14 @@ p {
     padding-top: calc(var(--header-height) + var(--hero-gap, 0px));
 }
 
+/* The social links also live in the burger menu, so on narrow screens they
+   come out of the top bar — logo plus seven icons didn't fit. */
+@media (max-width: 599px) {
+    .header-actions .header-social-inline {
+        display: none;
+    }
+}
+
 /* On mobile the hero is transparent and the colour sits on the heading,
    so the header needs that colour behind it to stay legible. The heading
    also supplies its own clearance, so the generic offset is dropped. */
@@ -231,11 +239,16 @@ p {
 .site-logo {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
 }
 
 .site-logo img {
-    height: 48px;
+    /* The wordmark is ~6:1, so height drives a lot of width. Scale it down
+       as the viewport narrows so the nav keeps fitting beside it. */
+    height: clamp(24px, 2.1vw, 34px);
     width: auto;
+    flex-shrink: 0;
+    max-width: none;
 }
 
 .site-nav {
@@ -313,7 +326,7 @@ p {
     display: none;
 }
 
-@media (min-width: 1050px) {
+@media (min-width: 1150px) {
     .header-social {
         display: flex;
         margin-left: auto;
@@ -441,14 +454,14 @@ p {
     padding: var(--space-xs);
 }
 
-@media (max-width: 1049px) {
+@media (max-width: 1149px) {
     .site-header {
         display: flex;
         align-items: center;
     }
 
     .site-logo img {
-        height: 34px;
+        height: clamp(20px, 5.5vw, 30px);
     }
 
     .header-social {
@@ -665,7 +678,7 @@ main {
     transform: scale(1.2);
 }
 
-@media (max-width: 1049px) {
+@media (max-width: 1149px) {
     .featured-gallery-btn {
         width: 40px;
         height: 40px;
@@ -964,7 +977,7 @@ main {
     transform: scale(1.2);
 }
 
-@media (max-width: 1049px) {
+@media (max-width: 1149px) {
     .carousel-btn {
         width: 40px;
         height: 40px;
@@ -1416,7 +1429,7 @@ main {
     }
 }
 
-@media (max-width: 1049px) {
+@media (max-width: 1149px) {
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -1533,7 +1546,7 @@ main {
     align-items: start;
 }
 
-@media (max-width: 1049px) {
+@media (max-width: 1149px) {
     .product-detail-layout {
         grid-template-columns: 1fr;
         gap: var(--space-md);

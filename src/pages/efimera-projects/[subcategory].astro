@@ -2,7 +2,7 @@
 export const prerender = false;
 
 import Layout from "../../layouts/Layout.astro";
-import ArticleCard from "../../components/ArticleCard.astro";
+import EditorialCard from "../../components/EditorialCard.astro";
 import Pagination from "../../components/Pagination.astro";
 import { getArticlesByCategoryPaginated, urlFor } from "../../lib/sanity";
 import { getLang, t, getLocalePath, type Locale } from "../../lib/i18n";
@@ -28,7 +28,7 @@ const currentPage = Math.max(1, parseInt(pageParam || "1", 10) || 1);
 const { articles, totalPages } = await getArticlesByCategoryPaginated(
     categoryName,
     currentPage,
-    10,
+    9,
     lang,
 );
 ---
@@ -41,20 +41,24 @@ const { articles, totalPages } = await getArticlesByCategoryPaginated(
     {
         articles.length > 0 ? (
             <>
-                <div class="article-grid">
+                <div class="editorial-grid">
                     {articles.map((article) => (
-                        <ArticleCard
+                        <EditorialCard
                             title={article.title}
-                            slug={article.slug.current}
-                            category={article.category}
+                            href={getLocalePath(
+                                `/article/${article.slug.current}`,
+                                lang,
+                            )}
                             image={
                                 article.mainImage
                                     ? urlFor(article.mainImage)
                                           .width(800)
                                           .height(600)
+                                          .fit("crop")
                                           .url()
-                                    : undefined
+                                    : null
                             }
+                            kicker={article.category}
                             excerpt={article.excerpt}
                             lang={lang}
                         />

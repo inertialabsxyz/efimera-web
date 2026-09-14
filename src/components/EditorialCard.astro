@@ -9,6 +9,8 @@ interface Props {
     excerpt?: string | null;
     /** Larger type + image for the lead card in a row */
     featured?: boolean;
+    /** Opens in a new tab — for PDFs and off-site links */
+    external?: boolean;
     lang?: Locale;
     loading?: "lazy" | "eager";
 }
@@ -20,6 +22,7 @@ const {
     kicker,
     excerpt,
     featured = false,
+    external = false,
     lang = "es",
     loading = "lazy",
 } = Astro.props;
@@ -35,6 +38,9 @@ const Tag = href ? "a" : "div";
 <Tag
     class:list={["editorial-card", { featured }]}
     {...href ? { href } : {}}
+    {...href && external
+        ? { target: "_blank", rel: "noopener noreferrer" }
+        : {}}
 >
     {
         image && (

@@ -341,9 +341,11 @@ const hasMultiple = heroSlides.length > 1;
             visibility 0s linear 0.25s;
     }
 
-    /* The heading sizes to the active slide, so a short title leaves no gap
-       above the description. Hero height is held steady separately. */
-    .home-hero-head .home-hero-copy:not(.active) {
+    /* Both stacks size to the active slide: a short title leaves no gap above
+       the description, and the block doesn't reserve height for copy that
+       isn't showing. */
+    .home-hero-head .home-hero-copy:not(.active),
+    .home-hero-text .home-hero-copy:not(.active) {
         height: 0;
         overflow: hidden;
     }
@@ -451,6 +453,13 @@ const hasMultiple = heroSlides.length > 1;
         grid-area: 1 / 1;
         opacity: 0;
         transition: opacity 0.7s ease;
+        /* Inactive slides must not hold the track open at their own height,
+           or a scaled-down active image still reserves the full box. */
+        align-self: end;
+    }
+
+    .home-hero-track > .home-hero-slide:not(.active) {
+        max-height: 0;
     }
 
     .home-hero-slide.active {

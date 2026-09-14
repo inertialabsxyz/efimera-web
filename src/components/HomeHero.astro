@@ -265,22 +265,29 @@ const hasMultiple = heroSlides.length > 1;
         /* Left column: heading directly above details, sized to content so
            the media's height doesn't stretch the gap between them. */
         .home-hero-inner {
-            grid-template-rows: auto 1fr;
+            /* Heading sized to the active slide so the eyebrow sits tight
+               under the nav and the details sit tight under the title. The
+               hero's min-height (set from the tallest slide) keeps the block
+               from resizing as slides change. */
+            grid-template-rows: auto auto;
             row-gap: 0;
+            align-content: start;
         }
 
         .home-hero-head {
             grid-column: 1;
             grid-row: 1;
-            /* The row reserves the tallest title so the hero doesn't resize
-               between slides; bottom-align so a shorter title still sits
-               directly above the description instead of floating. */
-            align-content: end;
+            /* Top-aligned so the eyebrow always sits just under the nav. The
+               row still reserves the tallest title's height, so the hero
+               doesn't resize between slides — the slack falls below the
+               heading, where the details block takes it up. */
+            align-content: start;
         }
 
         .home-hero-head .home-hero-copy {
-            align-self: end;
+            align-self: start;
         }
+
 
         .home-hero-text {
             grid-column: 1;
@@ -325,13 +332,11 @@ const hasMultiple = heroSlides.length > 1;
             visibility 0s linear 0.25s;
     }
 
-    /* Mobile: the heading sizes to the active slide, so a short title doesn't
-       leave a gap above the description. */
-    @media (max-width: 899px) {
-        .home-hero-head .home-hero-copy:not(.active) {
-            height: 0;
-            overflow: hidden;
-        }
+    /* The heading sizes to the active slide, so a short title leaves no gap
+       above the description. Hero height is held steady separately. */
+    .home-hero-head .home-hero-copy:not(.active) {
+        height: 0;
+        overflow: hidden;
     }
 
     .home-hero-copy.active {
@@ -536,6 +541,11 @@ const hasMultiple = heroSlides.length > 1;
             hero?.querySelectorAll<HTMLButtonElement>(".home-hero-num") ?? [],
         );
         if (slides.length < 2) return;
+
+        // Headings differ in height when titles wrap to different line
+        // counts, which would resize the whole hero as slides change. Reserve
+        // the tallest so the block stays put, without padding the active
+        // slide's own spacing.
 
         let index = 0;
         let timer: number | null = null;

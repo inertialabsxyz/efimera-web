@@ -64,7 +64,9 @@ const gallerySlides = slides
         const title = slide?.title || article?.title || slide?.revista?.title || null;
 
         return {
-            src: urlFor(source).width(1400).height(1000).fit("crop").url(),
+            src: urlFor(source).width(1400).fit("max").auto("format").url(),
+            width: source?.asset?.metadata?.dimensions?.width ?? null,
+            height: source?.asset?.metadata?.dimensions?.height ?? null,
             alt: source?.alt || title || t("home.heroImageAlt", lang),
             eyebrow: slide?.eyebrow || article?.category || null,
             title,
@@ -422,13 +424,17 @@ const hasMultiple = heroSlides.length > 1;
     .home-hero-media img {
         width: 100%;
         height: auto;
-        aspect-ratio: 4 / 3;
-        object-fit: cover;
+        /* No forced ratio or cover crop: each image shows in full at its own
+           shape, so tall or square images aren't cut top and bottom. */
+        object-fit: contain;
     }
 
-    /* Slides stack and crossfade; the first one sets the box height */
+    /* Slides stack and crossfade. Images keep their own shape, so the track
+       aligns them to the bottom and a shorter one still meets the blue's
+       lower edge rather than floating above it. */
     .home-hero-track {
         display: grid;
+        align-items: end;
     }
 
     .home-hero-slide {
@@ -485,8 +491,8 @@ const hasMultiple = heroSlides.length > 1;
     /* Keep the stacked image from dominating the fold on tablets */
     @media (max-width: 899px) {
         .home-hero-media img {
-            aspect-ratio: 16 / 10;
             max-height: 50vh;
+            object-fit: contain;
         }
 
         /* Title, then image, then description and the rest */

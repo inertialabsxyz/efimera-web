@@ -338,7 +338,10 @@ export async function getHeroSlides(lang: Locale = "es") {
     `
     *[_type == "featuredGallery" && ${langFilter(lang)}][0].slides[] {
       _type,
-      image,
+      image {
+        ...,
+        asset->{ _id, metadata { dimensions } }
+      },
       eyebrow,
       title,
       excerpt,
@@ -355,7 +358,10 @@ export async function getHeroSlides(lang: Locale = "es") {
       },
       "revista": revista->{
         title,
-        coverImage,
+        coverImage {
+          ...,
+          asset->{ _id, metadata { dimensions } }
+        },
         "pdfUrl": pdf.asset->url
       }
     }

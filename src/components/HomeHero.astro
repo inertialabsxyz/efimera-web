@@ -518,31 +518,43 @@ const hasMultiple = heroSlides.length > 1;
             object-fit: contain;
         }
 
-        /* A full screen of blue is too heavy on a narrow viewport. The block
-           itself goes transparent and the colour is painted behind the
-           heading only, so the image and the rest of the copy sit on the page
-           background — echoing the desktop split. */
+        /* The blue wraps the heading and the image, then ends — the rest of
+           the copy sits on the page background. A full screen of blue was
+           too heavy on a narrow viewport. */
         .home-hero {
             background: transparent;
-            /* The heading carries the colour and its own header clearance,
-               so the hero's padding would show as a white stripe. */
             padding-top: 0;
         }
 
-        .home-hero-head {
-            order: 1;
+        /* The grid's row-gap would show as white between the two blue
+           blocks; spacing comes from their padding instead. */
+        .home-hero-inner {
+            row-gap: 0;
+        }
+
+        .home-hero-head,
+        .home-hero-media {
             background: var(--color-feature);
             color: var(--color-feature-text);
             /* Bleed to both edges, past the inner gutter */
             margin-inline: calc(-1 * var(--space-md));
-            padding: calc(var(--header-height) + var(--hero-gap))
-                var(--space-md) clamp(1.25rem, 4vw, 2rem);
+            padding-inline: var(--space-md);
+        }
+
+        .home-hero-head {
+            order: 1;
+            padding-top: calc(var(--header-height) + var(--hero-gap));
+            padding-bottom: clamp(1.25rem, 4vw, 2rem);
         }
 
         .home-hero-media {
             order: 2;
-            margin-top: clamp(1.5rem, 5vw, 2.5rem);
+            /* No gap between the two blue blocks, or white shows through */
+            margin-top: 0;
+            padding-top: 0;
+            padding-bottom: clamp(1.5rem, 5vw, 2.5rem);
         }
+
 
         .home-hero-media img {
             max-height: none;
@@ -560,7 +572,7 @@ const hasMultiple = heroSlides.length > 1;
 
         .home-hero-text {
             order: 3;
-            margin-top: clamp(1.25rem, 4vw, 2rem);
+            margin-top: clamp(1.75rem, 6vw, 2.75rem);
         }
 
         /* The desktop 22ch cap left the description in a narrow ribbon;

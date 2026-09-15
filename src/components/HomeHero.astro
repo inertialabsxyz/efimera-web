@@ -518,55 +518,25 @@ const hasMultiple = heroSlides.length > 1;
             object-fit: contain;
         }
 
-        /* The blue wraps the heading and the image, then ends — the rest of
-           the copy sits on the page background. A full screen of blue was
-           too heavy on a narrow viewport. */
-        .home-hero {
-            background: transparent;
-            padding-top: 0;
-        }
-
-        /* The grid's row-gap would show as white between the two blue
-           blocks; spacing comes from their padding instead. */
-        .home-hero-inner {
-            row-gap: 0;
-        }
-
-        .home-hero-head,
-        .home-hero-media {
-            background: var(--color-feature);
-            color: var(--color-feature-text);
-            /* Bleed to both edges, past the inner gutter */
-            margin-inline: calc(-1 * var(--space-md));
-            padding-inline: var(--space-md);
-        }
-
+        /* The whole hero is blue, as on desktop: heading, image and the rest
+           of the copy all sit on the colour. */
         .home-hero-head {
             order: 1;
-            padding-top: calc(var(--header-height) + var(--hero-gap));
-            padding-bottom: clamp(1.25rem, 4vw, 2rem);
         }
 
         .home-hero-media {
             order: 2;
-            /* No gap between the two blue blocks, or white shows through */
-            margin-top: 0;
-            padding-top: 0;
-            padding-bottom: clamp(1.5rem, 5vw, 2.5rem);
+            margin-top: clamp(1.5rem, 5vw, 2.5rem);
         }
-
 
         .home-hero-media img {
             max-height: none;
         }
 
-        /* Desktop bottom-aligns slides so they meet the edge of the blue.
-           On mobile the image sits on white, so align to the top instead —
-           otherwise a shorter slide is pushed down by a taller one. */
+        /* Stacked layout: the image no longer meets a bottom edge, so it
+           aligns to the top, and a scaled-down one centres in the column. */
         .home-hero-track {
             align-items: start;
-            /* Desktop pins images to the right edge of the blue; on mobile
-               the image sits on white, so a scaled one centres instead. */
             justify-items: center;
         }
 

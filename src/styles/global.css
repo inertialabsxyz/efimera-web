@@ -195,18 +195,7 @@ p {
     }
 }
 
-/* On mobile the hero is transparent and the colour sits on the heading,
-   so the header needs that colour behind it to stay legible. The heading
-   also supplies its own clearance, so the generic offset is dropped. */
-@media (max-width: 899px) {
-    .has-transparent-header:not(.header-pinned) .site-header {
-        background: var(--color-feature);
-    }
 
-    .has-transparent-header main > :first-child {
-        padding-top: 0;
-    }
-}
 
 /* The hero keeps its light-on-blue palette in both themes, so the header
    over it must stay dark — light nav text on the blue is only 3.3:1. */

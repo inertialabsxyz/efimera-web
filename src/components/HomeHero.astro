@@ -524,9 +524,23 @@ const hasMultiple = heroSlides.length > 1;
             order: 1;
         }
 
+        /* Vertical rhythm: the grid's row-gap is the single spacing between
+           heading, image and copy, so the three don't compound with each
+           block's own margins. */
+        .home-hero-inner {
+            row-gap: clamp(1.75rem, 6vw, 2.5rem);
+        }
+
         .home-hero-media {
             order: 2;
-            margin-top: clamp(1.5rem, 5vw, 2.5rem);
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+
+        /* The title's own margin sits inside the heading block, where the
+           row-gap already separates it from the image. */
+        .home-hero-head .home-hero-title {
+            margin-bottom: 0;
         }
 
         .home-hero-media img {
@@ -542,7 +556,21 @@ const hasMultiple = heroSlides.length > 1;
 
         .home-hero-text {
             order: 3;
-            margin-top: clamp(1.75rem, 6vw, 2.75rem);
+            margin-top: 0;
+            padding-bottom: clamp(1.5rem, 5vw, 2.25rem);
+        }
+
+        /* Description and date read as one block */
+        .home-hero-subtitle {
+            margin-bottom: clamp(0.5rem, 2vw, 0.85rem);
+        }
+
+        .home-hero-dates {
+            margin-bottom: clamp(1.5rem, 5vw, 2rem);
+        }
+
+        .home-hero-index {
+            margin-top: clamp(1.5rem, 5vw, 2rem);
         }
 
         /* The desktop 22ch cap left the description in a narrow ribbon;

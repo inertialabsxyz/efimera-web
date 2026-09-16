@@ -49,7 +49,9 @@ const featureItems = articles.slice(0, FEATURE_COUNT);
 const gridArticles = articles.slice(FEATURE_COUNT);
 ---
 
-<Layout title="Efímera" transparentHeader={hasHero}>
+{/* The header stays white on every page; the hero reads as a distinct
+   block beneath it rather than running under a transparent bar. */}
+<Layout title="Efímera">
     {hasHero && <HomeHero slides={heroSlides} lang={lang} />}
 
     {

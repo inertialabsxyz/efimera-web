@@ -109,6 +109,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Article
     "article.related": "Artículos relacionados",
+    "article.downloadPdf": "Descargar PDF",
 
     // Prensa
     "prensa.download": "Descargar ZIP",
@@ -259,6 +260,7 @@ const translations: Record<Locale, Record<string, string>> = {
 
     // Article
     "article.related": "Related articles",
+    "article.downloadPdf": "Download PDF",
 
     // Prensa
     "prensa.download": "Download ZIP",

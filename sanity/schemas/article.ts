@@ -68,6 +68,25 @@ export default {
         "Optional image carousel shown on the article page. If empty, the main image is shown instead.",
     },
     {
+      name: "pdf",
+      title: "PDF",
+      type: "file",
+      options: {
+        accept: ".pdf",
+      },
+      description:
+        "Optional. Shown as a download link under the image at the top of the article.",
+      fields: [
+        {
+          name: "label",
+          title: "Link Label",
+          type: "string",
+          description:
+            'Optional. Overrides the default "Descargar PDF" / "Download PDF" text.',
+        },
+      ],
+    },
+    {
       name: "category",
       title: "Category",
       type: "string",

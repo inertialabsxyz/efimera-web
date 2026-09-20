@@ -79,6 +79,18 @@ const galleryImages = hasGallery
             },
         ];
 
+// Optional PDF shown as a download link under the hero image.
+// `?dl=` makes Sanity's CDN serve the file as an attachment with a readable name.
+const pdfFileName = `${slug}.pdf`;
+const pdfHref = article.pdfUrl
+    ? `${article.pdfUrl}?dl=${encodeURIComponent(pdfFileName)}`
+    : null;
+const pdfLabel = article.pdfLabel || t("article.downloadPdf", lang);
+const pdfSizeMb =
+    typeof article.pdfSize === "number"
+        ? (article.pdfSize / (1024 * 1024)).toFixed(1)
+        : null;
+
 function renderVideo({ value }: { value: any }) {
     if (!value?.file?.asset?._ref) return "";
     // Convert Sanity file asset ref to URL
@@ -154,6 +166,42 @@ const bodyHtml = article.body
             />
         </div>
 
+        {
+            pdfHref && (
+                <div class="article-pdf">
+                    <a
+                        href={pdfHref}
+                        class="article-pdf-link"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        <svg
+                            class="article-pdf-icon"
+                            width="14"
+                            height="14"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            aria-hidden="true"
+                        >
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
+                        </svg>
+                        <span>{pdfLabel}</span>
+                        {pdfSizeMb && (
+                            <span class="article-pdf-size">
+                                (PDF, {pdfSizeMb} MB)
+                            </span>
+                        )}
+                    </a>
+                </div>
+            )
+        }
+
         <div class="article-content" set:html={bodyHtml} />
 
         {
@@ -204,6 +252,39 @@ const bodyHtml = article.body
         to {
             opacity: 1;
         }
+    }
+
+    .article-pdf {
+        max-width: 680px;
+        margin: var(--space-md) auto 0;
+        padding: 0 var(--space-md);
+    }
+
+    .article-pdf-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: var(--color-text);
+        text-decoration: none;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        border-bottom: 1px solid var(--color-text);
+        padding-bottom: 0.25rem;
+        transition: opacity 0.2s ease;
+    }
+
+    .article-pdf-link:hover {
+        opacity: 0.6;
+    }
+
+    .article-pdf-icon {
+        flex-shrink: 0;
+    }
+
+    .article-pdf-size {
+        color: var(--color-text-muted);
+        letter-spacing: 0.05em;
     }
 
     .related-articles {

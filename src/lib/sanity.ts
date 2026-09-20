@@ -44,6 +44,9 @@ const articleDetailFields = `
   category,
   mainImage,
   gallery,
+  "pdfUrl": pdf.asset->url,
+  "pdfLabel": pdf.label,
+  "pdfSize": pdf.asset->size,
   "author": author->{name, image},
   "relatedArticles": relatedArticles[]->{
     _id,

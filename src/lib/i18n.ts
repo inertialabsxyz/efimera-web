@@ -148,7 +148,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "Disponible en alquiler por jornadas o medias jornadas, en un entorno singular rodeado de arte contemporáneo.",
     "reserva.extrasTitle": "¿Necesitas algo más?",
     "reserva.extras":
-      "Consúltanos para necesidades especiales de montaje, equipamiento, horarios u otros servicios. La limpieza se facturará aparte.",
+      "Consúltanos para necesidades especiales de montaje, equipamiento, horarios u otros servicios.",
     "reserva.cta": "Escríbenos",
     "reserva.plan": "Descargar plano (PDF)",
     "reserva.availability":
@@ -300,7 +300,7 @@ const translations: Record<Locale, Record<string, string>> = {
       "Available to rent by full or half days, in a unique setting surrounded by contemporary art.",
     "reserva.extrasTitle": "Need anything else?",
     "reserva.extras":
-      "Ask us about special set-up, equipment or scheduling needs, or any other services. Cleaning is invoiced separately.",
+      "Ask us about special set-up, equipment or scheduling needs, or any other services.",
     "reserva.cta": "Write to us",
     "reserva.plan": "Download floor plan (PDF)",
     "reserva.availability":

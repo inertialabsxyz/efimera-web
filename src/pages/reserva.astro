@@ -1,8 +1,32 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import ImageCarousel from "../components/ImageCarousel.astro";
 import { getLang, t } from "../lib/i18n";
 
 const lang = getLang(Astro);
+
+const spaceImages = [
+    "EFIMERA-1 ESPACIOS X_Z.jpg",
+    "EFIMERA-1 ESPACIO Y.jpg",
+    "EFIMERA-1 ESPACIO Z.jpg",
+    "EFIMERA-2 ESPACIO Y.jpg",
+    "EFIMERA-2.ESPACIO Y.jpg",
+    "EFIMERA-3 ESPACIOS Y_Z.jpg",
+    "EFIMERA-3 SPACIO Y.jpg",
+    "EFIMERA-4 ESCALERA_ ESPACIO Y.jpg",
+    "EFIMERA-5  ESPACIOS Y_X.jpg",
+    "EFIMERA-6 ESPACIO Y_Z.jpg",
+    "EFIMERA-7. ESPACIO Y_Z.jpg",
+    "EFIMERA-7 ASEO.jpg",
+    "EFIMERA-11.jpg",
+    "EFIMERA-14.jpg",
+    "EFIMERA-28.jpg",
+].map((file) => ({
+    url: `/espacio/${encodeURIComponent(file)}`,
+    alt: "Efímera espacio",
+}));
+
+const planUrl = `/${encodeURIComponent("2025 EFIMERA C&S.pdf")}`;
 ---
 
 <Layout
@@ -13,6 +37,14 @@ const lang = getLang(Astro);
         <h1>{t("reserva.headline", lang)}</h1>
         <p class="lead">{t("reserva.intro", lang)}</p>
         <p>{t("reserva.description", lang)}</p>
+
+        <div class="space-gallery">
+            <ImageCarousel images={spaceImages} articleTitle="Efímera espacio" />
+        </div>
+
+        <a class="plan-link" href={planUrl} download="Efimera-plano.pdf">
+            {t("reserva.plan", lang)} ↓
+        </a>
 
         <div class="rental">
             <p>{t("reserva.rental", lang)}</p>
@@ -66,6 +98,29 @@ const lang = getLang(Astro);
         font-size: clamp(1.35rem, 3vw, 1.6rem);
         line-height: 1.4;
         margin-bottom: var(--space-md);
+    }
+
+    .space-gallery {
+        margin: var(--space-md) 0 var(--space-sm);
+        aspect-ratio: 3 / 2;
+    }
+
+    .plan-link {
+        display: inline-block;
+        font-family: var(--font-display);
+        font-size: 1rem;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+        border-bottom: 1px solid var(--color-border);
+        padding-bottom: 0.15rem;
+        transition:
+            color 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .plan-link:hover {
+        color: var(--color-text);
+        border-color: var(--color-text);
     }
 
     .rental {

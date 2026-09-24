@@ -150,6 +150,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "reserva.extras":
       "Consúltanos para necesidades especiales de montaje, equipamiento, horarios u otros servicios. La limpieza se facturará aparte.",
     "reserva.cta": "Escríbenos",
+    "reserva.plan": "Descargar plano (PDF)",
     "reserva.availability":
       "Todas las reservas están sujetas a disponibilidad y compatibilidad con la exposición en curso.",
 
@@ -301,6 +302,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "reserva.extras":
       "Ask us about special set-up, equipment or scheduling needs, or any other services. Cleaning is invoiced separately.",
     "reserva.cta": "Write to us",
+    "reserva.plan": "Download floor plan (PDF)",
     "reserva.availability":
       "All bookings are subject to availability and compatibility with the current exhibition.",
 

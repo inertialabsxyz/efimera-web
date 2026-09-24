@@ -341,6 +341,9 @@ export interface NavItem {
   children?: { label: string; href: string }[];
 }
 
+// Shows the Tienda nav item and the selection (cart) button in the header
+export const SHOP_ENABLED = false;
+
 /** Navigation items with their translated labels and paths */
 export function getNavItems(lang: Locale): NavItem[] {
   return [
@@ -395,6 +398,8 @@ export function getNavItems(lang: Locale): NavItem[] {
       label: t("nav.constelacion", lang),
       href: getLocalePath("/constelacion-efimera", lang),
     },
-    { label: t("nav.tienda", lang), href: getLocalePath("/tienda", lang) },
+    ...(SHOP_ENABLED
+      ? [{ label: t("nav.tienda", lang), href: getLocalePath("/tienda", lang) }]
+      : []),
   ];
 }

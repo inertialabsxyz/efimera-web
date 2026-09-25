@@ -28,23 +28,14 @@ const content = {
             },
             {
                 name: "Mecenas",
-                price: "Desde 300 € / año",
+                price: "Si quieres ser mecena de Efímera, escríbenos a",
+                email: "info@efimera.xyz",
                 benefits: [
                     "Todas las ventajas anteriores.",
                     "50 % de descuento en actividades de Efímera.",
                     "Invitaciones a visitas privadas y encuentros exclusivos.",
                     "Condiciones especiales para alquilar el espacio.",
                     "Posibilidad de explorar colaboraciones con Efímera.",
-                ],
-            },
-            {
-                name: "Gran Mecenas",
-                price: "Desde 500 € / año",
-                benefits: [
-                    "Todas las ventajas anteriores.",
-                    "Una jornada o dos medias jornadas de uso gratuito de Efímera al año.",
-                    "Condiciones preferentes para usos adicionales del espacio.",
-                    "Participación en proyectos, encuentros y propuestas especiales.",
                 ],
             },
         ],
@@ -73,23 +64,14 @@ const content = {
             },
             {
                 name: "Mecenas",
-                price: "From €300 / year",
+                price: "If you'd like to become a patron of Efímera, write to us at",
+                email: "info@efimera.xyz",
                 benefits: [
                     "All the benefits above.",
                     "50% discount on Efímera activities.",
                     "Invitations to private visits and exclusive gatherings.",
                     "Special conditions for renting the space.",
                     "The possibility of exploring collaborations with Efímera.",
-                ],
-            },
-            {
-                name: "Gran Mecenas",
-                price: "From €500 / year",
-                benefits: [
-                    "All the benefits above.",
-                    "One full day or two half days of free use of Efímera per year.",
-                    "Preferential conditions for additional use of the space.",
-                    "Participation in special projects, gatherings and proposals.",
                 ],
             },
         ],
@@ -110,7 +92,10 @@ const content = {
             content.tiers.map((tier) => (
                 <div class="tier">
                     <h2>{tier.name}</h2>
-                    <p class="price">{tier.price}</p>
+                    <p class="price">
+                        {tier.price}
+                        {tier.email && <a href={`mailto:${tier.email}`}>{tier.email}</a>}
+                    </p>
                     <ul>
                         {tier.benefits.map((benefit) => (
                             <li>{benefit}</li>

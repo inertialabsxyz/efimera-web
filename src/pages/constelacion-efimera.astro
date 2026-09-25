@@ -11,6 +11,8 @@ const content = {
             {
                 name: "Colaborador",
                 price: "Desde 50 € / año",
+                link: "https://ticket.efimera.xyz/other",
+                cta: "Hazte colaborador",
                 benefits: [
                     "Acceso prioritario a actividades con aforo limitado.",
                     "Invitaciones a encuentros y sesiones especiales.",
@@ -19,6 +21,8 @@ const content = {
             {
                 name: "Socio",
                 price: "Desde 100 € / año",
+                link: "https://ticket.efimera.xyz/other",
+                cta: "Hazte socio",
                 benefits: [
                     "Todas las ventajas anteriores.",
                     "Visitas y encuentros con artistas.",
@@ -47,6 +51,8 @@ const content = {
             {
                 name: "Colaborador",
                 price: "From €50 / year",
+                link: "https://ticket.efimera.xyz/other",
+                cta: "Become a Colaborador",
                 benefits: [
                     "Priority access to limited-capacity activities.",
                     "Invitations to gatherings and special sessions.",
@@ -55,6 +61,8 @@ const content = {
             {
                 name: "Socio",
                 price: "From €100 / year",
+                link: "https://ticket.efimera.xyz/other",
+                cta: "Become a Socio",
                 benefits: [
                     "All the benefits above.",
                     "Visits and meetings with artists.",
@@ -101,6 +109,11 @@ const content = {
                             <li>{benefit}</li>
                         ))}
                     </ul>
+                    {tier.link && (
+                        <a class="tier-link" href={tier.link}>
+                            {tier.cta} →
+                        </a>
+                    )}
                 </div>
             ))
         }
@@ -178,6 +191,13 @@ const content = {
 
     li:last-child {
         margin-bottom: 0;
+    }
+
+    .tier-link {
+        display: inline-block;
+        font-family: var(--font-display);
+        font-size: 1.1rem;
+        margin-top: var(--space-sm);
     }
 
     .availability {

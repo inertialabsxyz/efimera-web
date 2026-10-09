@@ -94,6 +94,7 @@ export default {
         list: [
           { title: "Actividades", value: "Actividades" },
           { title: "Artistas", value: "Artistas" },
+          { title: "Convocatorias", value: "Convocatorias" },
           { title: "Entrevistas", value: "Entrevistas" },
           { title: "Eventos", value: "Eventos" },
           { title: "Exposiciones", value: "Exposiciones" },
@@ -103,6 +104,7 @@ export default {
           { title: "Online", value: "Online" },
           { title: "Podcast", value: "Podcast" },
           { title: "Ruido de fondo", value: "Ruido de fondo" },
+          { title: "Talleres", value: "Talleres" },
         ],
       },
       validation: (Rule) => Rule.required(),

@@ -19,13 +19,15 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.exposiciones": "Exposiciones",
     "nav.actividades": "Actividades",
     "nav.ruidoDeFondo": "Ruido de fondo",
+    "nav.convocatorias": "Convocatorias",
+    "nav.talleres": "Talleres",
     "nav.eventos": "Eventos",
     "nav.podcast": "Podcast",
     "nav.artistas": "Artistas",
     "nav.letras": "Letras",
     "nav.entrevistas": "Entrevistas",
     "nav.articulos": "Otros",
-    "nav.revistaXyz": "Revista XYZ",
+    "nav.revista": "Revista",
     "nav.tienda": "Tienda",
     "nav.projects": "Proyectos",
     "nav.reserva": "Reserva",
@@ -52,6 +54,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Categories
     "cat.Actividades": "Actividades",
     "cat.Artistas": "Artistas",
+    "cat.Convocatorias": "Convocatorias",
     "cat.Entrevistas": "Entrevistas",
     "cat.Exposiciones": "Exposiciones",
     "cat.In situ": "In situ",
@@ -61,6 +64,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "cat.Ruido de fondo": "Ruido de fondo",
     "cat.Eventos": "Eventos",
     "cat.Podcast": "Podcast",
+    "cat.Talleres": "Talleres",
 
     // Empty states
     "empty.category": "Aún no hay artículos en esta categoría.",
@@ -171,13 +175,15 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.exposiciones": "Exhibitions",
     "nav.actividades": "Activities",
     "nav.ruidoDeFondo": "Ruido de fondo",
+    "nav.convocatorias": "Open calls",
+    "nav.talleres": "Workshops",
     "nav.eventos": "Events",
     "nav.podcast": "Podcast",
     "nav.artistas": "Artists",
     "nav.letras": "Writing",
     "nav.entrevistas": "Interviews",
     "nav.articulos": "Other",
-    "nav.revistaXyz": "Revista XYZ",
+    "nav.revista": "Magazine",
     "nav.tienda": "Shop",
     "nav.projects": "Projects",
     "nav.reserva": "Booking",
@@ -204,6 +210,7 @@ const translations: Record<Locale, Record<string, string>> = {
     // Categories
     "cat.Actividades": "Activities",
     "cat.Artistas": "Artists",
+    "cat.Convocatorias": "Open calls",
     "cat.Entrevistas": "Interviews",
     "cat.Exposiciones": "Exhibitions",
     "cat.In situ": "In situ",
@@ -213,6 +220,7 @@ const translations: Record<Locale, Record<string, string>> = {
     "cat.Ruido de fondo": "Ruido de fondo",
     "cat.Eventos": "Events",
     "cat.Podcast": "Podcast",
+    "cat.Talleres": "Workshops",
 
     // Empty states
     "empty.category": "No articles in this category yet.",
@@ -363,6 +371,14 @@ export function getNavItems(lang: Locale): NavItem[] {
           label: t("nav.ruidoDeFondo", lang),
           href: getLocalePath("/category/ruido-de-fondo", lang),
         },
+        {
+          label: t("nav.convocatorias", lang),
+          href: getLocalePath("/category/convocatorias", lang),
+        },
+        {
+          label: t("nav.talleres", lang),
+          href: getLocalePath("/category/talleres", lang),
+        },
       ],
     },
     {
@@ -380,11 +396,11 @@ export function getNavItems(lang: Locale): NavItem[] {
           label: t("nav.articulos", lang),
           href: getLocalePath("/category/articulos", lang),
         },
-        {
-          label: t("nav.revistaXyz", lang),
-          href: getLocalePath("/revista", lang),
-        },
       ],
+    },
+    {
+      label: t("nav.revista", lang),
+      href: getLocalePath("/revista", lang),
     },
     {
       label: t("nav.projects", lang),

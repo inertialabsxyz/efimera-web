@@ -278,7 +278,10 @@ const hasMultiple = heroSlides.length > 1;
                under the nav and the details sit tight under the title. The
                hero's min-height (set from the tallest slide) keeps the block
                from resizing as slides change. */
-            grid-template-rows: auto auto;
+            /* The details row takes any slack from the reserved height (set
+               by the script from the tallest slide), so the details stay
+               tight under the title and the image still spans the block. */
+            grid-template-rows: auto 1fr;
             row-gap: 0;
             align-content: start;
         }
@@ -368,6 +371,34 @@ const hasMultiple = heroSlides.length > 1;
 
         .home-hero-media .home-hero-slide {
             display: block;
+        }
+
+        /* With text, the image fills the full height of the blue block, from
+           its top edge to its bottom edge, so no blue shows above it. The
+           text column sets the height; the image is cropped to fit. The
+           track is out of flow so the image can't make the block taller. */
+        .home-hero-inner:not(.is-image-only) .home-hero-media {
+            align-self: stretch;
+            position: relative;
+            margin-top: calc(-1 * var(--hero-gap));
+        }
+
+        .home-hero-inner:not(.is-image-only) .home-hero-track {
+            position: absolute;
+            inset: 0;
+        }
+
+        /* Each slide is pinned to the track's box (not sized by a grid row,
+           which a tall image would stretch), so it can't spill below the
+           blue. A scaled-down slide stays flush right. */
+        .home-hero-inner:not(.is-image-only) .home-hero-slide {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            height: 100%;
+            max-height: none;
+            object-fit: cover;
         }
     }
 
@@ -622,7 +653,63 @@ const hasMultiple = heroSlides.length > 1;
         // Headings differ in height when titles wrap to different line
         // counts, which would resize the whole hero as slides change. Reserve
         // the tallest so the block stays put, without padding the active
-        // slide's own spacing.
+        // slide's own spacing. On desktop the image fills the block, so this
+        // also keeps every slide's image the same height.
+        const inner = hero?.querySelector<HTMLElement>(".home-hero-inner");
+        const desktop = window.matchMedia("(min-width: 900px)");
+
+        function setCopy(active: number) {
+            copyStacks.forEach((stack) =>
+                stack.forEach((c, i) => c.classList.toggle("active", i === active)),
+            );
+        }
+
+        // The block is this fraction of the tallest slide's natural height.
+        // A slide whose copy doesn't fit gets a smaller title until it does.
+        const HEIGHT_RATIO = 0.7;
+        const MIN_TITLE_RATIO = 0.6;
+        const titles = copyStacks[0].map((c) =>
+            c.querySelector<HTMLElement>(".home-hero-title"),
+        );
+
+        function reserveHeight() {
+            if (!inner || !hero) return;
+            inner.style.minHeight = "";
+            titles.forEach((t) => t && (t.style.fontSize = ""));
+            if (!desktop.matches) {
+                setCopy(index);
+                return;
+            }
+
+            const natural: number[] = [];
+            for (let i = 0; i < slides.length; i++) {
+                setCopy(i);
+                natural.push(inner.offsetHeight);
+            }
+            // The 30% cut applies to the whole blue block, which includes
+            // the gap above the copy.
+            const gap = parseFloat(getComputedStyle(hero).paddingTop) || 0;
+            const tallest = Math.max(...natural);
+            let target = Math.round((tallest + gap) * HEIGHT_RATIO - gap);
+
+            for (let i = 0; i < slides.length; i++) {
+                const title = titles[i];
+                if (natural[i] <= target || !title) continue;
+                setCopy(i);
+                const base = parseFloat(getComputedStyle(title).fontSize);
+                let ratio = 1;
+                while (inner.offsetHeight > target && ratio > MIN_TITLE_RATIO) {
+                    ratio -= 0.025;
+                    title.style.fontSize = `${base * ratio}px`;
+                }
+                // Copy that still doesn't fit at the smallest title size
+                // sets the height, so text is never cut off.
+                target = Math.max(target, inner.offsetHeight);
+            }
+
+            setCopy(index);
+            inner.style.minHeight = `${target}px`;
+        }
 
         let index = 0;
         let timer: number | null = null;
@@ -675,6 +762,16 @@ const hasMultiple = heroSlides.length > 1;
         root.addEventListener("mouseleave", start);
         root.addEventListener("focusin", stop);
         root.addEventListener("focusout", start);
+
+        reserveHeight();
+        // Web fonts change the title's line breaks, so measure again once
+        // they load, and whenever the width changes.
+        document.fonts?.ready.then(reserveHeight);
+        let resizeFrame = 0;
+        window.addEventListener("resize", () => {
+            cancelAnimationFrame(resizeFrame);
+            resizeFrame = requestAnimationFrame(reserveHeight);
+        });
 
         start();
     });

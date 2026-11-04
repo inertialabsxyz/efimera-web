@@ -31,7 +31,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.tienda": "Tienda",
     "nav.projects": "Proyectos",
     "nav.reserva": "Reserva",
-    "nav.constelacion": "Constelación",
 
     // Footer
     "footer.about": "Acerca de",
@@ -126,7 +125,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "contact.title": "Contacto",
 
     // Home
-    "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
     "home.heroCta": "Ver más",
     "home.heroNav": "Navegación de portada",
@@ -138,8 +136,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "home.contacto": "Contacto",
     "home.latest": "Lo último",
 
-    // Constelación
-    "constelacion.title": "Constelación Efímera",
 
     // Reserva
     "reserva.title": "Reserva",
@@ -187,7 +183,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "nav.tienda": "Shop",
     "nav.projects": "Projects",
     "nav.reserva": "Booking",
-    "nav.constelacion": "Constelación",
 
     // Footer
     "footer.about": "About",
@@ -282,7 +277,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "contact.title": "Contact",
 
     // Home
-    "home.constelacion": "Constelación Efímera",
     "home.revista": "Revista XYZ",
     "home.heroCta": "Read more",
     "home.heroNav": "Featured navigation",
@@ -294,8 +288,6 @@ const translations: Record<Locale, Record<string, string>> = {
     "home.contacto": "Contact",
     "home.latest": "Latest",
 
-    // Constelación
-    "constelacion.title": "Constelación Efímera",
 
     // Reserva
     "reserva.title": "Booking",
@@ -409,10 +401,6 @@ export function getNavItems(lang: Locale): NavItem[] {
     {
       label: t("nav.reserva", lang),
       href: getLocalePath("/reserva", lang),
-    },
-    {
-      label: t("nav.constelacion", lang),
-      href: getLocalePath("/constelacion-efimera", lang),
     },
     ...(SHOP_ENABLED
       ? [{ label: t("nav.tienda", lang), href: getLocalePath("/tienda", lang) }]
